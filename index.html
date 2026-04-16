@@ -60,7 +60,12 @@
         .score-item .label { font-size: 11px; color: #666; }
         .score-item .value { font-size: 20px; font-weight: bold; color: #667eea; }
         .question-suggestion { background: #e3f2fd; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #667eea; }
-        .cv-preview { background: #f8f9fa; padding: 15px; border-radius: 12px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+        .cv-container { background: #f8f9fa; border-radius: 16px; overflow: hidden; }
+        .cv-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .cv-section { background: white; margin: 15px; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .cv-section-title { font-size: 16px; font-weight: 600; color: #667eea; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #667eea; display: inline-block; }
+        .cv-section-content { font-size: 13px; line-height: 1.6; color: #333; white-space: pre-wrap; }
+        .cv-badge { display: inline-block; background: #f0f2f5; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin: 3px; }
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; color: white; }
         .spinner { width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -146,7 +151,7 @@
             <div class="tab-buttons">
                 <button class="tab-btn active" onclick="switchTab('info')">📋 Información</button>
                 <button class="tab-btn" onclick="switchTab('interview')">🎤 Entrevista</button>
-                <button class="tab-btn" onclick="switchTab('cv')">📄 CV Original</button>
+                <button class="tab-btn" onclick="switchTab('cv')">📄 Currículum Vitae</button>
             </div>
             <div id="tabInfo" class="tab-content active"></div>
             <div id="tabInterview" class="tab-content"></div>
@@ -209,7 +214,7 @@
             }
             
             const topCandidates = [...candidates].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
-            document.getElementById('topCandidatesList').innerHTML = topCandidates.map(c=>`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span><strong>${c.name}</strong><br><small>${c.specialty||''} | ${c.location || 'Ubicación no especificada'}</small></span><span style="font-weight:bold;color:#667eea;">${c.score||70}%</span></div>`).join('');
+            document.getElementById('topCandidatesList').innerHTML = topCandidates.map(c=>`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span><strong>${escapeHtml(c.name)}</strong><br><small>${c.specialty||''} | ${c.location || 'Ubicación no especificada'}</small></span><span style="font-weight:bold;color:#667eea;">${c.score||70}%</span></div>`).join('');
         }
 
         function renderCandidates() {
@@ -243,6 +248,101 @@
                 if(m === '>') return '&gt;';
                 return m;
             });
+        }
+
+        // Función para formatear el CV de manera estética
+        function formatearCV(cvTexto) {
+            if (!cvTexto) return '<p>No hay texto del CV disponible</p>';
+            
+            // Extraer secciones comunes del CV
+            const secciones = {
+                datosPersonales: '',
+                perfilProfesional: '',
+                formacionAcademica: '',
+                capacitaciones: '',
+                experienciaLaboral: '',
+                habilidades: '',
+                idiomas: ''
+            };
+            
+            let textoFormateado = '';
+            
+            // Detectar y organizar por secciones
+            const lineas = cvTexto.split('\n');
+            let seccionActual = 'datosPersonales';
+            
+            for (let linea of lineas) {
+                linea = linea.trim();
+                if (!linea) continue;
+                
+                const lineaLower = linea.toLowerCase();
+                
+                if (lineaLower.includes('perfil') || lineaLower.includes('resumen') || lineaLower.includes('sobre mí')) {
+                    seccionActual = 'perfilProfesional';
+                    textoFormateado += `<div class="cv-section"><div class="cv-section-title">🎯 PERFIL PROFESIONAL</div><div class="cv-section-content">`;
+                    continue;
+                }
+                else if (lineaLower.includes('formación') || lineaLower.includes('educación') || lineaLower.includes('estudios') || lineaLower.includes('universitario')) {
+                    seccionActual = 'formacionAcademica';
+                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">🎓 FORMACIÓN ACADÉMICA</div><div class="cv-section-content">`;
+                    continue;
+                }
+                else if (lineaLower.includes('capacitación') || lineaLower.includes('curso') || lineaLower.includes('diplomatura') || lineaLower.includes('taller')) {
+                    seccionActual = 'capacitaciones';
+                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">📚 CAPACITACIONES Y CURSOS</div><div class="cv-section-content">`;
+                    continue;
+                }
+                else if (lineaLower.includes('experiencia') || lineaLower.includes('laboral') || lineaLower.includes('trabajo')) {
+                    seccionActual = 'experienciaLaboral';
+                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">💼 EXPERIENCIA LABORAL</div><div class="cv-section-content">`;
+                    continue;
+                }
+                else if (lineaLower.includes('habilidad') || lineaLower.includes('competencia') || lineaLower.includes('aptitud')) {
+                    seccionActual = 'habilidades';
+                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">⚡ HABILIDADES Y COMPETENCIAS</div><div class="cv-section-content">`;
+                    continue;
+                }
+                else if (lineaLower.includes('idioma')) {
+                    seccionActual = 'idiomas';
+                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">🌐 IDIOMAS</div><div class="cv-section-content">`;
+                    continue;
+                }
+                
+                // Formatear líneas con viñetas si empiezan con • o -
+                let lineaFormateada = linea;
+                if (linea.startsWith('•') || linea.startsWith('-') || linea.match(/^\d+\./)) {
+                    lineaFormateada = `<span style="display:block; margin-left: 20px; margin-bottom: 8px;">${linea}</span>`;
+                } else if (linea.includes(':')) {
+                    const [titulo, ...resto] = linea.split(':');
+                    lineaFormateada = `<strong>${titulo}:</strong> ${resto.join(':')}`;
+                } else {
+                    lineaFormateada = linea;
+                }
+                
+                textoFormateado += `<div style="margin-bottom: 6px;">${escapeHtml(lineaFormateada)}</div>`;
+            }
+            
+            textoFormateado += `</div></div>`;
+            
+            // Si no se detectaron secciones, mostrar el texto plano pero con mejor formato
+            if (!textoFormateado.includes('cv-section')) {
+                textoFormateado = `
+                    <div class="cv-section">
+                        <div class="cv-section-title">📄 CURRÍCULUM VITAE</div>
+                        <div class="cv-section-content" style="white-space: pre-wrap;">${escapeHtml(cvTexto)}</div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="cv-container">
+                    <div class="cv-header">
+                        <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
+                        <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">Documento original del candidato</div>
+                    </div>
+                    ${textoFormateado}
+                </div>
+            `;
         }
 
         function openCandidateDetail(id) {
@@ -292,22 +392,19 @@
                 </div>
                 <hr style="margin:20px 0;">
                 <h4>✅ Checklist de seguimiento</h4>
-                <div class="checklist-item"><input type="checkbox" id="checkCV" ${c.checkCV ? 'checked' : ''}> CV revisado</div>
-                <div class="checklist-item"><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall ? 'checked' : ''}> Video llamada <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}"></div>
-                <div class="checklist-item"><input type="checkbox" id="checkTechnical" ${c.checkTechnical ? 'checked' : ''}> Entrevista técnica <input type="date" id="technicalDate" value="${c.technicalDate || ''}"></div>
-                <div class="checklist-item"><input type="checkbox" id="checkHR" ${c.checkHR ? 'checked' : ''}> Entrevista RRHH <input type="date" id="hrDate" value="${c.hrDate || ''}"></div>
-                <div class="checklist-item"><input type="checkbox" id="checkOffer" ${c.checkOffer ? 'checked' : ''}> Oferta enviada</div>
+                <div><input type="checkbox" id="checkCV" ${c.checkCV ? 'checked' : ''}> CV revisado</div>
+                <div><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall ? 'checked' : ''}> Video llamada <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}"></div>
+                <div><input type="checkbox" id="checkTechnical" ${c.checkTechnical ? 'checked' : ''}> Entrevista técnica <input type="date" id="technicalDate" value="${c.technicalDate || ''}"></div>
+                <div><input type="checkbox" id="checkHR" ${c.checkHR ? 'checked' : ''}> Entrevista RRHH <input type="date" id="hrDate" value="${c.hrDate || ''}"></div>
+                <div><input type="checkbox" id="checkOffer" ${c.checkOffer ? 'checked' : ''}> Oferta enviada</div>
                 
                 <h4 style="margin-top:20px;">📝 Notas de entrevista</h4>
                 <textarea id="interviewNotes" rows="4" placeholder="Ej: Tiene pareja, busca full-time, disponible en 15 días..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;">${escapeHtml(c.interviewNotes || '')}</textarea>
                 <div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="${c.nextContact || ''}" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;"></div>
             `;
             
-            document.getElementById('tabCV').innerHTML = `
-                <h3>📄 Currículum Vitae Original</h3>
-                <div class="cv-preview">${escapeHtml(c.rawCV || 'No se guardó el texto original del CV')}</div>
-                <button class="btn btn-outline" style="margin-top:10px;" onclick="copyCVText()">📋 Copiar CV completo</button>
-            `;
+            // CV formateado estéticamente
+            document.getElementById('tabCV').innerHTML = formatearCV(c.rawCV);
             
             document.getElementById('candidateModal').style.display = 'flex';
         }
@@ -357,12 +454,6 @@
             ];
         }
         
-        function copyCVText() {
-            const c = candidates.find(c=>c.id===currentEditCandidateId);
-            if (c && c.rawCV) { navigator.clipboard.writeText(c.rawCV); alert('✅ CV copiado'); }
-            else alert('No hay CV guardado');
-        }
-        
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
@@ -404,30 +495,24 @@
         function resetFilters() { document.getElementById('searchFilter').value = ''; document.getElementById('specialtyFilter').value = ''; document.getElementById('statusFilter').value = ''; renderCandidates(); }
         
         function limpiarRespuestaAI(text) {
-            // Eliminar caracteres de control y limpiar JSON
             let cleaned = text.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
             cleaned = cleaned.replace(/```json\n?/g, '').replace(/```\n?/g, '');
             cleaned = cleaned.replace(/\n/g, ' ').replace(/\r/g, ' ');
             cleaned = cleaned.replace(/\t/g, ' ');
-            // Buscar el primer { y último }
             const firstBrace = cleaned.indexOf('{');
             const lastBrace = cleaned.lastIndexOf('}');
             if (firstBrace === -1 || lastBrace === -1) throw new Error('No se encontró JSON válido');
             let jsonStr = cleaned.substring(firstBrace, lastBrace + 1);
-            // Escapar caracteres problemáticos dentro de strings
             jsonStr = jsonStr.replace(/\\"/g, '"').replace(/""/g, '"');
-            // Reemplazar comillas simples por dobles solo si es necesario
             jsonStr = jsonStr.replace(/'/g, '"');
             return JSON.parse(jsonStr);
         }
         
         function extraerUbicacion(texto) {
-            // Intentar extraer ubicación del CV
             const provincias = ['Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'];
             for(let provincia of provincias) {
                 if(texto.includes(provincia)) return provincia;
             }
-            // Buscar ciudad
             const ciudadMatch = texto.match(/(?:Villa|San|Santa|Ciudad|Mar del|La|El|Los|Las)\s+[A-Z][a-z]+/);
             if(ciudadMatch) return ciudadMatch[0];
             return 'No especificada';
@@ -443,7 +528,7 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
                     body: JSON.stringify({
                         model: 'llama-3.1-8b-instant',
-                        messages: [{ role: 'system', content: `Eres un experto en HR Tech. Analiza el CV y responde SOLO con JSON válido, sin caracteres especiales. JSON: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}` }, { role: 'user', content: cvText.substring(0,3000) }],
+                        messages: [{ role: 'system', content: `Eres un experto en HR Tech. Analiza el CV y responde SOLO con JSON válido. JSON: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}` }, { role: 'user', content: cvText.substring(0,3000) }],
                         temperature: 0.3
                     })
                 });
@@ -469,7 +554,7 @@
                 showSection('candidates');
             } catch(e) { 
                 console.error('Error:', e);
-                alert('Error al analizar: ' + e.message + '\nPor favor, intentá de nuevo con un texto más claro'); 
+                alert('Error al analizar: ' + e.message); 
             }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
@@ -508,7 +593,6 @@
         }
         
         function updateAnalyticsCharts() {
-            // Top habilidades
             const allSkills = {};
             candidates.forEach(c => (c.hardSkills||[]).forEach(s=>allSkills[s]=(allSkills[s]||0)+1));
             const sorted = Object.entries(allSkills).sort((a,b)=>b[1]-a[1]).slice(0,10);
@@ -518,7 +602,6 @@
                 skillsChart = new Chart(ctxSkills, { type:'bar', data:{ labels:sorted.map(s=>s[0]), datasets:[{ label:'Candidatos con esta habilidad', data:sorted.map(s=>s[1]), backgroundColor:'#667eea' }] } });
             }
             
-            // Distribución por ubicación
             const locations = {};
             candidates.forEach(c => { if(c.location && c.location !== 'No especificada') locations[c.location] = (locations[c.location]||0)+1; });
             const locData = Object.entries(locations).sort((a,b)=>b[1]-a[1]).slice(0,6);
@@ -528,7 +611,6 @@
                 locationChart = new Chart(ctxLoc, { type:'pie', data:{ labels:locData.map(l=>l[0]), datasets:[{ data:locData.map(l=>l[1]), backgroundColor:['#667eea','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899'] }] } });
             }
             
-            // Estado de candidatos
             const stats = { pendiente:0, entrevistado:0, contratado:0, descartado:0 };
             candidates.forEach(c=>stats[c.status]=(stats[c.status]||0)+1);
             if (statusChart) statusChart.destroy();
@@ -537,13 +619,12 @@
                 statusChart = new Chart(ctxStatus, { type:'doughnut', data:{ labels:['Pendiente','Entrevistado','Contratado','Descartado'], datasets:[{ data:[stats.pendiente,stats.entrevistado,stats.contratado,stats.descartado], backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444'] }] } });
             }
             
-            // Tendencia
-            const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toLocaleDateString(); }).reverse();
-            const dailyCounts = last7Days.map(date => candidates.filter(c => c.date?.includes(date.split(',')[0])).length);
+            const last30Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toLocaleDateString(); }).reverse();
+            const dailyCounts = last30Days.map(date => candidates.filter(c => c.date?.includes(date.split(',')[0])).length);
             if (trendChart) trendChart.destroy();
             const ctxTrend = document.getElementById('trendChart')?.getContext('2d');
             if(ctxTrend) {
-                trendChart = new Chart(ctxTrend, { type:'line', data:{ labels:last7Days, datasets:[{ label:'CVs evaluados', data:dailyCounts, borderColor:'#10b981', tension:0.3, fill:true }] } });
+                trendChart = new Chart(ctxTrend, { type:'line', data:{ labels:last30Days, datasets:[{ label:'CVs evaluados', data:dailyCounts, borderColor:'#10b981', tension:0.3, fill:true }] } });
             }
         }
         
