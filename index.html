@@ -494,6 +494,7 @@ function copyCVCompleto() {
             
             // CV formateado estéticamente
             document.getElementById('tabCV').innerHTML = formatearCV(c.rawCV);
+            console.log('CV Texto:', c.rawCV); // Para ver si el CV se guardó
             
             document.getElementById('candidateModal').style.display = 'flex';
         }
