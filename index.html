@@ -1,1 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Kinesio Hub - Evaluador de CVs con IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .result pre {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .candidates-list {
+            margin-top: 20px;
+        }
+
+        .candidate-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .candidate-item:hover {
+            background: #e9ecef;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-kine { background: #4CAF50; color: white; }
+        .badge-trainer { background: #FF9800; color: white; }
+        .badge-both { background: #9C27B0; color: white; }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            background: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Talent Kinesio Hub</h1>
+        <div class="subtitle">Sistema de Evaluación de CVs con IA para Kinesiología y Entrenamiento</div>
+
+        <div class="grid">
+            <!-- Panel de entrada -->
+            <div class="card">
+                <h2>📄 Cargar CV del Candidato</h2>
+                <textarea id="cvText" rows="10" placeholder="Pega aquí el texto del CV o la descripción del candidato..."></textarea>
+                
+                <select id="profileType">
+                    <option value="">Seleccionar tipo de búsqueda (opcional)</option>
+                    <option value="Kinesiólogo">Kinesiólogo</option>
+                    <option value="Entrenador">Entrenador</option>
+                    <option value="Ambos">Ambos perfiles</option>
+                </select>
+
+                <button id="analyzeBtn" onclick="analyzeCV()">🤖 Analizar CV con IA</button>
+                
+                <div id="loading" style="display:none;">
+                    <div class="spinner"></div>
+                    <div class="loading">Analizando CV con IA...</div>
+                </div>
+            </div>
+
+            <!-- Panel de resultados -->
+            <div class="card">
+                <h2>📋 Ficha del Perfil</h2>
+                <div id="result">
+                    <p style="color: #999; text-align: center;">Los resultados aparecerán aquí</p>
+                </div>
+                <div class="action-buttons" id="actionButtons" style="display:none;">
+                    <button onclick="copyToClipboard()">📋 Copiar Ficha</button>
+                    <button onclick="saveCandidate()">💾 Guardar en Biblioteca</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biblioteca de candidatos -->
+        <div class="card" style="margin-top: 20px;">
+            <h2>📚 Biblioteca de Profesionales Evaluados</h2>
+            <div id="candidatesList" class="candidates-list">
+                <p style="color: #999; text-align: center;">No hay candidatos guardados aún</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de la API
+        const API_KEY = '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';
+        let currentResult = null;
+        let candidates = [];
+
+        // Cargar candidatos guardados al iniciar
+        loadCandidates();
+
+        async function analyzeCV() {
+            const cvText = document.getElementById('cvText').value.trim();
+            const profileType = document.getElementById('profileType').value;
+
+            if (!cvText) {
+                alert('Por favor, pega el texto del CV');
+                return;
+            }
+
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').innerHTML = '<div class="loading">Procesando...</div>';
+
+            const systemPrompt = `Actúa como un experto en HR Tech especializado en Kinesiología y Entrenamiento.
+
+Tu tarea: Procesar el CV del candidato y generar una "Ficha de Perfil" con el siguiente formato EXACTO:
+
+# FICHA DE PERFIL PROFESIONAL
+
+## 📌 HEADER TÉCNICO
+- **Nombre:** [extraer del CV o poner "No especificado"]
+- **Especialidad Principal:** [Kinesiólogo/Entrenador/Ambos]
+- **Años de Experiencia:** [calcular aproximadamente]
+- **Tecnologías que domina:** [software, herramientas, equipos mencionados]
+
+## 💪 MATRIZ DE FORTALEZAS
+
+### Hard Skills (Técnicas)
+- [Lista de habilidades técnicas específicas]
+
+### Soft Skills (Humanas)
+- [Lista de habilidades blandas]
+
+## 🎯 RESUMEN EJECUTIVO (Market-Fit)
+[Párrafo de 3-4 líneas evaluando qué tan bien encaja este perfil con un centro de Kinesiología y Entrenamiento]
+
+## ❓ GUÍA DE ENTREVISTA PERSONALIZADA
+
+### Preguntas Técnicas (3)
+1. [Pregunta técnica específica basada en su perfil]
+2. [Segunda pregunta técnica]
+3. [Tercera pregunta técnica]
+
+### Preguntas Situacionales/Behavioral (2)
+1. [Pregunta de situación]
+2. [Segunda pregunta de situación]
+
+## 📝 BITÁCORA DE ENTREVISTA (PARA LLENAR)
+- **Puntualidad y Presencia:** _______________
+- **Resolución de caso clínico/práctico:** _______________
+- **Expectativa salarial vs Fit cultural:** _______________
+
+---
+**Evaluación preliminar:** [Recomendación: Entrevistar sí/no/condicional]`;
+
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'Talent Kinesio Hub'
+                    },
+                    body: JSON.stringify({
+                        model: 'openai/gpt-3.5-turbo',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: systemPrompt
+                            },
+                            {
+                                role: 'user',
+                                content: `CV del candidato:\n\n${cvText}\n\n${profileType ? `Tipo de búsqueda: ${profileType}` : ''}`
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 2000
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message || 'Error en la API');
+                }
+
+                const analysis = data.choices[0].message.content;
+                currentResult = analysis;
+                
+                // Mostrar resultado con formato
+                document.getElementById('result').innerHTML = `<pre>${analysis}</pre>`;
+                document.getElementById('actionButtons').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<div style="color: red;">❌ Error: ${error.message}<br><br>Nota: Asegúrate de que la API key sea válida y tenga créditos.</div>`;
+            } finally {
+                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function copyToClipboard() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult);
+                alert('✅ Ficha copiada al portapapeles');
+            }
+        }
+
+        function saveCandidate() {
+            if (!currentResult) return;
+            
+            const nameMatch = currentResult.match(/\*\*Nombre:\*\*\s*(.+?)(?:\n|$)/);
+            const name = nameMatch ? nameMatch[1].trim() : 'Candidato ' + (candidates.length + 1);
+            
+            const specialtyMatch = currentResult.match(/\*\*Especialidad Principal:\*\*\s*(.+?)(?:\n|$)/);
+            const specialty = specialtyMatch ? specialtyMatch[1].trim() : 'No especificada';
+            
+            const candidate = {
+                id: Date.now(),
+                name: name,
+                specialty: specialty,
+                date: new Date().toLocaleString(),
+                fullProfile: currentResult
+            };
+            
+            candidates.unshift(candidate);
+            saveToLocalStorage();
+            displayCandidates();
+            alert('✅ Candidato guardado en la biblioteca');
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('kinesioCandidates', JSON.stringify(candidates));
+        }
+
+        function loadCandidates() {
+            const saved = localStorage.getItem('kinesioCandidates');
+            if (saved) {
+                candidates = JSON.parse(saved);
+                displayCandidates();
+            }
+        }
+
+        function displayCandidates() {
+            const container = document.getElementById('candidatesList');
+            
+            if (candidates.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No hay candidatos guardados aún</p>';
+                return;
+            }
+            
+            container.innerHTML = candidates.map(candidate => `
+                <div class="candidate-item" onclick="viewCandidate(${candidate.id})">
+                    <strong>${candidate.name}</strong><br>
+                    <span class="badge ${getBadgeClass(candidate.specialty)}">${candidate.specialty}</span>
+                    <small style="color: #666;">📅 ${candidate.date}</small>
+                </div>
+            `).join('');
+        }
+
+        function getBadgeClass(specialty) {
+            if (specialty.includes('Kinesiólogo')) return 'badge-kine';
+            if (specialty.includes('Entrenador')) return 'badge-trainer';
+            return 'badge-both';
+        }
+
+        function viewCandidate(id) {
+            const candidate = candidates.find(c => c.id === id);
+            if (candidate) {
+                currentResult = candidate.fullProfile;
+                document.getElementById('result').innerHTML = `<pre>${candidate.fullProfile}</pre>`;
+                document.getElementById('actionButtons').style.display = 'flex';
+                
+                // Scroll al resultado
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Eliminar candidato (función extra)
+        window.deleteCandidate = function(id) {
+            if (confirm('¿Eliminar este candidato de la biblioteca?')) {
+                candidates = candidates.filter(c => c.id !== id);
+                saveToLocalStorage();
+                displayCandidates();
+                if (currentResult && candidates.length === 0) {
+                    document.getElementById('result').innerHTML = '<p style="color: #999; text-align: center;">Los resultados aparecerán aquí</p>';
+                    document.getElementById('actionButtons').style.display = 'none';
+                }
+            }
+        };
+    </script>
+</body>
+</html>
