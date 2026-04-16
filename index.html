@@ -250,100 +250,189 @@
             });
         }
 
-        // Función para formatear el CV de manera estética
-        function formatearCV(cvTexto) {
-            if (!cvTexto) return '<p>No hay texto del CV disponible</p>';
-            
-            // Extraer secciones comunes del CV
-            const secciones = {
-                datosPersonales: '',
-                perfilProfesional: '',
-                formacionAcademica: '',
-                capacitaciones: '',
-                experienciaLaboral: '',
-                habilidades: '',
-                idiomas: ''
-            };
-            
-            let textoFormateado = '';
-            
-            // Detectar y organizar por secciones
-            const lineas = cvTexto.split('\n');
-            let seccionActual = 'datosPersonales';
-            
-            for (let linea of lineas) {
-                linea = linea.trim();
-                if (!linea) continue;
-                
-                const lineaLower = linea.toLowerCase();
-                
-                if (lineaLower.includes('perfil') || lineaLower.includes('resumen') || lineaLower.includes('sobre mí')) {
-                    seccionActual = 'perfilProfesional';
-                    textoFormateado += `<div class="cv-section"><div class="cv-section-title">🎯 PERFIL PROFESIONAL</div><div class="cv-section-content">`;
-                    continue;
+// Reemplaza la función formatearCV completa con esta versión mejorada
+function formatearCV(cvTexto) {
+    if (!cvTexto || cvTexto === 'No se guardó el texto original del CV') {
+        return `
+            <div class="cv-container">
+                <div class="cv-header">
+                    <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
+                    <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">No hay texto del CV disponible</div>
+                </div>
+                <div class="cv-section">
+                    <div class="cv-section-content" style="padding: 20px; text-align: center; color: #999;">
+                        ⚠️ El texto del CV no se guardó correctamente.<br>
+                        Por favor, vuelve a cargar el candidato.
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Función para detectar secciones
+    const secciones = {
+        perfil: ['perfil profesional', 'resumen profesional', 'sobre mí', 'perfil laboral', 'perfil', 'resumen'],
+        formacion: ['formación académica', 'formacion academica', 'educación', 'estudios', 'formación', 'titulos', 'títulos'],
+        capacitaciones: ['capacitaciones', 'cursos', 'diplomatura', 'taller', 'seminario', 'formación complementaria'],
+        experiencia: ['experiencia laboral', 'experiencia profesional', 'trayectoria', 'empleos', 'trabajos'],
+        habilidades: ['habilidades', 'aptitudes', 'competencias', 'skills', 'conocimientos'],
+        idiomas: ['idiomas', 'lenguas', 'inglés', 'portugués', 'idioma']
+    };
+    
+    let html = `
+        <div class="cv-container">
+            <div class="cv-header">
+                <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">Documento original del candidato</div>
+            </div>
+    `;
+    
+    // Dividir el texto en líneas
+    const lineas = cvTexto.split(/\r?\n/);
+    let seccionActual = null;
+    let contenidoSeccion = '';
+    let primeraSeccion = true;
+    
+    // Función para detectar si una línea es un título de sección
+    function esTituloSeccion(linea) {
+        const lineaLower = linea.toLowerCase().trim();
+        // Eliminar caracteres especiales del inicio
+        const lineaLimpia = lineaLower.replace(/^[•\-*\d.\s]+/, '');
+        
+        for (let [seccion, keywords] of Object.entries(secciones)) {
+            for (let keyword of keywords) {
+                if (lineaLimpia.includes(keyword) && lineaLimpia.length < 50) {
+                    return seccion;
                 }
-                else if (lineaLower.includes('formación') || lineaLower.includes('educación') || lineaLower.includes('estudios') || lineaLower.includes('universitario')) {
-                    seccionActual = 'formacionAcademica';
-                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">🎓 FORMACIÓN ACADÉMICA</div><div class="cv-section-content">`;
-                    continue;
-                }
-                else if (lineaLower.includes('capacitación') || lineaLower.includes('curso') || lineaLower.includes('diplomatura') || lineaLower.includes('taller')) {
-                    seccionActual = 'capacitaciones';
-                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">📚 CAPACITACIONES Y CURSOS</div><div class="cv-section-content">`;
-                    continue;
-                }
-                else if (lineaLower.includes('experiencia') || lineaLower.includes('laboral') || lineaLower.includes('trabajo')) {
-                    seccionActual = 'experienciaLaboral';
-                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">💼 EXPERIENCIA LABORAL</div><div class="cv-section-content">`;
-                    continue;
-                }
-                else if (lineaLower.includes('habilidad') || lineaLower.includes('competencia') || lineaLower.includes('aptitud')) {
-                    seccionActual = 'habilidades';
-                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">⚡ HABILIDADES Y COMPETENCIAS</div><div class="cv-section-content">`;
-                    continue;
-                }
-                else if (lineaLower.includes('idioma')) {
-                    seccionActual = 'idiomas';
-                    textoFormateado += `</div></div><div class="cv-section"><div class="cv-section-title">🌐 IDIOMAS</div><div class="cv-section-content">`;
-                    continue;
-                }
-                
-                // Formatear líneas con viñetas si empiezan con • o -
-                let lineaFormateada = linea;
-                if (linea.startsWith('•') || linea.startsWith('-') || linea.match(/^\d+\./)) {
-                    lineaFormateada = `<span style="display:block; margin-left: 20px; margin-bottom: 8px;">${linea}</span>`;
-                } else if (linea.includes(':')) {
-                    const [titulo, ...resto] = linea.split(':');
-                    lineaFormateada = `<strong>${titulo}:</strong> ${resto.join(':')}`;
-                } else {
-                    lineaFormateada = linea;
-                }
-                
-                textoFormateado += `<div style="margin-bottom: 6px;">${escapeHtml(lineaFormateada)}</div>`;
             }
-            
-            textoFormateado += `</div></div>`;
-            
-            // Si no se detectaron secciones, mostrar el texto plano pero con mejor formato
-            if (!textoFormateado.includes('cv-section')) {
-                textoFormateado = `
+        }
+        return null;
+    }
+    
+    // Función para obtener el ícono de la sección
+    function getIconoSeccion(seccion) {
+        const iconos = {
+            perfil: '🎯',
+            formacion: '🎓',
+            capacitaciones: '📚',
+            experiencia: '💼',
+            habilidades: '⚡',
+            idiomas: '🌐'
+        };
+        return iconos[seccion] || '📌';
+    }
+    
+    // Función para obtener el título bonito
+    function getTituloSeccion(seccion) {
+        const titulos = {
+            perfil: 'PERFIL PROFESIONAL',
+            formacion: 'FORMACIÓN ACADÉMICA',
+            capacitaciones: 'CAPACITACIONES Y CURSOS',
+            experiencia: 'EXPERIENCIA LABORAL',
+            habilidades: 'HABILIDADES Y COMPETENCIAS',
+            idiomas: 'IDIOMAS'
+        };
+        return titulos[seccion] || seccion.toUpperCase();
+    }
+    
+    // Procesar línea por línea
+    for (let linea of lineas) {
+        linea = linea.trim();
+        if (linea === '') continue;
+        
+        const tituloSeccion = esTituloSeccion(linea);
+        
+        if (tituloSeccion) {
+            // Cerrar sección anterior si existe
+            if (seccionActual && contenidoSeccion.trim()) {
+                html += `
                     <div class="cv-section">
-                        <div class="cv-section-title">📄 CURRÍCULUM VITAE</div>
-                        <div class="cv-section-content" style="white-space: pre-wrap;">${escapeHtml(cvTexto)}</div>
+                        <div class="cv-section-title">${getIconoSeccion(seccionActual)} ${getTituloSeccion(seccionActual)}</div>
+                        <div class="cv-section-content">${contenidoSeccion}</div>
                     </div>
                 `;
             }
+            // Iniciar nueva sección
+            seccionActual = tituloSeccion;
+            contenidoSeccion = '';
+        } else {
+            // Formatear la línea
+            let lineaFormateada = escapeHtml(linea);
             
-            return `
-                <div class="cv-container">
-                    <div class="cv-header">
-                        <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
-                        <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">Documento original del candidato</div>
-                    </div>
-                    ${textoFormateado}
-                </div>
-            `;
+            // Detectar y formatear fechas
+            if (lineaFormateada.match(/\d{4}/)) {
+                lineaFormateada = `<span style="color: #667eea; font-weight: 500;">📅 ${lineaFormateada}</span>`;
+            }
+            // Detectar nombres de empresas o instituciones (mayúsculas o con palabras clave)
+            else if (lineaFormateada === lineaFormateada.toUpperCase() && lineaFormateada.length > 5) {
+                lineaFormateada = `<strong style="color: #1a1a2e;">🏢 ${lineaFormateada}</strong>`;
+            }
+            // Detectar cargos o puestos
+            else if (lineaFormateada.toLowerCase().includes('encargado') || 
+                     lineaFormateada.toLowerCase().includes('entrenador') ||
+                     lineaFormateada.toLowerCase().includes('instructor') ||
+                     lineaFormateada.toLowerCase().includes('coordinador')) {
+                lineaFormateada = `<strong>👔 ${lineaFormateada}</strong>`;
+            }
+            // Formatear viñetas
+            else if (linea.startsWith('•') || linea.startsWith('-') || linea.match(/^\d+\./)) {
+                lineaFormateada = `<span style="display: block; margin-left: 20px; margin-bottom: 8px;">${lineaFormateada}</span>`;
+            }
+            // Detectar contacto (email, teléfono)
+            else if (lineaFormateada.includes('@') || lineaFormateada.match(/\+?\d{10,}/)) {
+                lineaFormateada = `<span style="color: #10b981;">📧 ${lineaFormateada}</span>`;
+            }
+            
+            contenidoSeccion += `<div style="margin-bottom: 8px;">${lineaFormateada}</div>`;
         }
+    }
+    
+    // Cerrar última sección
+    if (seccionActual && contenidoSeccion.trim()) {
+        html += `
+            <div class="cv-section">
+                <div class="cv-section-title">${getIconoSeccion(seccionActual)} ${getTituloSeccion(seccionActual)}</div>
+                <div class="cv-section-content">${contenidoSeccion}</div>
+            </div>
+        `;
+    }
+    
+    // Si no se detectaron secciones, mostrar el texto completo
+    if (!html.includes('cv-section')) {
+        html += `
+            <div class="cv-section">
+                <div class="cv-section-title">📄 CV COMPLETO</div>
+                <div class="cv-section-content" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.5;">
+                    ${escapeHtml(cvTexto)}
+                </div>
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    
+    // Agregar botón para copiar
+    html += `
+        <div style="margin-top: 15px; text-align: center;">
+            <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding: 8px 16px; font-size: 12px;">
+                📋 Copiar CV completo
+            </button>
+        </div>
+    `;
+    
+    return html;
+}
+
+// Función para copiar el CV completo (agregar al script)
+function copyCVCompleto() {
+    const c = candidates.find(c=>c.id===currentEditCandidateId);
+    if (c && c.rawCV) {
+        navigator.clipboard.writeText(c.rawCV);
+        alert('✅ CV completo copiado al portapapeles');
+    } else {
+        alert('No hay CV para copiar');
+    }
+}
 
         function openCandidateDetail(id) {
             currentEditCandidateId = id;
