@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talent Kinesio Hub - Evaluador de CVs con IA (Groq)</title>
+    <title>Talent Kinesio Hub Pro - ATS System</title>
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- SheetJS para exportar a Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- html2pdf para exportar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,440 +18,753 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
+        /* Sidebar Profesional */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            padding: 30px 20px;
+            z-index: 100;
+            transition: all 0.3s;
         }
 
-        .subtitle {
-            text-align: center;
-            color: rgba(255,255,255,0.9);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px 30px;
+        }
+
+        /* Header Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
             margin-bottom: 30px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
+        .stat-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: monospace;
-            resize: vertical;
-            margin-bottom: 15px;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: transform 0.2s;
-            width: 100%;
         }
 
-        button:hover {
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 8px;
+        }
+
+        /* Secciones */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        /* Formulario de carga */
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        /* Grid de candidatos */
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .candidate-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .candidate-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transform: translateY(-2px);
         }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .result {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .result pre {
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .loading {
-            text-align: center;
-            color: #667eea;
-            margin-top: 20px;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .candidates-list {
-            margin-top: 20px;
-        }
-
-        .candidate-item {
-            background: #f8f9fa;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .candidate-item:hover {
-            background: #e9ecef;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .badge-kine { background: #4CAF50; color: white; }
-        .badge-trainer { background: #FF9800; color: white; }
-        .badge-both { background: #9C27B0; color: white; }
-
-        .action-buttons {
+        .candidate-header {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .action-buttons button {
-            flex: 1;
-            background: #6c757d;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 8px;
+            justify-content: space-between;
+            align-items: start;
             margin-bottom: 15px;
-            font-size: 13px;
-            color: #1976d2;
         }
 
+        .candidate-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .candidate-specialty {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #e5e7eb;
+        }
+
+        .score-badge {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .skill-tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #f0f2f5;
+        }
+
+        /* Gráfico radar */
+        .radar-container {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ddd;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🏥 Talent Kinesio Hub</h1>
-        <div class="subtitle">Sistema de Evaluación de CVs con IA (Groq) - Kinesiología y Entrenamiento</div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🏥</div>
+            <div class="logo-text">
+                <h2>Talent Kinesio Hub</h2>
+                <p>ATS Professional System</p>
+            </div>
+        </div>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <span>📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('candidates')">
+            <span>👥</span> Candidatos
+        </div>
+        <div class="nav-item" onclick="showSection('upload')">
+            <span>📤</span> Cargar CV
+        </div>
+        <div class="nav-item" onclick="showSection('analytics')">
+            <span>📈</span> Analytics
+        </div>
+    </div>
 
-        <div class="grid">
-            <!-- Panel de entrada -->
-            <div class="card">
-                <h2>📄 Cargar CV del Candidato</h2>
-                <div class="info-box">
-                    💡 <strong>Consejo:</strong> Abre el PDF, selecciona todo el texto (Ctrl+A), cópialo (Ctrl+C) y pégalo abajo.
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Candidatos</div>
+                    <div class="stat-value" id="totalCandidates">0</div>
+                    <div class="stat-change">+ evaluados este mes</div>
                 </div>
-                <textarea id="cvText" rows="10" placeholder="Pega aquí el texto del CV o la descripción del candidato..."></textarea>
-                
-                <select id="profileType">
-                    <option value="">Seleccionar tipo de búsqueda (opcional)</option>
-                    <option value="Kinesiólogo">Kinesiólogo</option>
-                    <option value="Entrenador">Entrenador</option>
-                    <option value="Ambos">Ambos perfiles</option>
-                </select>
-
-                <button id="analyzeBtn" onclick="analyzeCV()">🤖 Analizar CV con IA (Groq)</button>
-                
-                <div id="loading" style="display:none;">
-                    <div class="spinner"></div>
-                    <div class="loading">Analizando CV con Groq... (10-20 segundos)</div>
+                <div class="stat-card">
+                    <div class="stat-title">Fit Promedio</div>
+                    <div class="stat-value" id="avgFit">0%</div>
+                    <div class="stat-change">basado en IA</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Kinesiólogos</div>
+                    <div class="stat-value" id="kineCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Entrenadores</div>
+                    <div class="stat-value" id="trainerCount">0</div>
                 </div>
             </div>
-
-            <!-- Panel de resultados -->
-            <div class="card">
-                <h2>📋 Ficha del Perfil</h2>
-                <div id="result">
-                    <p style="color: #999; text-align: center;">Los resultados aparecerán aquí</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3 style="margin-bottom: 15px;">📊 Distribución por Especialidad</h3>
+                    <canvas id="specialtyChart" style="max-height: 250px;"></canvas>
                 </div>
-                <div class="action-buttons" id="actionButtons" style="display:none;">
-                    <button onclick="copyToClipboard()">📋 Copiar Ficha</button>
-                    <button onclick="saveCandidate()">💾 Guardar en Biblioteca</button>
+                <div>
+                    <h3 style="margin-bottom: 15px;">⭐ Top Candidatos por Score</h3>
+                    <div id="topCandidatesList"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Biblioteca de candidatos -->
-        <div class="card" style="margin-top: 20px;">
-            <h2>📚 Biblioteca de Profesionales Evaluados</h2>
-            <div id="candidatesList" class="candidates-list">
-                <p style="color: #999; text-align: center;">No hay candidatos guardados aún</p>
+        <!-- Candidates Section -->
+        <div id="candidatesSection" class="section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">👥 Biblioteca de Talentos</h2>
+                <div>
+                    <button class="btn btn-outline" onclick="exportToExcel()">📊 Exportar a Excel</button>
+                    <button class="btn btn-outline" onclick="exportToPDF()">📄 Exportar a PDF</button>
+                </div>
+            </div>
+            <input type="text" id="searchInput" placeholder="🔍 Buscar candidato..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 20px;">
+            <div id="candidatesGrid" class="candidates-grid"></div>
+        </div>
+
+        <!-- Upload Section -->
+        <div id="uploadSection" class="section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">📤 Cargar Nuevo Candidato</h2>
+            </div>
+            <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 48px; margin-bottom: 10px;">📄</div>
+                <p>Arrastra un PDF o haz clic para seleccionar</p>
+                <p style="font-size: 12px; color: #999; margin-top: 10px;">Soporta: PDF, TXT</p>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf,.txt" style="display: none;" onchange="handleFileUpload(this.files[0])">
+            
+            <textarea id="cvTextInput" rows="8" placeholder="O pega el texto del CV aquí..." style="width: 100%; margin-top: 20px; padding: 12px; border: 1px solid #ddd; border-radius: 12px;"></textarea>
+            
+            <select id="profileTypeSelect" style="width: 100%; margin-top: 15px; padding: 12px; border: 1px solid #ddd; border-radius: 12px;">
+                <option value="">Seleccionar tipo de búsqueda (opcional)</option>
+                <option value="Kinesiólogo">Kinesiólogo</option>
+                <option value="Entrenador">Entrenador</option>
+                <option value="Ambos">Ambos perfiles</option>
+            </select>
+            
+            <button class="btn btn-primary" onclick="analyzeCVWithGroq()" style="width: 100%; margin-top: 20px;">🤖 Analizar CV con IA</button>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analyticsSection" class="section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">📈 Análisis de Talentos</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <h3>Competencias Más Valoradas</h3>
+                    <canvas id="skillsChart" style="max-height: 300px;"></canvas>
+                </div>
+                <div>
+                    <h3>Tendencia de Contratación</h3>
+                    <canvas id="trendChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalle -->
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h2 id="modalTitle">Perfil del Candidato</h2>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+            <div id="modalBody"></div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="copyModalContent()">📋 Copiar Ficha</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuración de la API de GROQ
-        const API_KEY = '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';
-        let currentResult = null;
+        // Configuración
+        const GROQ_API_KEY = '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';
         let candidates = [];
+        let currentAnalysis = null;
+        
+        // Gráficos
+        let specialtyChart, skillsChart, trendChart;
 
-        // Cargar candidatos guardados al iniciar
-        loadCandidates();
-
-        async function analyzeCV() {
-            const cvText = document.getElementById('cvText').value.trim();
-            const profileType = document.getElementById('profileType').value;
-
-            if (!cvText) {
-                alert('Por favor, pega el texto del CV');
-                return;
-            }
-
-            document.getElementById('analyzeBtn').disabled = true;
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('result').innerHTML = '<div class="loading">Procesando con Groq...</div>';
-
-            const systemPrompt = `Actúa como un experto en HR Tech especializado en Kinesiología y Entrenamiento.
-
-Tu tarea: Procesar el CV del candidato y generar una "Ficha de Perfil" con el siguiente formato EXACTO:
-
-# FICHA DE PERFIL PROFESIONAL
-
-## 📌 HEADER TÉCNICO
-- **Nombre:** [extraer del CV o poner "No especificado"]
-- **Especialidad Principal:** [Kinesiólogo/Entrenador/Ambos]
-- **Años de Experiencia:** [calcular aproximadamente]
-- **Tecnologías que domina:** [software, herramientas, equipos mencionados]
-
-## 💪 MATRIZ DE FORTALEZAS
-
-### Hard Skills (Técnicas)
-- [Lista de habilidades técnicas específicas]
-
-### Soft Skills (Humanas)
-- [Lista de habilidades blandas]
-
-## 🎯 RESUMEN EJECUTIVO (Market-Fit)
-[Párrafo de 3-4 líneas evaluando qué tan bien encaja este perfil con un centro de Kinesiología y Entrenamiento]
-
-## ❓ GUÍA DE ENTREVISTA PERSONALIZADA
-
-### Preguntas Técnicas (3)
-1. [Pregunta técnica específica basada en su perfil]
-2. [Segunda pregunta técnica]
-3. [Tercera pregunta técnica]
-
-### Preguntas Situacionales/Behavioral (2)
-1. [Pregunta de situación]
-2. [Segunda pregunta de situación]
-
-## 📝 BITÁCORA DE ENTREVISTA (PARA LLENAR)
-- **Puntualidad y Presencia:** _______________
-- **Resolución de caso clínico/práctico:** _______________
-- **Expectativa salarial vs Fit cultural:** _______________
-
----
-**Evaluación preliminar:** [Recomendación: Entrevistar sí/no/condicional]`;
-
-            try {
-                // Usar API de Groq
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: 'llama-3.1-8b-instant',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: systemPrompt
-                            },
-                            {
-                                role: 'user',
-                                content: `CV del candidato:\n\n${cvText}\n\n${profileType ? `Tipo de búsqueda: ${profileType}` : ''}`
-                            }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: 2000
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message || 'Error en la API de Groq');
-                }
-
-                const analysis = data.choices[0].message.content;
-                currentResult = analysis;
-                
-                // Mostrar resultado con formato
-                document.getElementById('result').innerHTML = `<pre>${analysis}</pre>`;
-                document.getElementById('actionButtons').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('Error:', error);
-                let errorMsg = error.message;
-                if (errorMsg.includes('API key')) {
-                    errorMsg = 'La API key de Groq no es válida. Por favor, verifícala en console.groq.com';
-                } else if (errorMsg.includes('fetch')) {
-                    errorMsg = 'Error de conexión. Verifica que tengas internet.';
-                }
-                document.getElementById('result').innerHTML = `<div style="color: red; padding: 20px;">
-                    <strong>❌ Error:</strong><br>${errorMsg}<br><br>
-                    <strong>Solución:</strong><br>
-                    1. Ve a <a href="https://console.groq.com" target="_blank">console.groq.com</a><br>
-                    2. Regístrate gratis<br>
-                    3. Ve a "API Keys" y crea una nueva<br>
-                    4. Copia la nueva key y reemplázala en el código<br>
-                    5. Recarga la página
-                </div>`;
-            } finally {
-                document.getElementById('analyzeBtn').disabled = false;
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        function copyToClipboard() {
-            if (currentResult) {
-                navigator.clipboard.writeText(currentResult);
-                alert('✅ Ficha copiada al portapapeles');
-            }
-        }
-
-        function saveCandidate() {
-            if (!currentResult) return;
-            
-            const nameMatch = currentResult.match(/\*\*Nombre:\*\*\s*(.+?)(?:\n|$)/);
-            const name = nameMatch ? nameMatch[1].trim() : 'Candidato ' + (candidates.length + 1);
-            
-            const specialtyMatch = currentResult.match(/\*\*Especialidad Principal:\*\*\s*(.+?)(?:\n|$)/);
-            const specialty = specialtyMatch ? specialtyMatch[1].trim() : 'No especificada';
-            
-            const candidate = {
-                id: Date.now(),
-                name: name,
-                specialty: specialty,
-                date: new Date().toLocaleString(),
-                fullProfile: currentResult
-            };
-            
-            candidates.unshift(candidate);
-            saveToLocalStorage();
-            displayCandidates();
-            alert('✅ Candidato guardado en la biblioteca');
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('kinesioCandidates', JSON.stringify(candidates));
-        }
-
-        function loadCandidates() {
-            const saved = localStorage.getItem('kinesioCandidates');
+        // Cargar datos guardados
+        function loadData() {
+            const saved = localStorage.getItem('kinesioCandidatesPro');
             if (saved) {
                 candidates = JSON.parse(saved);
-                displayCandidates();
             }
+            updateDashboard();
+            renderCandidates();
         }
 
-        function displayCandidates() {
-            const container = document.getElementById('candidatesList');
+        function saveData() {
+            localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates));
+            updateDashboard();
+            renderCandidates();
+        }
+
+        function updateDashboard() {
+            document.getElementById('totalCandidates').innerText = candidates.length;
             
-            if (candidates.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">No hay candidatos guardados aún</p>';
-                return;
-            }
+            const kineCount = candidates.filter(c => c.specialty?.includes('Kinesiólogo')).length;
+            const trainerCount = candidates.filter(c => c.specialty?.includes('Entrenador')).length;
+            document.getElementById('kineCount').innerText = kineCount;
+            document.getElementById('trainerCount').innerText = trainerCount;
             
-            container.innerHTML = candidates.map(candidate => `
-                <div class="candidate-item" onclick="viewCandidate(${candidate.id})">
-                    <strong>${candidate.name}</strong><br>
-                    <span class="badge ${getBadgeClass(candidate.specialty)}">${candidate.specialty}</span>
-                    <small style="color: #666;">📅 ${candidate.date}</small>
+            const avgFit = candidates.length > 0 ? Math.round(candidates.reduce((sum, c) => sum + (c.score || 70), 0) / candidates.length) : 0;
+            document.getElementById('avgFit').innerText = avgFit + '%';
+            
+            // Actualizar gráfico de especialidades
+            if (specialtyChart) specialtyChart.destroy();
+            const ctx = document.getElementById('specialtyChart').getContext('2d');
+            specialtyChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Kinesiólogos', 'Entrenadores', 'Ambos'],
+                    datasets: [{
+                        data: [kineCount, trainerCount, candidates.length - kineCount - trainerCount],
+                        backgroundColor: ['#667eea', '#f59e0b', '#10b981']
+                    }]
+                }
+            });
+            
+            // Top candidatos
+            const topCandidates = [...candidates].sort((a,b) => (b.score || 0) - (a.score || 0)).slice(0,5);
+            document.getElementById('topCandidatesList').innerHTML = topCandidates.map(c => `
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span>${c.name}</span>
+                    <span style="font-weight: bold; color: #667eea;">${c.score || 70}%</span>
                 </div>
             `).join('');
         }
 
-        function getBadgeClass(specialty) {
-            if (specialty.includes('Kinesiólogo')) return 'badge-kine';
-            if (specialty.includes('Entrenador')) return 'badge-trainer';
-            return 'badge-both';
+        function renderCandidates() {
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const filtered = candidates.filter(c => c.name?.toLowerCase().includes(searchTerm));
+            
+            const grid = document.getElementById('candidatesGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = filtered.map(candidate => `
+                <div class="candidate-card" onclick="showCandidateDetail(${candidate.id})">
+                    <div class="candidate-header">
+                        <div>
+                            <div class="candidate-name">${candidate.name}</div>
+                            <div class="candidate-specialty">${candidate.specialty || 'No especificado'}</div>
+                        </div>
+                        <div class="score-badge">${candidate.score || 70}%</div>
+                    </div>
+                    <div class="skills-list">
+                        ${(candidate.topSkills || []).slice(0,3).map(s => `<span class="skill-tag">${s}</span>`).join('')}
+                    </div>
+                    <div style="margin-top: 12px; font-size: 12px; color: #999;">📅 ${candidate.date || ''}</div>
+                </div>
+            `).join('');
         }
 
-        function viewCandidate(id) {
-            const candidate = candidates.find(c => c.id === id);
-            if (candidate) {
-                currentResult = candidate.fullProfile;
-                document.getElementById('result').innerHTML = `<pre>${candidate.fullProfile}</pre>`;
-                document.getElementById('actionButtons').style.display = 'flex';
-                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        async function analyzeCVWithGroq() {
+            const cvText = document.getElementById('cvTextInput').value.trim();
+            const profileType = document.getElementById('profileTypeSelect').value;
+            
+            if (!cvText) {
+                alert('Por favor, pega el texto del CV o sube un archivo');
+                return;
+            }
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = '🔄 Analizando con IA...';
+            
+            const systemPrompt = `Eres un experto en HR Tech especializado en Kinesiología y Entrenamiento. Analiza el CV y genera un JSON EXACTO con esta estructura:
+{
+    "nombre": "nombre completo",
+    "especialidad": "Kinesiólogo/Entrenador/Ambos",
+    "experiencia_anos": numero,
+    "tecnologias": ["tecnologia1", "tecnologia2"],
+    "hard_skills": ["skill1", "skill2"],
+    "soft_skills": ["skill1", "skill2"],
+    "score_fit": numero entre 0-100,
+    "recomendacion": "Entrevistar/Descartar/Considerar",
+    "preguntas_tecnicas": ["pregunta1", "pregunta2", "pregunta3"],
+    "preguntas_situacionales": ["pregunta1", "pregunta2"]
+}`;
+            
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GROQ_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'llama-3.1-8b-instant',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: `CV: ${cvText}\nTipo de búsqueda: ${profileType}` }
+                        ],
+                        temperature: 0.5
+                    })
+                });
+                
+                const data = await response.json();
+                let analysis = data.choices[0].message.content;
+                analysis = analysis.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+                const parsed = JSON.parse(analysis);
+                
+                const candidate = {
+                    id: Date.now(),
+                    name: parsed.nombre || 'Candidato',
+                    specialty: parsed.especialidad || profileType || 'No especificado',
+                    experience: parsed.experiencia_anos || 0,
+                    technologies: parsed.tecnologias || [],
+                    hardSkills: parsed.hard_skills || [],
+                    softSkills: parsed.soft_skills || [],
+                    score: parsed.score_fit || 70,
+                    recommendation: parsed.recomendacion || 'Considerar',
+                    interviewQuestions: {
+                        technical: parsed.preguntas_tecnicas || [],
+                        behavioral: parsed.preguntas_situacionales || []
+                    },
+                    date: new Date().toLocaleString(),
+                    fullProfile: cvText
+                };
+                
+                candidates.unshift(candidate);
+                saveData();
+                alert('✅ Candidato evaluado y guardado correctamente');
+                document.getElementById('cvTextInput').value = '';
+                showSection('candidates');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al analizar: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '🤖 Analizar CV con IA';
             }
         }
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('cvTextInput').value = e.target.result;
+                alert('✅ Archivo cargado. Ahora haz clic en "Analizar CV con IA"');
+            };
+            reader.readAsText(file);
+        }
+
+        function showCandidateDetail(id) {
+            const candidate = candidates.find(c => c.id === id);
+            if (!candidate) return;
+            
+            const modal = document.getElementById('candidateModal');
+            document.getElementById('modalTitle').innerHTML = `📋 ${candidate.name}`;
+            
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <div style="display: inline-block; padding: 4px 12px; border-radius: 20px; background: ${candidate.score >= 80 ? '#10b981' : candidate.score >= 60 ? '#f59e0b' : '#ef4444'}; color: white; font-weight: bold;">Score: ${candidate.score}%</div>
+                    <div style="margin-top: 15px;"><strong>Especialidad:</strong> ${candidate.specialty}</div>
+                    <div><strong>Experiencia:</strong> ${candidate.experience} años</div>
+                    <div><strong>Recomendación:</strong> ${candidate.recommendation}</div>
+                </div>
+                
+                <div style="background: #f0f2f5; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                    <h4>💪 Hard Skills</h4>
+                    <div class="skills-list">${candidate.hardSkills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
+                </div>
+                
+                <div style="background: #f0f2f5; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                    <h4>🤝 Soft Skills</h4>
+                    <div class="skills-list">${candidate.softSkills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
+                </div>
+                
+                <div style="background: #f0f2f5; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                    <h4>❓ Preguntas para Entrevista</h4>
+                    <p><strong>Técnicas:</strong></p>
+                    <ul>${candidate.interviewQuestions.technical.map(q => `<li>${q}</li>`).join('')}</ul>
+                    <p><strong>Situacionales:</strong></p>
+                    <ul>${candidate.interviewQuestions.behavioral.map(q => `<li>${q}</li>`).join('')}</ul>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('candidateModal').style.display = 'none';
+        }
+
+        function copyModalContent() {
+            const content = document.getElementById('modalBody').innerText;
+            navigator.clipboard.writeText(content);
+            alert('✅ Ficha copiada al portapapeles');
+        }
+
+        function showSection(section) {
+            document.getElementById('dashboardSection').style.display = section === 'dashboard' ? 'block' : 'none';
+            document.getElementById('candidatesSection').style.display = section === 'candidates' ? 'block' : 'none';
+            document.getElementById('uploadSection').style.display = section === 'upload' ? 'block' : 'none';
+            document.getElementById('analyticsSection').style.display = section === 'analytics' ? 'block' : 'none';
+            
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.remove('active');
+                if ((section === 'dashboard' && i === 0) ||
+                    (section === 'candidates' && i === 1) ||
+                    (section === 'upload' && i === 2) ||
+                    (section === 'analytics' && i === 3)) {
+                    item.classList.add('active');
+                }
+            });
+            
+            if (section === 'analytics') {
+                updateAnalyticsCharts();
+            }
+        }
+
+        function updateAnalyticsCharts() {
+            if (skillsChart) skillsChart.destroy();
+            if (trendChart) trendChart.destroy();
+            
+            const allSkills = {};
+            candidates.forEach(c => {
+                c.hardSkills.forEach(s => {
+                    allSkills[s] = (allSkills[s] || 0) + 1;
+                });
+            });
+            
+            const sortedSkills = Object.entries(allSkills).sort((a,b) => b[1] - a[1]).slice(0,5);
+            
+            const ctxSkills = document.getElementById('skillsChart').getContext('2d');
+            skillsChart = new Chart(ctxSkills, {
+                type: 'bar',
+                data: {
+                    labels: sortedSkills.map(s => s[0]),
+                    datasets: [{
+                        label: 'Candidatos con esta skill',
+                        data: sortedSkills.map(s => s[1]),
+                        backgroundColor: '#667eea'
+                    }]
+                }
+            });
+            
+            const last7Days = [...Array(7)].map((_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                return d.toLocaleDateString();
+            }).reverse();
+            
+            const dailyCounts = last7Days.map(date => {
+                return candidates.filter(c => c.date?.includes(date.split(',')[0])).length;
+            });
+            
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: last7Days,
+                    datasets: [{
+                        label: 'CVs evaluados',
+                        data: dailyCounts,
+                        borderColor: '#10b981',
+                        tension: 0.3
+                    }]
+                }
+            });
+        }
+
+        function exportToExcel() {
+            const data = candidates.map(c => ({
+                Nombre: c.name,
+                Especialidad: c.specialty,
+                Score: c.score,
+                Experiencia: c.experience,
+                Hard_Skills: c.hardSkills.join(', '),
+                Soft_Skills: c.softSkills.join(', '),
+                Fecha_Evaluacion: c.date
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Candidatos');
+            XLSX.writeFile(wb, `talentos_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        function exportToPDF() {
+            const element = document.getElementById('candidatesGrid');
+            html2pdf().from(element).save(`candidatos_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
+        // Drag & drop
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && (file.type === 'application/pdf' || file.type === 'text/plain')) {
+                handleFileUpload(file);
+            } else {
+                alert('Por favor, sube un archivo PDF o TXT');
+            }
+        });
+
+        document.getElementById('searchInput')?.addEventListener('input', () => renderCandidates());
+
+        // Inicializar
+        loadData();
     </script>
 </body>
 </html>
