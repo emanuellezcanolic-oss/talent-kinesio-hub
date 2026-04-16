@@ -3,324 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talent Kinesio Hub Pro - Sistema Completo de Gestión</title>
+    <title>Talent Kinesio Hub Pro - Sistema Avanzado de Gestión</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            overflow-x: hidden;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            padding: 30px 20px;
-            z-index: 100;
-            transition: all 0.3s;
-            overflow-y: auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; overflow-x: hidden; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 30px 20px; z-index: 100; transition: all 0.3s; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .logo-icon { font-size: 32px; }
         .logo-text h2 { font-size: 18px; margin-bottom: 4px; }
         .logo-text p { font-size: 11px; opacity: 0.7; }
-
-        .nav-item {
-            padding: 12px 16px;
-            margin: 8px 0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255,255,255,0.7);
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            padding: 20px 30px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-
+        .nav-item { padding: 12px 16px; margin: 8px 0; border-radius: 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
+        .main-content { margin-left: 280px; padding: 20px 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s; }
         .stat-card:hover { transform: translateY(-3px); }
         .stat-title { color: #666; font-size: 13px; margin-bottom: 10px; }
         .stat-value { font-size: 32px; font-weight: bold; color: #1a1a2e; }
-        .stat-change { font-size: 12px; color: #10b981; margin-top: 8px; }
-
-        .section {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
+        .section { background: white; border-radius: 20px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
         .section-title { font-size: 18px; font-weight: 600; color: #1a1a2e; }
-
-        .filters-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select, .filter-input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #fafafa;
-        }
-
-        .upload-area:hover, .upload-area.drag-over {
-            border-color: #667eea;
-            background: #f0f2ff;
-        }
-
-        .candidates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .candidate-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .candidate-card:hover {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-
+        .filters-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-select, .filter-input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .upload-area { border: 2px dashed #ddd; border-radius: 16px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; background: #fafafa; }
+        .upload-area:hover, .upload-area.drag-over { border-color: #667eea; background: #f0f2ff; }
+        .candidates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; margin-top: 20px; }
+        .candidate-card { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; transition: all 0.3s; cursor: pointer; position: relative; }
+        .candidate-card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .status-badge { position: absolute; top: 15px; right: 15px; font-size: 11px; padding: 4px 8px; border-radius: 20px; }
         .status-pendiente { background: #fef3c7; color: #d97706; }
         .status-entrevistado { background: #dbeafe; color: #2563eb; }
         .status-contratado { background: #d1fae5; color: #059669; }
         .status-descartado { background: #fee2e2; color: #dc2626; }
-
         .candidate-name { font-size: 18px; font-weight: 600; color: #1a1a2e; }
-        .candidate-specialty {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 20px;
-            background: #e5e7eb;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
+        .candidate-specialty { font-size: 12px; padding: 4px 8px; border-radius: 20px; background: #e5e7eb; display: inline-block; margin-top: 5px; }
         .score-badge { font-size: 24px; font-weight: bold; color: #667eea; }
         .skills-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
         .skill-tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: #f0f2f5; }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
+        .btn { padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
         .btn-outline { background: transparent; border: 1px solid #ddd; }
-        .btn-success { background: #10b981; color: white; }
-        .btn-warning { background: #f59e0b; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            max-width: 900px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 30px;
-        }
-
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 24px; max-width: 1000px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 30px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .checklist-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .interview-note {
-            background: #f0f2f5;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            flex-direction: column;
-            color: white;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); position: fixed; }
-            .main-content { margin-left: 0; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        .editable-field {
-            cursor: pointer;
-            transition: background 0.2s;
-            padding: 4px;
-            border-radius: 6px;
-        }
-        .editable-field:hover { background: #f0f2f5; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .score-breakdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+        .score-item { text-align: center; padding: 10px; background: #f0f2f5; border-radius: 12px; }
+        .score-item .label { font-size: 11px; color: #666; }
+        .score-item .value { font-size: 20px; font-weight: bold; color: #667eea; }
+        .question-suggestion { background: #e3f2fd; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #667eea; }
+        .cv-preview { background: #f8f9fa; padding: 15px; border-radius: 12px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; color: white; }
+        .spinner { width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); position: fixed; } .main-content { margin-left: 0; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+        .tab-btn { padding: 10px 20px; background: none; border: none; cursor: pointer; font-weight: 500; }
+        .tab-btn.active { border-bottom: 2px solid #667eea; color: #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div>🤖 Procesando...</div>
-    </div>
+    <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>🤖 Procesando CV con IA...</div></div>
 
     <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">🏥</div>
-            <div class="logo-text">
-                <h2>Talent Kinesio Hub</h2>
-                <p>Gestión de Talento Pro</p>
-            </div>
-        </div>
+        <div class="logo"><div class="logo-icon">🏥</div><div class="logo-text"><h2>Talent Kinesio Hub</h2><p>Gestión de Talento Pro</p></div></div>
         <div class="nav-item active" onclick="showSection('dashboard')">📊 Dashboard</div>
         <div class="nav-item" onclick="showSection('candidates')">👥 Biblioteca de Talentos</div>
         <div class="nav-item" onclick="showSection('upload')">📤 Cargar CV</div>
@@ -328,7 +82,6 @@
     </div>
 
     <div class="main-content">
-        <!-- Dashboard -->
         <div id="dashboardSection" class="section">
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-title">Total Candidatos</div><div class="stat-value" id="totalCandidates">0</div></div>
@@ -342,44 +95,30 @@
             </div>
         </div>
 
-        <!-- Biblioteca de Candidatos -->
         <div id="candidatesSection" class="section" style="display: none;">
-            <div class="section-header">
-                <h2 class="section-title">👥 Biblioteca de Talentos</h2>
-                <div><button class="btn btn-outline" onclick="exportToExcel()">📊 Exportar Excel</button></div>
-            </div>
-            
-            <!-- Filtros -->
+            <div class="section-header"><h2 class="section-title">👥 Biblioteca de Talentos</h2><button class="btn btn-outline" onclick="exportToExcel()">📊 Exportar Excel</button></div>
             <div class="filters-bar">
                 <input type="text" id="searchFilter" placeholder="🔍 Buscar..." class="filter-input" style="flex:2;">
-                <select id="specialtyFilter" class="filter-select"><option value="">Todas las especialidades</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option><option value="Ambos">Ambos</option></select>
-                <select id="statusFilter" class="filter-select"><option value="">Todos los estados</option><option value="pendiente">Pendiente</option><option value="entrevistado">Entrevistado</option><option value="contratado">Contratado</option><option value="descartado">Descartado</option></select>
-                <select id="availabilityFilter" class="filter-select"><option value="">Disponibilidad</option><option value="inmediata">Inmediata</option><option value="15 dias">15 días</option><option value="30 dias">30 días</option><option value="no disponible">No disponible</option></select>
-                <button class="btn btn-primary" onclick="resetFilters()">Limpiar filtros</button>
+                <select id="specialtyFilter" class="filter-select"><option value="">Todas</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option></select>
+                <select id="statusFilter" class="filter-select"><option value="">Estado</option><option value="pendiente">Pendiente</option><option value="entrevistado">Entrevistado</option><option value="contratado">Contratado</option><option value="descartado">Descartado</option></select>
+                <button class="btn btn-primary" onclick="resetFilters()">Limpiar</button>
             </div>
-            
             <div id="candidatesGrid" class="candidates-grid"></div>
         </div>
 
-        <!-- Cargar CV -->
         <div id="uploadSection" class="section" style="display: none;">
             <h2 class="section-title">📤 Cargar Nuevo Candidato</h2>
             <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <div style="font-size: 48px;">📄</div>
-                <p>Arrastra un PDF o haz clic para seleccionar</p>
+                <div style="font-size: 48px;">📄</div><p>Arrastra un PDF o haz clic para seleccionar</p>
             </div>
             <input type="file" id="fileInput" accept=".pdf,.txt" style="display:none;" onchange="handleFileUpload(this.files[0])">
             <textarea id="cvTextInput" rows="6" placeholder="O pega el texto del CV aquí..." style="width:100%; margin-top:15px; padding:12px; border:1px solid #ddd; border-radius:12px;"></textarea>
             <select id="profileTypeSelect" style="width:100%; margin-top:15px; padding:12px; border:1px solid #ddd; border-radius:12px;">
-                <option value="">Seleccionar tipo de búsqueda</option>
-                <option value="Kinesiólogo">Kinesiólogo</option>
-                <option value="Entrenador">Entrenador</option>
-                <option value="Ambos">Ambos perfiles</option>
+                <option value="">Seleccionar tipo de búsqueda</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option><option value="Ambos">Ambos</option>
             </select>
             <button class="btn btn-primary" onclick="analyzeCVWithGroq()" style="width:100%; margin-top:20px;">🤖 Analizar CV con IA</button>
         </div>
 
-        <!-- Analytics -->
         <div id="analyticsSection" class="section" style="display: none;">
             <h2 class="section-title">📈 Análisis de Talentos</h2>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
@@ -389,17 +128,23 @@
         </div>
     </div>
 
-    <!-- Modal de edición/detalle -->
     <div id="candidateModal" class="modal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <h2 id="modalTitle">Perfil del Candidato</h2>
                 <button onclick="closeModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
             </div>
-            <div id="modalBody"></div>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('info')">📋 Información</button>
+                <button class="tab-btn" onclick="switchTab('interview')">🎤 Entrevista</button>
+                <button class="tab-btn" onclick="switchTab('cv')">📄 CV Original</button>
+            </div>
+            <div id="tabInfo" class="tab-content active"></div>
+            <div id="tabInterview" class="tab-content"></div>
+            <div id="tabCV" class="tab-content"></div>
             <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
                 <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
-                <button class="btn btn-primary" id="saveCandidateBtn" onclick="saveCurrentCandidate()">💾 Guardar cambios</button>
+                <button class="btn btn-primary" onclick="saveCurrentCandidate()">💾 Guardar cambios</button>
             </div>
         </div>
     </div>
@@ -413,24 +158,17 @@
         function loadData() {
             const saved = localStorage.getItem('kinesioCandidatesPro');
             if (saved) candidates = JSON.parse(saved);
-            else {
-                candidates = [];
-            }
             updateDashboard();
             renderCandidates();
         }
 
-        function saveData() {
-            localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates));
-            updateDashboard();
-            renderCandidates();
-        }
+        function saveData() { localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates)); updateDashboard(); renderCandidates(); }
 
         function updateDashboard() {
             document.getElementById('totalCandidates').innerText = candidates.length;
             const avgFit = candidates.length ? Math.round(candidates.reduce((s,c)=>s+(c.score||70),0)/candidates.length) : 0;
             document.getElementById('avgFit').innerText = avgFit+'%';
-            const entrevistados = candidates.filter(c=>c.status==='entrevistado' || c.interviewDone).length;
+            const entrevistados = candidates.filter(c=>c.status==='entrevistado').length;
             document.getElementById('entrevistadosCount').innerText = entrevistados;
             const disponibilidad = candidates.filter(c=>c.availability==='inmediata').length;
             document.getElementById('disponibilidadCount').innerText = disponibilidad;
@@ -439,10 +177,7 @@
             const trainerCount = candidates.filter(c=>c.specialty?.includes('Entrenador')).length;
             if (specialtyChart) specialtyChart.destroy();
             const ctx = document.getElementById('specialtyChart').getContext('2d');
-            specialtyChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: ['Kinesiólogos','Entrenadores','Ambos'], datasets: [{ data: [kineCount, trainerCount, Math.max(0,candidates.length-kineCount-trainerCount)], backgroundColor: ['#667eea','#f59e0b','#10b981'] }] }
-            });
+            specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Entrenadores','Ambos'], datasets:[{ data:[kineCount, trainerCount, Math.max(0,candidates.length-kineCount-trainerCount)], backgroundColor:['#667eea','#f59e0b','#10b981'] }] } });
             
             const topCandidates = [...candidates].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
             document.getElementById('topCandidatesList').innerHTML = topCandidates.map(c=>`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span><strong>${c.name}</strong><br><small>${c.specialty||''}</small></span><span style="font-weight:bold;color:#667eea;">${c.score||70}%</span></div>`).join('');
@@ -452,19 +187,10 @@
             const search = document.getElementById('searchFilter')?.value.toLowerCase() || '';
             const specialty = document.getElementById('specialtyFilter')?.value || '';
             const status = document.getElementById('statusFilter')?.value || '';
-            const availability = document.getElementById('availabilityFilter')?.value || '';
-            
-            let filtered = candidates.filter(c => 
-                (c.name?.toLowerCase().includes(search) || c.specialty?.toLowerCase().includes(search)) &&
-                (specialty === '' || c.specialty?.includes(specialty)) &&
-                (status === '' || c.status === status) &&
-                (availability === '' || c.availability === availability)
-            );
-            
+            let filtered = candidates.filter(c => (c.name?.toLowerCase().includes(search) || c.specialty?.toLowerCase().includes(search)) && (specialty === '' || c.specialty?.includes(specialty)) && (status === '' || c.status === status));
             const grid = document.getElementById('candidatesGrid');
             if (!grid) return;
             if (filtered.length === 0) { grid.innerHTML = '<p style="text-align:center;color:#999;">No hay candidatos</p>'; return; }
-            
             grid.innerHTML = filtered.map(c => {
                 const statusText = { pendiente:'Pendiente', entrevistado:'Entrevistado', contratado:'Contratado', descartado:'Descartado' }[c.status] || 'Pendiente';
                 const statusClass = { pendiente:'status-pendiente', entrevistado:'status-entrevistado', contratado:'status-contratado', descartado:'status-descartado' }[c.status] || 'status-pendiente';
@@ -475,7 +201,7 @@
                     <div class="score-badge" style="margin-top:10px;">${c.score || 70}%</div>
                     <div class="skills-list">${(c.hardSkills || []).slice(0,3).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
                     <div style="margin-top:10px; font-size:12px; color:#999;">📅 ${c.date || ''}</div>
-                    ${c.availability ? `<div style="font-size:11px; color:#10b981; margin-top:5px;">✅ Disponibilidad: ${c.availability}</div>` : ''}
+                    ${c.availability ? `<div style="font-size:11px; color:#10b981; margin-top:5px;">✅ ${c.availability}</div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -484,69 +210,122 @@
             currentEditCandidateId = id;
             const c = candidates.find(c=>c.id===id);
             if (!c) return;
+            document.getElementById('modalTitle').innerHTML = `📋 ${c.name}`;
             
-            document.getElementById('modalTitle').innerHTML = `✏️ Editando: ${c.name}`;
+            // Tab Información
             const scoreColor = c.score >= 80 ? '#10b981' : (c.score >= 60 ? '#f59e0b' : '#ef4444');
-            
-            document.getElementById('modalBody').innerHTML = `
+            document.getElementById('tabInfo').innerHTML = `
                 <form id="editForm">
                     <div class="form-group"><label>Nombre completo</label><input type="text" id="editName" value="${c.name.replace(/"/g, '&quot;')}"></div>
                     <div class="form-group"><label>Especialidad principal</label><input type="text" id="editSpecialty" value="${c.specialty || ''}"></div>
                     <div class="form-group"><label>Años de experiencia</label><input type="number" id="editExperience" value="${c.experience || 0}"></div>
-                    <div class="form-group"><label>Score de Fit (0-100)</label><input type="range" id="editScore" min="0" max="100" value="${c.score || 70}" oninput="document.getElementById('scoreValue').innerText=this.value"><span id="scoreValue">${c.score || 70}</span></div>
+                    
+                    <h3>🎯 Desglose del Score</h3>
+                    <div class="score-breakdown">
+                        <div class="score-item"><div class="label">Técnico</div><div class="value">${c.scoreBreakdown?.tecnico || Math.floor(c.score*0.4)}%</div></div>
+                        <div class="score-item"><div class="label">Experiencia</div><div class="value">${c.scoreBreakdown?.experiencia || Math.floor(c.score*0.3)}%</div></div>
+                        <div class="score-item"><div class="label">Soft Skills</div><div class="value">${c.scoreBreakdown?.soft || Math.floor(c.score*0.15)}%</div></div>
+                        <div class="score-item"><div class="label">Herramientas</div><div class="value">${c.scoreBreakdown?.herramientas || Math.floor(c.score*0.15)}%</div></div>
+                    </div>
+                    <div class="form-group"><label>Score Total (0-100)</label><input type="range" id="editScore" min="0" max="100" value="${c.score || 70}" oninput="document.getElementById('scoreValue').innerText=this.value"><span id="scoreValue">${c.score || 70}</span></div>
                     
                     <div class="form-group"><label>Hard Skills (separar por comas)</label><input type="text" id="editHardSkills" value="${(c.hardSkills || []).join(', ')}"></div>
                     <div class="form-group"><label>Soft Skills (separar por comas)</label><input type="text" id="editSoftSkills" value="${(c.softSkills || []).join(', ')}"></div>
-                    <div class="form-group"><label>Tecnologías que domina</label><input type="text" id="editTechnologies" value="${(c.technologies || []).join(', ')}"></div>
+                    <div class="form-group"><label>Tecnologías/Herramientas</label><input type="text" id="editTechnologies" value="${(c.technologies || []).join(', ')}"></div>
                     
-                    <div class="form-group"><label>Estado del proceso</label>
-                        <select id="editStatus">
-                            <option value="pendiente" ${c.status==='pendiente' ? 'selected' : ''}>Pendiente</option>
-                            <option value="entrevistado" ${c.status==='entrevistado' ? 'selected' : ''}>Entrevistado</option>
-                            <option value="contratado" ${c.status==='contratado' ? 'selected' : ''}>Contratado</option>
-                            <option value="descartado" ${c.status==='descartado' ? 'selected' : ''}>Descartado</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group"><label>Disponibilidad para incorporarse</label>
-                        <select id="editAvailability">
-                            <option value="">Seleccionar</option>
-                            <option value="inmediata" ${c.availability==='inmediata' ? 'selected' : ''}>Inmediata</option>
-                            <option value="15 dias" ${c.availability==='15 dias' ? 'selected' : ''}>15 días</option>
-                            <option value="30 dias" ${c.availability==='30 dias' ? 'selected' : ''}>30 días</option>
-                            <option value="no disponible" ${c.availability==='no disponible' ? 'selected' : ''}>No disponible</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group"><label>Información adicional (pareja, hijos, reubicación, etc.)</label>
-                        <textarea id="editPersonalInfo" rows="3" placeholder="Ej: Tiene pareja, 2 hijos, necesita reubicación...">${c.personalInfo || ''}</textarea>
-                    </div>
-                    
-                    <hr style="margin: 20px 0;">
-                    <h4>📋 Checklist de seguimiento</h4>
-                    <div class="checklist-item"><input type="checkbox" id="checkCV" ${c.checkCV ? 'checked' : ''}> <label>✅ CV revisado</label></div>
-                    <div class="checklist-item"><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall ? 'checked' : ''}> <label>🎥 Video llamada realizada</label> <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}" style="margin-left:10px;"></div>
-                    <div class="checklist-item"><input type="checkbox" id="checkTechnical" ${c.checkTechnical ? 'checked' : ''}> <label>📝 Entrevista técnica realizada</label> <input type="date" id="technicalDate" value="${c.technicalDate || ''}" style="margin-left:10px;"></div>
-                    <div class="checklist-item"><input type="checkbox" id="checkHR" ${c.checkHR ? 'checked' : ''}> <label>👔 Entrevista con RRHH realizada</label> <input type="date" id="hrDate" value="${c.hrDate || ''}" style="margin-left:10px;"></div>
-                    <div class="checklist-item"><input type="checkbox" id="checkOffer" ${c.checkOffer ? 'checked' : ''}> <label>📄 Oferta enviada</label></div>
-                    
-                    <hr style="margin: 20px 0;">
-                    <h4>📝 Notas de entrevista</h4>
-                    <div class="interview-note">
-                        <label>¿Qué se habló en la entrevista?</label>
-                        <textarea id="interviewNotes" rows="4" placeholder="Ej: Tiene pareja, está buscando algo part-time, le interesa formarse...">${c.interviewNotes || ''}</textarea>
-                        <label style="margin-top:10px;">Próximo contacto / seguimiento</label>
-                        <input type="date" id="nextContact" value="${c.nextContact || ''}">
-                    </div>
+                    <div class="form-group"><label>Estado del proceso</label><select id="editStatus"><option value="pendiente" ${c.status==='pendiente' ? 'selected' : ''}>Pendiente</option><option value="entrevistado" ${c.status==='entrevistado' ? 'selected' : ''}>Entrevistado</option><option value="contratado" ${c.status==='contratado' ? 'selected' : ''}>Contratado</option><option value="descartado" ${c.status==='descartado' ? 'selected' : ''}>Descartado</option></select></div>
+                    <div class="form-group"><label>Disponibilidad</label><select id="editAvailability"><option value="">Seleccionar</option><option value="inmediata" ${c.availability==='inmediata' ? 'selected' : ''}>Inmediata</option><option value="15 dias" ${c.availability==='15 dias' ? 'selected' : ''}>15 días</option><option value="30 dias" ${c.availability==='30 dias' ? 'selected' : ''}>30 días</option></select></div>
+                    <div class="form-group"><label>Info adicional (pareja, hijos, reubicación)</label><textarea id="editPersonalInfo" rows="2">${c.personalInfo || ''}</textarea></div>
                 </form>
             `;
+            
+            // Tab Entrevista - Preguntas sugeridas basadas en habilidades
+            const preguntasTecnicas = generarPreguntasSegunSkills(c.hardSkills || [], c.specialty);
+            const preguntasSituacionales = generarPreguntasSituacionales(c.softSkills || []);
+            
+            document.getElementById('tabInterview').innerHTML = `
+                <h3>🎤 Preguntas sugeridas para la entrevista</h3>
+                <div style="margin-bottom:20px;">
+                    <h4>Preguntas Técnicas (basadas en sus habilidades)</h4>
+                    ${preguntasTecnicas.map((q,i)=>`<div class="question-suggestion"><strong>${i+1}.</strong> ${q}</div>`).join('')}
+                </div>
+                <div style="margin-bottom:20px;">
+                    <h4>Preguntas Situacionales (basadas en soft skills)</h4>
+                    ${preguntasSituacionales.map((q,i)=>`<div class="question-suggestion"><strong>${i+1}.</strong> ${q}</div>`).join('')}
+                </div>
+                <hr style="margin:20px 0;">
+                <h4>✅ Checklist de seguimiento</h4>
+                <div class="checklist-item"><input type="checkbox" id="checkCV" ${c.checkCV ? 'checked' : ''}> CV revisado</div>
+                <div class="checklist-item"><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall ? 'checked' : ''}> Video llamada <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}"></div>
+                <div class="checklist-item"><input type="checkbox" id="checkTechnical" ${c.checkTechnical ? 'checked' : ''}> Entrevista técnica <input type="date" id="technicalDate" value="${c.technicalDate || ''}"></div>
+                <div class="checklist-item"><input type="checkbox" id="checkHR" ${c.checkHR ? 'checked' : ''}> Entrevista RRHH <input type="date" id="hrDate" value="${c.hrDate || ''}"></div>
+                <div class="checklist-item"><input type="checkbox" id="checkOffer" ${c.checkOffer ? 'checked' : ''}> Oferta enviada</div>
+                
+                <h4 style="margin-top:20px;">📝 Notas de entrevista</h4>
+                <textarea id="interviewNotes" rows="4" placeholder="Ej: Tiene pareja, busca full-time, disponible en 15 días..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;">${c.interviewNotes || ''}</textarea>
+                <div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="${c.nextContact || ''}" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;"></div>
+            `;
+            
+            // Tab CV Original
+            document.getElementById('tabCV').innerHTML = `
+                <h3>📄 Currículum Vitae Original</h3>
+                <div class="cv-preview">${c.rawCV || 'No se guardó el texto original del CV'}</div>
+                <button class="btn btn-outline" style="margin-top:10px;" onclick="copyCVText()">📋 Copiar CV completo</button>
+            `;
+            
             document.getElementById('candidateModal').style.display = 'flex';
         }
-
+        
+        function generarPreguntasSegunSkills(hardSkills, specialty) {
+            const preguntas = [];
+            if (hardSkills.some(s=>s.toLowerCase().includes('rehabilitación') || s.toLowerCase().includes('kinesiologia'))) {
+                preguntas.push('Describa su abordaje para una lesión de isquiotibiales grado 2. ¿Qué técnicas utilizaría y en qué tiempos?');
+                preguntas.push('¿Cómo evalúa el progreso de un paciente post-operatorio de LCA?');
+            }
+            if (hardSkills.some(s=>s.toLowerCase().includes('entrenamiento') || s.toLowerCase().includes('fuerza'))) {
+                preguntas.push('¿Cómo periodizaría el entrenamiento de fuerza para un deportista amateur que compite los fines de semana?');
+                preguntas.push('Explique su método para detectar y corregir desbalances musculares en atletas jóvenes.');
+            }
+            if (hardSkills.some(s=>s.toLowerCase().includes('evaluación') || s.toLowerCase().includes('diagnóstico'))) {
+                preguntas.push('¿Qué pruebas funcionales utiliza para evaluar un hombro doloroso y cómo interpreta los resultados?');
+            }
+            if (hardSkills.some(s=>s.toLowerCase().includes('masoterapia') || s.toLowerCase().includes('masaje'))) {
+                preguntas.push('Describa las contraindicaciones absolutas para la aplicación de masoterapia en un paciente.');
+            }
+            if (preguntas.length < 3) {
+                preguntas.push('¿Cuál es su experiencia con lesiones deportivas más frecuentes en su práctica diaria?');
+                preguntas.push('¿Qué metodología utiliza para diseñar un plan de rehabilitación personalizado?');
+                preguntas.push('¿Cómo integra la evidencia científica en su práctica clínica diaria?');
+            }
+            return preguntas.slice(0,4);
+        }
+        
+        function generarPreguntasSituacionales(softSkills) {
+            return [
+                'Cuénteme de una situación donde un paciente no seguía el tratamiento indicado. ¿Cómo lo manejó?',
+                'Si un paciente se queja de dolor durante un ejercicio que usted indicó, ¿cuál es su protocolo de acción?',
+                '¿Cómo maneja la presión cuando tiene múltiples pacientes en horarios superpuestos?',
+                'Describa una situación donde tuvo que trabajar en equipo con otro profesional de la salud. ¿Cuál fue su rol?'
+            ];
+        }
+        
+        function copyCVText() {
+            const c = candidates.find(c=>c.id===currentEditCandidateId);
+            if (c && c.rawCV) { navigator.clipboard.writeText(c.rawCV); alert('✅ CV copiado'); }
+            else alert('No hay CV guardado');
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
+            if (tab === 'info') { document.querySelector('.tab-btn:first-child').classList.add('active'); document.getElementById('tabInfo').classList.add('active'); }
+            if (tab === 'interview') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('tabInterview').classList.add('active'); }
+            if (tab === 'cv') { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tabCV').classList.add('active'); }
+        }
+        
         function saveCurrentCandidate() {
             const c = candidates.find(c=>c.id===currentEditCandidateId);
             if (!c) return;
-            
             c.name = document.getElementById('editName')?.value || c.name;
             c.specialty = document.getElementById('editSpecialty')?.value || c.specialty;
             c.experience = parseInt(document.getElementById('editExperience')?.value) || 0;
@@ -567,22 +346,14 @@
             c.checkOffer = document.getElementById('checkOffer')?.checked || false;
             c.interviewNotes = document.getElementById('interviewNotes')?.value || '';
             c.nextContact = document.getElementById('nextContact')?.value || '';
-            
             saveData();
-            alert('✅ Cambios guardados correctamente');
+            alert('✅ Cambios guardados');
             closeModal();
         }
-
+        
         function closeModal() { document.getElementById('candidateModal').style.display = 'none'; currentEditCandidateId = null; }
-
-        function resetFilters() {
-            document.getElementById('searchFilter').value = '';
-            document.getElementById('specialtyFilter').value = '';
-            document.getElementById('statusFilter').value = '';
-            document.getElementById('availabilityFilter').value = '';
-            renderCandidates();
-        }
-
+        function resetFilters() { document.getElementById('searchFilter').value = ''; document.getElementById('specialtyFilter').value = ''; document.getElementById('statusFilter').value = ''; renderCandidates(); }
+        
         function parseAIResponse(text) {
             let cleaned = text.replace(/```json\n?/g,'').replace(/```\n?/g,'');
             const firstBrace = cleaned.indexOf('{');
@@ -592,19 +363,18 @@
             jsonStr = jsonStr.replace(/\\"/g,'"').replace(/""/g,'"');
             return JSON.parse(jsonStr);
         }
-
+        
         async function analyzeCVWithGroq() {
             const cvText = document.getElementById('cvTextInput').value.trim();
             if (!cvText) { alert('Pega el texto del CV'); return; }
             document.getElementById('loadingOverlay').style.display = 'flex';
-            
             try {
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
                     body: JSON.stringify({
                         model: 'llama-3.1-8b-instant',
-                        messages: [{ role: 'system', content: `Eres un experto en HR Tech. Responde SOLO con JSON: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","preguntas_tecnicas":[],"preguntas_situacionales":[]}` }, { role: 'user', content: cvText.substring(0,3000) }],
+                        messages: [{ role: 'system', content: `Eres un experto en HR Tech. Analiza el CV y responde SOLO con JSON. Calcula el score así: 40% habilidades técnicas, 30% años de experiencia, 15% soft skills, 15% herramientas. JSON: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":0,"recomendacion":"","score_tecnico":0,"score_experiencia":0,"score_soft":0,"score_herramientas":0}` }, { role: 'user', content: cvText.substring(0,3000) }],
                         temperature: 0.3
                     })
                 });
@@ -614,21 +384,22 @@
                     id: Date.now(), name: parsed.nombre || 'Candidato', specialty: parsed.especialidad || '',
                     experience: parsed.experiencia_anos || 0, technologies: parsed.tecnologias || [],
                     hardSkills: parsed.hard_skills || [], softSkills: parsed.soft_skills || [],
-                    score: parsed.score_fit || 70, recommendation: parsed.recomendacion || 'Considerar',
-                    interviewQuestions: { technical: parsed.preguntas_tecnicas || [], behavioral: parsed.preguntas_situacionales || [] },
+                    score: parsed.score_fit || 70,
+                    scoreBreakdown: { tecnico: parsed.score_tecnico || 40, experiencia: parsed.score_experiencia || 30, soft: parsed.score_soft || 15, herramientas: parsed.score_herramientas || 15 },
+                    recommendation: parsed.recomendacion || 'Considerar',
                     date: new Date().toLocaleString(), status: 'pendiente', availability: '', personalInfo: '',
                     checkCV: false, checkVideoCall: false, videoCallDate: '', checkTechnical: false, technicalDate: '', checkHR: false, hrDate: '', checkOffer: false,
-                    interviewNotes: '', nextContact: ''
+                    interviewNotes: '', nextContact: '', rawCV: cvText
                 };
                 candidates.unshift(candidate);
                 saveData();
-                alert(`✅ Candidato agregado: ${candidate.name} (Score: ${candidate.score}%)`);
+                alert(`✅ Candidato agregado: ${candidate.name}\nScore: ${candidate.score}%\nDesglose: Técnico ${candidate.scoreBreakdown.tecnico}% | Experiencia ${candidate.scoreBreakdown.experiencia}%`);
                 document.getElementById('cvTextInput').value = '';
                 showSection('candidates');
             } catch(e) { alert('Error: '+e.message); }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
-
+        
         async function handleFileUpload(file) {
             if (!file) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -648,13 +419,11 @@
             } catch(e) { alert('Error al leer archivo'); }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
-
+        
         function exportToExcel() {
             const data = candidates.map(c=>({
-                Nombre: c.name, Especialidad: c.specialty, Score: c.score+'%', Experiencia: c.experience,
-                Hard_Skills: (c.hardSkills||[]).join(', '), Soft_Skills: (c.softSkills||[]).join(', '),
-                Estado: c.status, Disponibilidad: c.availability, Info_Adicional: c.personalInfo,
-                VideoCall: c.checkVideoCall?'Sí':'No', Entrevista_Técnica: c.checkTechnical?'Sí':'No',
+                Nombre: c.name, Especialidad: c.specialty, Score: c.score+'%', Score_Tecnico: c.scoreBreakdown?.tecnico+'%', Score_Experiencia: c.scoreBreakdown?.experiencia+'%',
+                Hard_Skills: (c.hardSkills||[]).join(', '), Soft_Skills: (c.softSkills||[]).join(', '), Estado: c.status, Disponibilidad: c.availability,
                 Notas: c.interviewNotes, Fecha: c.date
             }));
             const ws = XLSX.utils.json_to_sheet(data);
@@ -662,20 +431,19 @@
             XLSX.utils.book_append_sheet(wb, ws, 'Candidatos');
             XLSX.writeFile(wb, `talentos_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
-
+        
         function updateAnalyticsCharts() {
             if (skillsChart) skillsChart.destroy();
             const allSkills = {};
             candidates.forEach(c => (c.hardSkills||[]).forEach(s=>allSkills[s]=(allSkills[s]||0)+1));
             const sorted = Object.entries(allSkills).sort((a,b)=>b[1]-a[1]).slice(0,5);
             skillsChart = new Chart(document.getElementById('skillsChart'), { type:'bar', data:{ labels:sorted.map(s=>s[0]), datasets:[{ label:'Candidatos', data:sorted.map(s=>s[1]), backgroundColor:'#667eea' }] } });
-            
             if (statusChart) statusChart.destroy();
             const stats = { pendiente:0, entrevistado:0, contratado:0, descartado:0 };
             candidates.forEach(c=>stats[c.status]=(stats[c.status]||0)+1);
             statusChart = new Chart(document.getElementById('statusChart'), { type:'doughnut', data:{ labels:['Pendiente','Entrevistado','Contratado','Descartado'], datasets:[{ data:[stats.pendiente,stats.entrevistado,stats.contratado,stats.descartado], backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444'] }] } });
         }
-
+        
         function showSection(section) {
             document.getElementById('dashboardSection').style.display = section==='dashboard'?'block':'none';
             document.getElementById('candidatesSection').style.display = section==='candidates'?'block':'none';
@@ -684,19 +452,16 @@
             if(section==='analytics') updateAnalyticsCharts();
             document.querySelectorAll('.nav-item').forEach((item,i)=>{ item.classList.remove('active'); if((section==='dashboard'&&i===0)||(section==='candidates'&&i===1)||(section==='upload'&&i===2)||(section==='analytics'&&i===3)) item.classList.add('active'); });
         }
-
+        
         document.getElementById('searchFilter')?.addEventListener('input',()=>renderCandidates());
         document.getElementById('specialtyFilter')?.addEventListener('change',()=>renderCandidates());
         document.getElementById('statusFilter')?.addEventListener('change',()=>renderCandidates());
-        document.getElementById('availabilityFilter')?.addEventListener('change',()=>renderCandidates());
-        
         const dropZone = document.getElementById('dropZone');
         if(dropZone){
             dropZone.addEventListener('dragover',e=>{ e.preventDefault(); dropZone.classList.add('drag-over'); });
             dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
             dropZone.addEventListener('drop',e=>{ e.preventDefault(); dropZone.classList.remove('drag-over'); handleFileUpload(e.dataTransfer.files[0]); });
         }
-        
         loadData();
     </script>
 </body>
