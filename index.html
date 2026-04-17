@@ -606,7 +606,53 @@
             }
         }
 
-        function handlePDFUpload(file) {
+        function convertFileToPages(file, callback) {
+            if (!file) { callback([]); return; }
+            if (file.type === 'application/pdf') {
+                file.arrayBuffer().then(function(ab) {
+                    return pdfjsLib.getDocument({ data: ab }).promise;
+                }).then(function(pdf) {
+                    var pages = [];
+                    var total = Math.min(pdf.numPages, 6);
+                    var chain = Promise.resolve();
+                    for (var i = 1; i <= total; i++) {
+                        (function(idx) {
+                            chain = chain.then(function() {
+                                return pdf.getPage(idx).then(function(page) {
+                                    var vp = page.getViewport({ scale: 1.2 });
+                                    var canvas = document.createElement('canvas');
+                                    canvas.width = vp.width;
+                                    canvas.height = vp.height;
+                                    return page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise
+                                        .then(function() { pages.push(canvas.toDataURL('image/jpeg', 0.7)); });
+                                });
+                            });
+                        })(i);
+                    }
+                    return chain.then(function() { callback(pages); });
+                }).catch(function(e) { console.error('convert error', e); callback([]); });
+            } else if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var maxW = 1200;
+                        var ratio = Math.min(1, maxW / img.width);
+                        canvas.width = img.width * ratio;
+                        canvas.height = img.height * ratio;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        callback([canvas.toDataURL('image/jpeg', 0.75)]);
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                callback([]);
+            }
+        }
+
+                function handlePDFUpload(file) {
             if (!file) return;
             var maxBytes = 4 * 1024 * 1024;
             if (file.size > maxBytes) { alert('El archivo supera 4MB. Por favor usá uno más pequeño.'); return; }
@@ -618,77 +664,20 @@
             var progWrap = prog ? prog.parentElement : null;
             var progLabel = document.getElementById('pdfProgressLabel');
             if (progWrap) progWrap.style.display = 'block';
-            if (progLabel) progLabel.style.display = 'block';
+            if (progLabel) { progLabel.style.display = 'block'; progLabel.innerText = 'Procesando...'; }
+            if (prog) prog.style.width = '20%';
 
-            function setProgress(pct, label) {
-                if (prog) prog.style.width = pct + '%';
-                if (progLabel) progLabel.innerText = label;
-            }
-
-            setProgress(10, 'Leyendo archivo...');
-
-            if (file.type === 'application/pdf') {
-                // Convert PDF pages to images via pdf.js
-                file.arrayBuffer().then(function(ab) {
-                    setProgress(20, 'Cargando PDF...');
-                    return pdfjsLib.getDocument({ data: ab }).promise;
-                }).then(function(pdf) {
-                    var pages = [];
-                    var total = Math.min(pdf.numPages, 6); // max 6 pages
-                    var done = 0;
-
-                    function renderPage(i) {
-                        return pdf.getPage(i).then(function(page) {
-                            var scale = 1.2;
-                            var vp = page.getViewport({ scale: scale });
-                            var canvas = document.createElement('canvas');
-                            canvas.width = vp.width;
-                            canvas.height = vp.height;
-                            return page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise.then(function() {
-                                done++;
-                                setProgress(20 + Math.round((done/total)*60), 'Página ' + done + ' de ' + total + '...');
-                                // Compress to JPEG 0.7 quality
-                                return canvas.toDataURL('image/jpeg', 0.7);
-                            });
-                        });
-                    }
-
-                    var chain = Promise.resolve();
-                    for (var i = 1; i <= total; i++) {
-                        (function(idx) {
-                            chain = chain.then(function() { return renderPage(idx); }).then(function(dataUrl) { pages.push(dataUrl); });
-                        })(i);
-                    }
-                    return chain.then(function() { return pages; });
-                }).then(function(pages) {
-                    setProgress(85, 'Guardando en la nube...');
-                    savePDFPages(pages);
-                }).catch(function(e) {
-                    console.error(e);
-                    alert('Error al procesar el PDF: ' + e.message);
+            // Use the shared converter
+            convertFileToPages(file, function(pages) {
+                if (prog) prog.style.width = '85%';
+                if (progLabel) progLabel.innerText = 'Guardando en la nube...';
+                if (pages.length === 0) {
+                    alert('No se pudo procesar el archivo.');
                     resetPDFProgress();
-                });
-            } else {
-                // Image file - compress and save directly
-                setProgress(30, 'Comprimiendo imagen...');
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var img = new Image();
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var maxW = 1200;
-                        var ratio = Math.min(1, maxW / img.width);
-                        canvas.width = img.width * ratio;
-                        canvas.height = img.height * ratio;
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                        var dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-                        setProgress(85, 'Guardando en la nube...');
-                        savePDFPages([dataUrl]);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+                    return;
+                }
+                savePDFPages(pages);
+            });
         }
 
         function savePDFPages(pages) {
@@ -782,12 +771,32 @@
                 };
                 candidates.unshift(candidate);
                 saveData();
-                alert('✅ Candidato agregado: '+candidate.name+'\n📍 '+candidate.location+'\nScore: '+candidate.score+'%');
                 document.getElementById('cvTextInput').value = '';
+                // Auto-convert the original file to document pages if it was uploaded
+                if (pendingUploadFile) {
+                    var fileToConvert = pendingUploadFile;
+                    pendingUploadFile = null;
+                    alert('✅ Candidato agregado: '+candidate.name+'\n📍 '+candidate.location+'\nScore: '+candidate.score+'%\n\n🖼️ Guardando el documento automáticamente...');
+                    // Set context so savePDFPages knows which candidate to attach to
+                    currentEditCandidateId = candidate.id;
+                    convertFileToPages(fileToConvert, function(pages) {
+                        if (pages && pages.length > 0) {
+                            candidate.cvPages = pages;
+                            if (window._fbReady) {
+                                window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(candidate.id)), candidate)
+                                    .catch(function(e){ console.error('auto-save doc error', e); });
+                            }
+                        }
+                    });
+                } else {
+                    alert('✅ Candidato agregado: '+candidate.name+'\n📍 '+candidate.location+'\nScore: '+candidate.score+'%');
+                }
                 showSection('candidates');
             } catch(e) { console.error(e); alert('Error: '+e.message); }
             finally { document.getElementById('loadingOverlay').style.display='none'; }
         }
+
+        var pendingUploadFile = null; // stores the file to convert after analysis
 
         async function handleFileUpload(file) {
             if (!file) return;
@@ -800,6 +809,10 @@
                     for(let i=1;i<=pdf.numPages;i++){ const pg=await pdf.getPage(i); const ct=await pg.getTextContent(); text+=ct.items.map(x=>x.str).join(' ')+'\n'; }
                 } else text = await file.text();
                 document.getElementById('cvTextInput').value = text;
+                // Save file reference so we can auto-convert it after analysis
+                if (file.type === 'application/pdf' || file.type.startsWith('image/')) {
+                    pendingUploadFile = file;
+                }
                 alert('✅ Archivo cargado. Hacé clic en "Analizar CV con IA"');
             } catch(e) { alert('Error: '+e.message); }
             finally { document.getElementById('loadingOverlay').style.display='none'; }
