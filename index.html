@@ -60,72 +60,6 @@
         .score-item .label { font-size: 11px; color: #666; }
         .score-item .value { font-size: 20px; font-weight: bold; color: #667eea; }
         .question-suggestion { background: #e3f2fd; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #667eea; }
-        
-        /* Estilos profesionales para el CV */
-        .cv-profesional {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .cv-profesional-header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-        .cv-profesional-header h3 {
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-        .cv-profesional-header p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        .cv-seccion {
-            margin: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-        .cv-seccion-titulo {
-            font-size: 16px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .cv-seccion-contenido {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #333;
-        }
-        .cv-linea {
-            margin-bottom: 6px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .cv-fecha {
-            color: #667eea;
-            font-weight: 500;
-        }
-        .cv-empresa {
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-        .cv-cargo {
-            font-weight: 600;
-            color: #764ba2;
-        }
-        .cv-bullet {
-            display: block;
-            margin-left: 20px;
-            margin-bottom: 5px;
-        }
-        
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; color: white; }
         .spinner { width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -137,6 +71,54 @@
         .tab-content.active { display: block; }
         .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
         .analytics-card { background: #f8f9fa; border-radius: 16px; padding: 20px; }
+
+        /* ── CV PRO STYLES ── */
+        .cv-pro-wrapper { font-family: 'Georgia', 'Times New Roman', serif; max-width: 100%; }
+        .cv-pro-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #16213e 100%);
+            color: white; padding: 28px 25px; border-radius: 16px 16px 0 0;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .cv-pro-hero::before {
+            content: ''; position: absolute; top: -40px; right: -40px;
+            width: 150px; height: 150px; background: rgba(102,126,234,0.2); border-radius: 50%;
+        }
+        .cv-pro-hero-icon { font-size: 34px; margin-bottom: 8px; }
+        .cv-pro-hero h3 { font-size: 20px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+        .cv-hero-name { font-size: 15px; opacity: 0.85; font-style: italic; }
+        .cv-pro-hero p { font-size: 11px; opacity: 0.55; margin-top: 4px; }
+        .cv-pro-body { background: #fff; border-radius: 0 0 16px 16px; border: 1px solid #e5e7eb; border-top: none; padding: 6px 0 14px; }
+        .cv-sec { border-bottom: 1px solid #f3f4f6; }
+        .cv-sec:last-child { border-bottom: none; }
+        .cv-sec-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 13px 18px 10px; cursor: pointer; user-select: none; transition: background 0.15s;
+        }
+        .cv-sec-header:hover { background: #fafbff; }
+        .cv-sec-emoji { font-size: 17px; }
+        .cv-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #667eea; flex: 1; }
+        .cv-sec-count { font-size: 11px; color: #aaa; background: #f3f4f6; padding: 2px 7px; border-radius: 10px; }
+        .cv-sec-arrow { font-size: 11px; color: #ccc; transition: transform 0.2s; }
+        .cv-sec.collapsed .cv-sec-arrow { transform: rotate(-90deg); }
+        .cv-sec-body { padding: 2px 18px 12px 28px; animation: cvFadeIn 0.2s ease; }
+        .cv-sec.collapsed .cv-sec-body { display: none; }
+        @keyframes cvFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+        .cv-item { font-size: 13px; color: #374151; padding: 4px 0; line-height: 1.55; border-bottom: 1px dashed #f3f4f6; }
+        .cv-item:last-child { border-bottom: none; }
+        .cv-item-contact { color: #059669; font-weight: 500; }
+        .cv-item-date { margin: 5px 0 2px; }
+        .cv-date-pill {
+            display: inline-block; background: linear-gradient(135deg, #667eea22, #764ba222);
+            color: #5b48c8; font-size: 12px; font-weight: 700; padding: 2px 10px;
+            border-radius: 20px; border: 1px solid #667eea33;
+        }
+        .cv-item-org { color: #1a1a2e; font-weight: 600; }
+        .cv-item-role { color: #764ba2; font-weight: 600; font-style: italic; }
+        .cv-item-bullet { display: flex; gap: 8px; align-items: flex-start; }
+        .cv-bullet-dot { color: #667eea; font-size: 11px; margin-top: 3px; flex-shrink: 0; }
+        .cv-icon-inline { margin-right: 6px; font-size: 13px; }
+        .cv-pro-empty { padding: 30px; text-align: center; color: #999; font-size: 14px; }
+        .cv-copy-bar { text-align: center; padding: 12px 0 0; }
     </style>
 </head>
 <body>
@@ -231,24 +213,18 @@
         function loadData() {
             const saved = localStorage.getItem('kinesioCandidatesPro');
             if (saved) {
-                try {
-                    candidates = JSON.parse(saved);
-                } catch(e) {
-                    console.error('Error parsing saved data:', e);
-                    candidates = [];
-                }
+                try { candidates = JSON.parse(saved); }
+                catch(e) { console.error('Error parsing saved data:', e); candidates = []; }
             }
             updateDashboard();
             renderCandidates();
         }
 
-        function saveData() { 
-            localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates)); 
-            updateDashboard(); 
+        function saveData() {
+            localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates));
+            updateDashboard();
             renderCandidates();
-            if (document.getElementById('analyticsSection').style.display !== 'none') {
-                updateAnalyticsCharts();
-            }
+            if (document.getElementById('analyticsSection').style.display !== 'none') updateAnalyticsCharts();
         }
 
         function updateDashboard() {
@@ -259,10 +235,8 @@
             document.getElementById('entrevistadosCount').innerText = entrevistados;
             const disponibilidad = candidates.filter(c=>c.availability==='inmediata').length;
             document.getElementById('disponibilidadCount').innerText = disponibilidad;
-            
             const ciudades = new Set(candidates.map(c=>c.location).filter(l=>l));
             document.getElementById('citiesCount').innerText = ciudades.size;
-            
             const kineCount = candidates.filter(c=>c.specialty?.includes('Kinesiólogo')).length;
             const trainerCount = candidates.filter(c=>c.specialty?.includes('Entrenador')).length;
             if (specialtyChart) specialtyChart.destroy();
@@ -270,7 +244,6 @@
             if(ctx) {
                 specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Entrenadores','Ambos'], datasets:[{ data:[kineCount, trainerCount, Math.max(0,candidates.length-kineCount-trainerCount)], backgroundColor:['#667eea','#f59e0b','#10b981'] }] } });
             }
-            
             const topCandidates = [...candidates].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
             document.getElementById('topCandidatesList').innerHTML = topCandidates.map(c=>`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span><strong>${escapeHtml(c.name)}</strong><br><small>${c.specialty||''} | ${c.location || 'Ubicación no especificada'}</small></span><span style="font-weight:bold;color:#667eea;">${c.score||70}%</span></div>`).join('');
         }
@@ -297,7 +270,7 @@
                 </div>`;
             }).join('');
         }
-        
+
         function escapeHtml(text) {
             if(!text) return '';
             return text.replace(/[&<>]/g, function(m) {
@@ -308,301 +281,132 @@
             });
         }
 
-        // Función SIMPLE y EFECTIVA para formatear el CV
-        // Reemplaza la función formatearCV completa con esta versión mejorada
-function formatearCV(cvTexto) {
-    if (!cvTexto || cvTexto === 'No se guardó el texto original del CV') {
-        return `
-            <div class="cv-container">
-                <div class="cv-header">
-                    <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
-                    <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">No hay texto del CV disponible</div>
-                </div>
-                <div class="cv-section">
-                    <div class="cv-section-content" style="padding: 20px; text-align: center; color: #999;">
-                        ⚠️ El texto del CV no se guardó correctamente.<br>
-                        Por favor, vuelve a cargar el candidato.
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
-    // Función para detectar secciones
-    const secciones = {
-        perfil: ['perfil profesional', 'resumen profesional', 'sobre mí', 'perfil laboral', 'perfil', 'resumen'],
-        formacion: ['formación académica', 'formacion academica', 'educación', 'estudios', 'formación', 'titulos', 'títulos'],
-        capacitaciones: ['capacitaciones', 'cursos', 'diplomatura', 'taller', 'seminario', 'formación complementaria'],
-        experiencia: ['experiencia laboral', 'experiencia profesional', 'trayectoria', 'empleos', 'trabajos'],
-        habilidades: ['habilidades', 'aptitudes', 'competencias', 'skills', 'conocimientos'],
-        idiomas: ['idiomas', 'lenguas', 'inglés', 'portugués', 'idioma']
-    };
-    
-    let html = `
-        <div class="cv-container">
-            <div class="cv-header">
-                <div style="font-size: 20px; font-weight: bold;">📄 CURRÍCULUM VITAE</div>
-                <div style="font-size: 12px; opacity: 0.9; margin-top: 5px;">Documento original del candidato</div>
-            </div>
-    `;
-    
-    // Dividir el texto en líneas
-    const lineas = cvTexto.split(/\r?\n/);
-    let seccionActual = null;
-    let contenidoSeccion = '';
-    let primeraSeccion = true;
-    
-    // Función para detectar si una línea es un título de sección
-    function esTituloSeccion(linea) {
-        const lineaLower = linea.toLowerCase().trim();
-        // Eliminar caracteres especiales del inicio
-        const lineaLimpia = lineaLower.replace(/^[•\-*\d.\s]+/, '');
-        
-        for (let [seccion, keywords] of Object.entries(secciones)) {
-            for (let keyword of keywords) {
-                if (lineaLimpia.includes(keyword) && lineaLimpia.length < 50) {
-                    return seccion;
-                }
+        // ══════════════════════════════════════════════════════════
+        //  FUNCIÓN DE FORMATEO DE CV PROFESIONAL (VERSIÓN MEJORADA)
+        // ══════════════════════════════════════════════════════════
+        function formatearCVProfesional(texto) {
+            if (!texto || texto === 'No se guardó el texto original del CV') {
+                return `<div class="cv-pro-wrapper">
+                    <div class="cv-pro-hero"><div class="cv-pro-hero-icon">📄</div><h3>Currículum Vitae</h3><p>Documento del candidato</p></div>
+                    <div class="cv-pro-body"><div class="cv-pro-empty">⚠️ No hay texto del CV disponible</div></div>
+                </div>`;
             }
-        }
-        return null;
-    }
-    
-    // Función para obtener el ícono de la sección
-    function getIconoSeccion(seccion) {
-        const iconos = {
-            perfil: '🎯',
-            formacion: '🎓',
-            capacitaciones: '📚',
-            experiencia: '💼',
-            habilidades: '⚡',
-            idiomas: '🌐'
-        };
-        return iconos[seccion] || '📌';
-    }
-    
-    // Función para obtener el título bonito
-    function getTituloSeccion(seccion) {
-        const titulos = {
-            perfil: 'PERFIL PROFESIONAL',
-            formacion: 'FORMACIÓN ACADÉMICA',
-            capacitaciones: 'CAPACITACIONES Y CURSOS',
-            experiencia: 'EXPERIENCIA LABORAL',
-            habilidades: 'HABILIDADES Y COMPETENCIAS',
-            idiomas: 'IDIOMAS'
-        };
-        return titulos[seccion] || seccion.toUpperCase();
-    }
-    
-    // Procesar línea por línea
-    for (let linea of lineas) {
-        linea = linea.trim();
-        if (linea === '') continue;
-        
-        const tituloSeccion = esTituloSeccion(linea);
-        
-        if (tituloSeccion) {
-            // Cerrar sección anterior si existe
-            if (seccionActual && contenidoSeccion.trim()) {
-                html += `
-                    <div class="cv-section">
-                        <div class="cv-section-title">${getIconoSeccion(seccionActual)} ${getTituloSeccion(seccionActual)}</div>
-                        <div class="cv-section-content">${contenidoSeccion}</div>
-                    </div>
-                `;
-            }
-            // Iniciar nueva sección
-            seccionActual = tituloSeccion;
-            contenidoSeccion = '';
-        } else {
-            // Formatear la línea
-            let lineaFormateada = escapeHtml(linea);
-            
-            // Detectar y formatear fechas
-            if (lineaFormateada.match(/\d{4}/)) {
-                lineaFormateada = `<span style="color: #667eea; font-weight: 500;">📅 ${lineaFormateada}</span>`;
-            }
-            // Detectar nombres de empresas o instituciones (mayúsculas o con palabras clave)
-            else if (lineaFormateada === lineaFormateada.toUpperCase() && lineaFormateada.length > 5) {
-                lineaFormateada = `<strong style="color: #1a1a2e;">🏢 ${lineaFormateada}</strong>`;
-            }
-            // Detectar cargos o puestos
-            else if (lineaFormateada.toLowerCase().includes('encargado') || 
-                     lineaFormateada.toLowerCase().includes('entrenador') ||
-                     lineaFormateada.toLowerCase().includes('instructor') ||
-                     lineaFormateada.toLowerCase().includes('coordinador')) {
-                lineaFormateada = `<strong>👔 ${lineaFormateada}</strong>`;
-            }
-            // Formatear viñetas
-            else if (linea.startsWith('•') || linea.startsWith('-') || linea.match(/^\d+\./)) {
-                lineaFormateada = `<span style="display: block; margin-left: 20px; margin-bottom: 8px;">${lineaFormateada}</span>`;
-            }
-            // Detectar contacto (email, teléfono)
-            else if (lineaFormateada.includes('@') || lineaFormateada.match(/\+?\d{10,}/)) {
-                lineaFormateada = `<span style="color: #10b981;">📧 ${lineaFormateada}</span>`;
-            }
-            
-            contenidoSeccion += `<div style="margin-bottom: 8px;">${lineaFormateada}</div>`;
-        }
-    }
-    
-    // Cerrar última sección
-    if (seccionActual && contenidoSeccion.trim()) {
-        html += `
-            <div class="cv-section">
-                <div class="cv-section-title">${getIconoSeccion(seccionActual)} ${getTituloSeccion(seccionActual)}</div>
-                <div class="cv-section-content">${contenidoSeccion}</div>
-            </div>
-        `;
-    }
-    
-    // Si no se detectaron secciones, mostrar el texto completo
-    if (!html.includes('cv-section')) {
-        html += `
-            <div class="cv-section">
-                <div class="cv-section-title">📄 CV COMPLETO</div>
-                <div class="cv-section-content" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.5;">
-                    ${escapeHtml(cvTexto)}
-                </div>
-            </div>
-        `;
-    }
-    
-    html += `</div>`;
-    
-    // Agregar botón para copiar
-    html += `
-        <div style="margin-top: 15px; text-align: center;">
-            <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding: 8px 16px; font-size: 12px;">
-                📋 Copiar CV completo
-            </button>
-        </div>
-    `;
-    
-    return html;
-}
 
-// Función para copiar el CV completo (agregar al script)
-function copyCVCompleto() {
-    const c = candidates.find(c=>c.id===currentEditCandidateId);
-    if (c && c.rawCV) {
-        navigator.clipboard.writeText(c.rawCV);
-        alert('✅ CV completo copiado al portapapeles');
-    } else {
-        alert('No hay CV para copiar');
-    }
-}
-            
-            // Dividir el texto en líneas
-            const lineas = texto.split(/\r?\n/);
-            let html = `
-                <div class="cv-profesional">
-                    <div class="cv-profesional-header">
-                        <h3>📄 Currículum Vitae</h3>
-                        <p>Documento original del candidato</p>
-                    </div>
-            `;
-            
-            // Variables para organizar
-            let seccionActual = null;
-            let contenidoHTML = '';
-            let seccionesEncontradas = [];
-            
-            // Recorrer cada línea
-            for (let i = 0; i < lineas.length; i++) {
-                let linea = lineas[i].trim();
-                if (linea === '') continue;
-                
-                // Detectar títulos de sección (mayúsculas, con palabras clave)
-                const lineaUpper = linea.toUpperCase();
-                const esTitulo = (lineaUpper.includes('PERFIL') && lineaUpper.includes('PROFESIONAL')) ||
-                                 (lineaUpper.includes('FORMACIÓN') || lineaUpper.includes('FORMACION')) ||
-                                 (lineaUpper.includes('CAPACITACIÓN') || lineaUpper.includes('CAPACITACION') || lineaUpper.includes('CURSOS')) ||
-                                 (lineaUpper.includes('EXPERIENCIA') && lineaUpper.includes('LABORAL')) ||
-                                 (lineaUpper.includes('HABILIDADES') || lineaUpper.includes('APTITUDES') || lineaUpper.includes('COMPETENCIAS')) ||
-                                 (lineaUpper.includes('IDIOMAS') || lineaUpper.includes('LENGUAS'));
-                
-                if (esTitulo && linea.length < 50) {
-                    // Cerrar sección anterior
-                    if (seccionActual && contenidoHTML) {
-                        html += `
-                            <div class="cv-seccion">
-                                <div class="cv-seccion-titulo">${seccionActual}</div>
-                                <div class="cv-seccion-contenido">${contenidoHTML}</div>
-                            </div>
-                        `;
-                        seccionesEncontradas.push(seccionActual);
-                        contenidoHTML = '';
+            // Limpiar texto que viene mal del PDF (espacios raros entre letras)
+            let textoLimpio = texto
+                .replace(/([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])\s([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])/g, '$1$2')
+                .replace(/\s{3,}/g, '  ')
+                .replace(/ \. /g, '. ')
+                .replace(/ , /g, ', ')
+                .replace(/ : /g, ': ');
+
+            // Definición de secciones con emojis y palabras clave
+            const SECCIONES = [
+                { id:'perfil',       emoji:'🎯', titulo:'Perfil Profesional',        keywords:['PERFIL PROFESIONAL','PERFIL','OBJETIVO','SOBRE MÍ','SOBRE MI','PRESENTACIÓN','PRESENTACION','RESUMEN PROFESIONAL','RESUMEN'] },
+                { id:'formacion',    emoji:'🎓', titulo:'Formación Académica',        keywords:['FORMACIÓN ACADÉMICA','FORMACION ACADEMICA','EDUCACIÓN','EDUCACION','ESTUDIOS','ACADÉMICA','ACADEMICA','TITULOS','TÍTULOS','ISFD','CARRERA UNIVERSITARIA'] },
+                { id:'capacitacion', emoji:'📚', titulo:'Capacitaciones y Cursos',    keywords:['CAPACITACIÓN','CAPACITACION','CURSOS','CURSO','CERTIFICACIONES','CERTIFICADOS','POSGRADO','POSTGRADO','TALLERES','FORMACIÓN COMPLEMENTARIA','FORMACION COMPLEMENTARIA'] },
+                { id:'experiencia',  emoji:'💼', titulo:'Experiencia Laboral',         keywords:['EXPERIENCIA LABORAL','EXPERIENCIA PROFESIONAL','EXPERIENCIA','TRAYECTORIA','HISTORIAL LABORAL','EMPLEOS','TRABAJOS'] },
+                { id:'habilidades',  emoji:'⚡', titulo:'Habilidades y Competencias', keywords:['HABILIDADES','COMPETENCIAS','APTITUDES','SKILLS','DESTREZAS','CONOCIMIENTOS','HARD SKILLS','SOFT SKILLS'] },
+                { id:'idiomas',      emoji:'🌐', titulo:'Idiomas',                     keywords:['IDIOMAS','IDIOMA','LENGUAS','LANGUAGES'] },
+                { id:'contacto',     emoji:'📬', titulo:'Datos de Contacto',           keywords:['CONTACTO','DATOS PERSONALES','DATOS DE CONTACTO','INFORMACIÓN PERSONAL','INFORMACION PERSONAL'] },
+            ];
+
+            const lineas = textoLimpio.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 1);
+
+            function detectarSeccion(linea) {
+                const up = linea.toUpperCase().trim();
+                if (up.length > 60) return null;
+                for (const sec of SECCIONES) {
+                    for (const kw of sec.keywords) {
+                        if (up.includes(kw)) return sec;
                     }
-                    seccionActual = linea;
-                    continue;
                 }
-                
-                // Formatear la línea según su contenido
-                let lineaFormateada = escapeHtml(linea);
-                
-                // Detectar fechas (años)
-                if (lineaFormateada.match(/\b(19|20)\d{2}\b/)) {
-                    lineaFormateada = `<span class="cv-fecha">📅 ${lineaFormateada}</span>`;
-                }
-                // Detectar emails
-                else if (lineaFormateada.includes('@')) {
-                    lineaFormateada = `<span style="color: #10b981;">📧 ${lineaFormateada}</span>`;
-                }
-                // Detectar teléfonos
-                else if (lineaFormateada.match(/\+?\d{6,}/)) {
-                    lineaFormateada = `<span style="color: #10b981;">📞 ${lineaFormateada}</span>`;
-                }
-                // Detectar empresas o instituciones (palabras clave)
-                else if (lineaUpper.includes('ESCUELA') || lineaUpper.includes('CENTRO') || lineaUpper.includes('CLÍNICA') || 
-                         lineaUpper.includes('HOSPITAL') || lineaUpper.includes('UNIVERSIDAD') || lineaUpper.includes('INSTITUTO')) {
-                    lineaFormateada = `<span class="cv-empresa">🏢 ${lineaFormateada}</span>`;
-                }
-                // Detectar cargos
-                else if (lineaUpper.includes('ENTRENADOR') || lineaUpper.includes('KINESIÓLOGO') || lineaUpper.includes('INSTRUCTOR') ||
-                         lineaUpper.includes('DOCENTE') || lineaUpper.includes('PROFESOR') || lineaUpper.includes('ENCARGADO')) {
-                    lineaFormateada = `<span class="cv-cargo">👔 ${lineaFormateada}</span>`;
-                }
-                // Detectar viñetas
-                else if (linea.startsWith('•') || linea.startsWith('-') || linea.startsWith('*') || linea.match(/^\d+\./)) {
-                    lineaFormateada = `<span class="cv-bullet">${lineaFormateada}</span>`;
-                }
-                
-                contenidoHTML += `<div class="cv-linea">${lineaFormateada}</div>`;
+                return null;
             }
-            
-            // Cerrar última sección
-            if (seccionActual && contenidoHTML) {
-                html += `
-                    <div class="cv-seccion">
-                        <div class="cv-seccion-titulo">${seccionActual}</div>
-                        <div class="cv-seccion-contenido">${contenidoHTML}</div>
-                    </div>
-                `;
-            } else if (contenidoHTML && seccionesEncontradas.length === 0) {
-                // Si no se detectaron secciones, mostrar todo el texto
-                html += `
-                    <div class="cv-seccion">
-                        <div class="cv-seccion-titulo">📄 CURRÍCULUM VITAE</div>
-                        <div class="cv-seccion-contenido">${contenidoHTML}</div>
-                    </div>
-                `;
+
+            // Agrupar líneas en secciones
+            let seccionActual = null;
+            const grupos = [];
+            for (const linea of lineas) {
+                const sec = detectarSeccion(linea);
+                if (sec) {
+                    seccionActual = { seccion: sec, lineas: [] };
+                    grupos.push(seccionActual);
+                } else {
+                    if (!seccionActual) {
+                        // Líneas sin sección → van a "Perfil" por defecto
+                        seccionActual = { seccion: SECCIONES[0], lineas: [] };
+                        grupos.push(seccionActual);
+                    }
+                    seccionActual.lineas.push(linea);
+                }
             }
-            
-            html += `</div>`;
-            
-            // Agregar botón para copiar
-            html += `
-                <div style="margin-top: 15px; text-align: center;">
-                    <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding: 8px 16px; font-size: 12px;">
-                        📋 Copiar CV completo
-                    </button>
+
+            // Renderizar cada línea con detección de tipo
+            function renderLinea(linea) {
+                const esc = escapeHtml(linea);
+                if (/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(linea))
+                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📧</span>${esc}</div>`;
+                if (/\+?\d[\d\s\-\(\)]{6,}/.test(linea) && !linea.match(/\b(19|20)\d{2}\b/))
+                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📞</span>${esc}</div>`;
+                if (/\b(19|20)\d{2}\b/.test(linea))
+                    return `<div class="cv-item cv-item-date"><span class="cv-date-pill">📅 ${esc}</span></div>`;
+                if (/(ESCUELA|CENTRO|CLÍNICA|CLINICA|HOSPITAL|UNIVERSIDAD|INSTITUTO|ISFD|CEAL|UBA|UTN|MEGATLON|FITER|FITONE)/i.test(linea))
+                    return `<div class="cv-item cv-item-org"><span class="cv-icon-inline">🏢</span>${esc}</div>`;
+                if (/(ENTRENADOR|KINESIÓLOGO|KINESIÓLOGA|KINESIOLOGA|INSTRUCTOR|DOCENTE|PROFESORA|PROFESOR|ENCARGADO|COORDINADOR|PRECEPTORA|FISIOTERAPEUTA)/i.test(linea))
+                    return `<div class="cv-item cv-item-role"><span class="cv-icon-inline">👤</span>${esc}</div>`;
+                if (/^[•\-\*]/.test(linea) || /^\d+\./.test(linea))
+                    return `<div class="cv-item cv-item-bullet"><span class="cv-bullet-dot">▸</span>${esc.replace(/^[•\-\*\d\.]\s*/, '')}</div>`;
+                return `<div class="cv-item">${esc}</div>`;
+            }
+
+            // Obtener nombre del candidato para el header
+            const candidatoActual = candidates.find(c => c.id === currentEditCandidateId);
+            const nombreCandidato = candidatoActual ? candidatoActual.name : 'Candidato';
+
+            let html = `<div class="cv-pro-wrapper">
+                <div class="cv-pro-hero">
+                    <div class="cv-pro-hero-icon">📄</div>
+                    <h3>Currículum Vitae</h3>
+                    <div class="cv-hero-name">${escapeHtml(nombreCandidato)}</div>
+                    <p>Documento original del candidato</p>
                 </div>
-            `;
-            
+                <div class="cv-pro-body">`;
+
+            if (grupos.length === 0) {
+                html += `<div class="cv-pro-empty">No se pudo procesar el contenido del CV.</div>`;
+            } else {
+                grupos.forEach((grupo, idx) => {
+                    if (grupo.lineas.length === 0) return;
+                    const sec = grupo.seccion;
+                    const lineasHTML = grupo.lineas.map(renderLinea).join('');
+                    html += `<div class="cv-sec" id="cvSec_${idx}">
+                        <div class="cv-sec-header" onclick="toggleCVSec(${idx})">
+                            <span class="cv-sec-emoji">${sec.emoji}</span>
+                            <span class="cv-sec-title">${sec.titulo}</span>
+                            <span class="cv-sec-count">${grupo.lineas.length}</span>
+                            <span class="cv-sec-arrow">▼</span>
+                        </div>
+                        <div class="cv-sec-body">${lineasHTML}</div>
+                    </div>`;
+                });
+            }
+
+            html += `</div></div>
+            <div class="cv-copy-bar">
+                <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding:8px 18px;font-size:12px;">
+                    📋 Copiar CV completo
+                </button>
+            </div>`;
+
             return html;
         }
-        
+
+        function toggleCVSec(idx) {
+            const el = document.getElementById('cvSec_' + idx);
+            if (el) el.classList.toggle('collapsed');
+        }
+
         function copyCVCompleto() {
             const c = candidates.find(c=>c.id===currentEditCandidateId);
             if (c && c.rawCV) {
@@ -612,20 +416,20 @@ function copyCVCompleto() {
                 alert('No hay CV para copiar');
             }
         }
+        // ══════════════════════════════════════════════════════════
 
         function openCandidateDetail(id) {
             currentEditCandidateId = id;
             const c = candidates.find(c=>c.id===id);
             if (!c) return;
             document.getElementById('modalTitle').innerHTML = `📋 ${escapeHtml(c.name)}`;
-            
+
             document.getElementById('tabInfo').innerHTML = `
                 <form id="editForm">
                     <div class="form-group"><label>Nombre completo</label><input type="text" id="editName" value="${escapeHtml(c.name || '')}"></div>
                     <div class="form-group"><label>Especialidad principal</label><input type="text" id="editSpecialty" value="${escapeHtml(c.specialty || '')}"></div>
                     <div class="form-group"><label>Años de experiencia</label><input type="number" id="editExperience" value="${c.experience || 0}"></div>
                     <div class="form-group"><label>Ubicación (Ciudad, Provincia)</label><input type="text" id="editLocation" value="${escapeHtml(c.location || '')}" placeholder="Ej: Villa Unión, La Rioja"></div>
-                    
                     <h3>🎯 Desglose del Score</h3>
                     <div class="score-breakdown">
                         <div class="score-item"><div class="label">Técnico</div><div class="value">${c.scoreBreakdown?.tecnico || Math.floor((c.score||70)*0.4)}%</div></div>
@@ -634,20 +438,17 @@ function copyCVCompleto() {
                         <div class="score-item"><div class="label">Herramientas</div><div class="value">${c.scoreBreakdown?.herramientas || Math.floor((c.score||70)*0.15)}%</div></div>
                     </div>
                     <div class="form-group"><label>Score Total (0-100)</label><input type="range" id="editScore" min="0" max="100" value="${c.score || 70}" oninput="document.getElementById('scoreValue').innerText=this.value"><span id="scoreValue">${c.score || 70}</span></div>
-                    
                     <div class="form-group"><label>Hard Skills (separar por comas)</label><input type="text" id="editHardSkills" value="${(c.hardSkills || []).join(', ')}"></div>
                     <div class="form-group"><label>Soft Skills (separar por comas)</label><input type="text" id="editSoftSkills" value="${(c.softSkills || []).join(', ')}"></div>
                     <div class="form-group"><label>Tecnologías/Herramientas</label><input type="text" id="editTechnologies" value="${(c.technologies || []).join(', ')}"></div>
-                    
-                    <div class="form-group"><label>Estado del proceso</label><select id="editStatus"><option value="pendiente" ${c.status==='pendiente' ? 'selected' : ''}>Pendiente</option><option value="entrevistado" ${c.status==='entrevistado' ? 'selected' : ''}>Entrevistado</option><option value="contratado" ${c.status==='contratado' ? 'selected' : ''}>Contratado</option><option value="descartado" ${c.status==='descartado' ? 'selected' : ''}>Descartado</option></select></div>
-                    <div class="form-group"><label>Disponibilidad</label><select id="editAvailability"><option value="">Seleccionar</option><option value="inmediata" ${c.availability==='inmediata' ? 'selected' : ''}>Inmediata</option><option value="15 dias" ${c.availability==='15 dias' ? 'selected' : ''}>15 días</option><option value="30 dias" ${c.availability==='30 dias' ? 'selected' : ''}>30 días</option></select></div>
+                    <div class="form-group"><label>Estado del proceso</label><select id="editStatus"><option value="pendiente" ${c.status==='pendiente'?'selected':''}>Pendiente</option><option value="entrevistado" ${c.status==='entrevistado'?'selected':''}>Entrevistado</option><option value="contratado" ${c.status==='contratado'?'selected':''}>Contratado</option><option value="descartado" ${c.status==='descartado'?'selected':''}>Descartado</option></select></div>
+                    <div class="form-group"><label>Disponibilidad</label><select id="editAvailability"><option value="">Seleccionar</option><option value="inmediata" ${c.availability==='inmediata'?'selected':''}>Inmediata</option><option value="15 dias" ${c.availability==='15 dias'?'selected':''}>15 días</option><option value="30 dias" ${c.availability==='30 dias'?'selected':''}>30 días</option></select></div>
                     <div class="form-group"><label>Info adicional (pareja, hijos, reubicación)</label><textarea id="editPersonalInfo" rows="2">${escapeHtml(c.personalInfo || '')}</textarea></div>
-                </form>
-            `;
-            
+                </form>`;
+
             const preguntasTecnicas = generarPreguntasSegunSkills(c.hardSkills || [], c.specialty);
             const preguntasSituacionales = generarPreguntasSituacionales(c.softSkills || []);
-            
+
             document.getElementById('tabInterview').innerHTML = `
                 <h3>🎤 Preguntas sugeridas para la entrevista</h3>
                 <div style="margin-bottom:20px;">
@@ -660,23 +461,19 @@ function copyCVCompleto() {
                 </div>
                 <hr style="margin:20px 0;">
                 <h4>✅ Checklist de seguimiento</h4>
-                <div><input type="checkbox" id="checkCV" ${c.checkCV ? 'checked' : ''}> CV revisado</div>
-                <div><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall ? 'checked' : ''}> Video llamada <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}"></div>
-                <div><input type="checkbox" id="checkTechnical" ${c.checkTechnical ? 'checked' : ''}> Entrevista técnica <input type="date" id="technicalDate" value="${c.technicalDate || ''}"></div>
-                <div><input type="checkbox" id="checkHR" ${c.checkHR ? 'checked' : ''}> Entrevista RRHH <input type="date" id="hrDate" value="${c.hrDate || ''}"></div>
-                <div><input type="checkbox" id="checkOffer" ${c.checkOffer ? 'checked' : ''}> Oferta enviada</div>
-                
+                <div><input type="checkbox" id="checkCV" ${c.checkCV?'checked':''}> CV revisado</div>
+                <div><input type="checkbox" id="checkVideoCall" ${c.checkVideoCall?'checked':''}> Video llamada <input type="date" id="videoCallDate" value="${c.videoCallDate || ''}"></div>
+                <div><input type="checkbox" id="checkTechnical" ${c.checkTechnical?'checked':''}> Entrevista técnica <input type="date" id="technicalDate" value="${c.technicalDate || ''}"></div>
+                <div><input type="checkbox" id="checkHR" ${c.checkHR?'checked':''}> Entrevista RRHH <input type="date" id="hrDate" value="${c.hrDate || ''}"></div>
+                <div><input type="checkbox" id="checkOffer" ${c.checkOffer?'checked':''}> Oferta enviada</div>
                 <h4 style="margin-top:20px;">📝 Notas de entrevista</h4>
                 <textarea id="interviewNotes" rows="4" placeholder="Ej: Tiene pareja, busca full-time, disponible en 15 días..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;">${escapeHtml(c.interviewNotes || '')}</textarea>
-                <div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="${c.nextContact || ''}" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;"></div>
-            `;
-            
-            // Usar la nueva función de formateo profesional
+                <div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="${c.nextContact || ''}" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:10px;"></div>`;
+
             document.getElementById('tabCV').innerHTML = formatearCVProfesional(c.rawCV);
-            
             document.getElementById('candidateModal').style.display = 'flex';
         }
-        
+
         function deleteCurrentCandidate() {
             if(confirm('¿Estás seguro de que querés eliminar este candidato? Esta acción no se puede deshacer.')) {
                 const index = candidates.findIndex(c => c.id === currentEditCandidateId);
@@ -688,7 +485,7 @@ function copyCVCompleto() {
                 }
             }
         }
-        
+
         function generarPreguntasSegunSkills(hardSkills, specialty) {
             const preguntas = [];
             if (hardSkills.some(s=>s.toLowerCase().includes('rehabilitación') || s.toLowerCase().includes('kinesiologia'))) {
@@ -712,7 +509,7 @@ function copyCVCompleto() {
             }
             return preguntas.slice(0,4);
         }
-        
+
         function generarPreguntasSituacionales(softSkills) {
             return [
                 'Cuénteme de una situación donde un paciente no seguía el tratamiento indicado. ¿Cómo lo manejó?',
@@ -721,7 +518,7 @@ function copyCVCompleto() {
                 'Describa una situación donde tuvo que trabajar en equipo con otro profesional de la salud. ¿Cuál fue su rol?'
             ];
         }
-        
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
@@ -729,7 +526,7 @@ function copyCVCompleto() {
             if (tab === 'interview') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('tabInterview').classList.add('active'); }
             if (tab === 'cv') { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tabCV').classList.add('active'); }
         }
-        
+
         function saveCurrentCandidate() {
             const c = candidates.find(c=>c.id===currentEditCandidateId);
             if (!c) return;
@@ -758,10 +555,10 @@ function copyCVCompleto() {
             alert('✅ Cambios guardados');
             closeModal();
         }
-        
+
         function closeModal() { document.getElementById('candidateModal').style.display = 'none'; currentEditCandidateId = null; }
         function resetFilters() { document.getElementById('searchFilter').value = ''; document.getElementById('specialtyFilter').value = ''; document.getElementById('statusFilter').value = ''; renderCandidates(); }
-        
+
         function limpiarRespuestaAI(text) {
             let cleaned = text.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
             cleaned = cleaned.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -775,17 +572,15 @@ function copyCVCompleto() {
             jsonStr = jsonStr.replace(/'/g, '"');
             return JSON.parse(jsonStr);
         }
-        
+
         function extraerUbicacion(texto) {
             const provincias = ['Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'];
-            for(let provincia of provincias) {
-                if(texto.includes(provincia)) return provincia;
-            }
+            for(let provincia of provincias) { if(texto.includes(provincia)) return provincia; }
             const ciudadMatch = texto.match(/(?:Villa|San|Santa|Ciudad|Mar del|La|El|Los|Las)\s+[A-Z][a-z]+/);
             if(ciudadMatch) return ciudadMatch[0];
             return 'No especificada';
         }
-        
+
         async function analyzeCVWithGroq() {
             const cvText = document.getElementById('cvTextInput').value.trim();
             if (!cvText) { alert('Pega el texto del CV'); return; }
@@ -820,13 +615,13 @@ function copyCVCompleto() {
                 alert(`✅ Candidato agregado: ${candidate.name}\n📍 Ubicación: ${candidate.location}\nScore: ${candidate.score}%`);
                 document.getElementById('cvTextInput').value = '';
                 showSection('candidates');
-            } catch(e) { 
+            } catch(e) {
                 console.error('Error:', e);
-                alert('Error al analizar: ' + e.message); 
+                alert('Error al analizar: ' + e.message);
             }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
-        
+
         async function handleFileUpload(file) {
             if (!file) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -846,7 +641,7 @@ function copyCVCompleto() {
             } catch(e) { alert('Error al leer archivo: ' + e.message); }
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
-        
+
         function exportToExcel() {
             const data = candidates.map(c=>({
                 Nombre: c.name, Especialidad: c.specialty, Ubicación: c.location, Score: c.score+'%',
@@ -859,43 +654,32 @@ function copyCVCompleto() {
             XLSX.utils.book_append_sheet(wb, ws, 'Candidatos');
             XLSX.writeFile(wb, `talentos_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
-        
+
         function updateAnalyticsCharts() {
             const allSkills = {};
             candidates.forEach(c => (c.hardSkills||[]).forEach(s=>allSkills[s]=(allSkills[s]||0)+1));
             const sorted = Object.entries(allSkills).sort((a,b)=>b[1]-a[1]).slice(0,10);
             if (skillsChart) skillsChart.destroy();
             const ctxSkills = document.getElementById('skillsChart')?.getContext('2d');
-            if(ctxSkills) {
-                skillsChart = new Chart(ctxSkills, { type:'bar', data:{ labels:sorted.map(s=>s[0]), datasets:[{ label:'Candidatos con esta habilidad', data:sorted.map(s=>s[1]), backgroundColor:'#667eea' }] } });
-            }
-            
+            if(ctxSkills) skillsChart = new Chart(ctxSkills, { type:'bar', data:{ labels:sorted.map(s=>s[0]), datasets:[{ label:'Candidatos con esta habilidad', data:sorted.map(s=>s[1]), backgroundColor:'#667eea' }] } });
             const locations = {};
             candidates.forEach(c => { if(c.location && c.location !== 'No especificada') locations[c.location] = (locations[c.location]||0)+1; });
             const locData = Object.entries(locations).sort((a,b)=>b[1]-a[1]).slice(0,6);
             if (locationChart) locationChart.destroy();
             const ctxLoc = document.getElementById('locationChart')?.getContext('2d');
-            if(ctxLoc) {
-                locationChart = new Chart(ctxLoc, { type:'pie', data:{ labels:locData.map(l=>l[0]), datasets:[{ data:locData.map(l=>l[1]), backgroundColor:['#667eea','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899'] }] } });
-            }
-            
+            if(ctxLoc) locationChart = new Chart(ctxLoc, { type:'pie', data:{ labels:locData.map(l=>l[0]), datasets:[{ data:locData.map(l=>l[1]), backgroundColor:['#667eea','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899'] }] } });
             const stats = { pendiente:0, entrevistado:0, contratado:0, descartado:0 };
             candidates.forEach(c=>stats[c.status]=(stats[c.status]||0)+1);
             if (statusChart) statusChart.destroy();
             const ctxStatus = document.getElementById('statusChart')?.getContext('2d');
-            if(ctxStatus) {
-                statusChart = new Chart(ctxStatus, { type:'doughnut', data:{ labels:['Pendiente','Entrevistado','Contratado','Descartado'], datasets:[{ data:[stats.pendiente,stats.entrevistado,stats.contratado,stats.descartado], backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444'] }] } });
-            }
-            
+            if(ctxStatus) statusChart = new Chart(ctxStatus, { type:'doughnut', data:{ labels:['Pendiente','Entrevistado','Contratado','Descartado'], datasets:[{ data:[stats.pendiente,stats.entrevistado,stats.contratado,stats.descartado], backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444'] }] } });
             const last30Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toLocaleDateString(); }).reverse();
             const dailyCounts = last30Days.map(date => candidates.filter(c => c.date?.includes(date.split(',')[0])).length);
             if (trendChart) trendChart.destroy();
             const ctxTrend = document.getElementById('trendChart')?.getContext('2d');
-            if(ctxTrend) {
-                trendChart = new Chart(ctxTrend, { type:'line', data:{ labels:last30Days, datasets:[{ label:'CVs evaluados', data:dailyCounts, borderColor:'#10b981', tension:0.3, fill:true }] } });
-            }
+            if(ctxTrend) trendChart = new Chart(ctxTrend, { type:'line', data:{ labels:last30Days, datasets:[{ label:'CVs evaluados', data:dailyCounts, borderColor:'#10b981', tension:0.3, fill:true }] } });
         }
-        
+
         function showSection(section) {
             document.getElementById('dashboardSection').style.display = section==='dashboard'?'block':'none';
             document.getElementById('candidatesSection').style.display = section==='candidates'?'block':'none';
@@ -904,7 +688,7 @@ function copyCVCompleto() {
             if(section==='analytics') updateAnalyticsCharts();
             document.querySelectorAll('.nav-item').forEach((item,i)=>{ item.classList.remove('active'); if((section==='dashboard'&&i===0)||(section==='candidates'&&i===1)||(section==='upload'&&i===2)||(section==='analytics'&&i===3)) item.classList.add('active'); });
         }
-        
+
         document.getElementById('searchFilter')?.addEventListener('input',()=>renderCandidates());
         document.getElementById('specialtyFilter')?.addEventListener('change',()=>renderCandidates());
         document.getElementById('statusFilter')?.addEventListener('change',()=>renderCandidates());
