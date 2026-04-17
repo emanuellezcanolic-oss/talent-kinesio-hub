@@ -334,9 +334,15 @@
             if (!texto || texto.length < 20) {
                 return hero + '<div class="cvv-body"><div class="cvv-error">No hay texto de CV disponible.</div></div></div>';
             }
+            // 1. Check if already parsed and saved in the candidate object (Firebase)
+            if (cand && cand.cvParsedHTML) {
+                return hero + cand.cvParsedHTML + '</div>';
+            }
+            // 2. Check in-memory cache (same session)
             if (cvCacheId === currentEditCandidateId && cvCacheHTML) {
                 return hero + cvCacheHTML + '</div>';
             }
+            // 3. Call Groq to parse for the first time
             setTimeout(function(){ parsearCVConGroq(texto, currentEditCandidateId); }, 80);
             return hero + '<div class="cvv-loading"><div class="cvv-spinner"></div><span>La IA est\u00e1 estructurando el CV...</span></div></div>';
         }
@@ -357,6 +363,16 @@
                 var html = renderCVParsed(parsed);
                 cvCacheId = candId;
                 cvCacheHTML = html;
+                // Save parsed HTML into the candidate so it never re-generates
+                var candObj = candidates.find(function(x){ return x.id === candId; });
+                if (candObj) {
+                    candObj.cvParsedHTML = html;
+                    // Persist to Firebase silently
+                    if (window._fbReady) {
+                        window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(candId)), candObj)
+                            .catch(function(e){ console.error('cv save err', e); });
+                    }
+                }
                 if (currentEditCandidateId === candId) {
                     var tab = document.getElementById('tabCV');
                     if (tab && tab.classList.contains('active')) {
