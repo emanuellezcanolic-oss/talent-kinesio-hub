@@ -72,53 +72,170 @@
         .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
         .analytics-card { background: #f8f9fa; border-radius: 16px; padding: 20px; }
 
-        /* ── CV PRO STYLES ── */
-        .cv-pro-wrapper { font-family: 'Georgia', 'Times New Roman', serif; max-width: 100%; }
+        /* ── CV PRO STYLES v3 ── */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        .cv-pro-wrapper { font-family: 'Inter', sans-serif; max-width: 100%; background: #f8f9fc; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+
+        /* HEADER */
         .cv-pro-hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #16213e 100%);
-            color: white; padding: 28px 25px; border-radius: 16px 16px 0 0;
-            text-align: center; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: white; padding: 36px 30px 30px; text-align: center; position: relative; overflow: hidden;
         }
         .cv-pro-hero::before {
-            content: ''; position: absolute; top: -40px; right: -40px;
-            width: 150px; height: 150px; background: rgba(102,126,234,0.2); border-radius: 50%;
+            content: ''; position: absolute; top: -60px; right: -60px;
+            width: 220px; height: 220px; background: rgba(102,126,234,0.15); border-radius: 50%;
         }
-        .cv-pro-hero-icon { font-size: 34px; margin-bottom: 8px; }
-        .cv-pro-hero h3 { font-size: 20px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
-        .cv-hero-name { font-size: 15px; opacity: 0.85; font-style: italic; }
-        .cv-pro-hero p { font-size: 11px; opacity: 0.55; margin-top: 4px; }
-        .cv-pro-body { background: #fff; border-radius: 0 0 16px 16px; border: 1px solid #e5e7eb; border-top: none; padding: 6px 0 14px; }
-        .cv-sec { border-bottom: 1px solid #f3f4f6; }
-        .cv-sec:last-child { border-bottom: none; }
+        .cv-pro-hero::after {
+            content: ''; position: absolute; bottom: -40px; left: -40px;
+            width: 160px; height: 160px; background: rgba(118,75,162,0.12); border-radius: 50%;
+        }
+        .cv-hero-avatar {
+            width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; margin: 0 auto 14px; border: 2px solid rgba(255,255,255,0.2);
+            position: relative; z-index: 1;
+        }
+        .cv-pro-hero h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 22px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;
+            position: relative; z-index: 1;
+        }
+        .cv-hero-name {
+            font-size: 13px; opacity: 0.75; font-weight: 300; letter-spacing: 0.5px;
+            position: relative; z-index: 1;
+        }
+        .cv-hero-specialty {
+            display: inline-block; margin-top: 10px; padding: 4px 14px;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+            position: relative; z-index: 1;
+        }
+
+        /* BODY */
+        .cv-pro-body { background: #f8f9fc; padding: 8px 0 20px; }
+
+        /* SECTION */
+        .cv-sec {
+            margin: 12px 18px 0;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        .cv-sec:hover { box-shadow: 0 4px 16px rgba(102,126,234,0.12); }
+
         .cv-sec-header {
-            display: flex; align-items: center; gap: 10px;
-            padding: 13px 18px 10px; cursor: pointer; user-select: none; transition: background 0.15s;
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; cursor: pointer; user-select: none;
+            background: white; transition: background 0.15s;
+            border-left: 4px solid transparent;
         }
         .cv-sec-header:hover { background: #fafbff; }
-        .cv-sec-emoji { font-size: 17px; }
-        .cv-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #667eea; flex: 1; }
-        .cv-sec-count { font-size: 11px; color: #aaa; background: #f3f4f6; padding: 2px 7px; border-radius: 10px; }
-        .cv-sec-arrow { font-size: 11px; color: #ccc; transition: transform 0.2s; }
-        .cv-sec.collapsed .cv-sec-arrow { transform: rotate(-90deg); }
-        .cv-sec-body { padding: 2px 18px 12px 28px; animation: cvFadeIn 0.2s ease; }
-        .cv-sec.collapsed .cv-sec-body { display: none; }
-        @keyframes cvFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
-        .cv-item { font-size: 13px; color: #374151; padding: 4px 0; line-height: 1.55; border-bottom: 1px dashed #f3f4f6; }
-        .cv-item:last-child { border-bottom: none; }
-        .cv-item-contact { color: #059669; font-weight: 500; }
-        .cv-item-date { margin: 5px 0 2px; }
-        .cv-date-pill {
-            display: inline-block; background: linear-gradient(135deg, #667eea22, #764ba222);
-            color: #5b48c8; font-size: 12px; font-weight: 700; padding: 2px 10px;
-            border-radius: 20px; border: 1px solid #667eea33;
+
+        .cv-sec[data-id="perfil"] .cv-sec-header { border-left-color: #667eea; }
+        .cv-sec[data-id="experiencia"] .cv-sec-header { border-left-color: #f59e0b; }
+        .cv-sec[data-id="formacion"] .cv-sec-header { border-left-color: #10b981; }
+        .cv-sec[data-id="capacitacion"] .cv-sec-header { border-left-color: #8b5cf6; }
+        .cv-sec[data-id="habilidades"] .cv-sec-header { border-left-color: #ef4444; }
+        .cv-sec[data-id="idiomas"] .cv-sec-header { border-left-color: #06b6d4; }
+        .cv-sec[data-id="contacto"] .cv-sec-header { border-left-color: #84cc16; }
+
+        .cv-sec-emoji-wrap {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
         }
-        .cv-item-org { color: #1a1a2e; font-weight: 600; }
-        .cv-item-role { color: #764ba2; font-weight: 600; font-style: italic; }
-        .cv-item-bullet { display: flex; gap: 8px; align-items: flex-start; }
-        .cv-bullet-dot { color: #667eea; font-size: 11px; margin-top: 3px; flex-shrink: 0; }
-        .cv-icon-inline { margin-right: 6px; font-size: 13px; }
-        .cv-pro-empty { padding: 30px; text-align: center; color: #999; font-size: 14px; }
-        .cv-copy-bar { text-align: center; padding: 12px 0 0; }
+        .cv-sec[data-id="perfil"] .cv-sec-emoji-wrap { background: #eef2ff; }
+        .cv-sec[data-id="experiencia"] .cv-sec-emoji-wrap { background: #fffbeb; }
+        .cv-sec[data-id="formacion"] .cv-sec-emoji-wrap { background: #ecfdf5; }
+        .cv-sec[data-id="capacitacion"] .cv-sec-emoji-wrap { background: #f5f3ff; }
+        .cv-sec[data-id="habilidades"] .cv-sec-emoji-wrap { background: #fef2f2; }
+        .cv-sec[data-id="idiomas"] .cv-sec-emoji-wrap { background: #ecfeff; }
+        .cv-sec[data-id="contacto"] .cv-sec-emoji-wrap { background: #f7fee7; }
+
+        .cv-sec-info { flex: 1; }
+        .cv-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #1a1a2e; }
+        .cv-sec-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+        .cv-sec-count {
+            font-size: 11px; color: #667eea; background: #eef2ff;
+            padding: 2px 8px; border-radius: 12px; font-weight: 600;
+        }
+        .cv-sec-arrow { font-size: 10px; color: #d1d5db; transition: transform 0.25s; margin-left: 4px; }
+        .cv-sec.collapsed .cv-sec-arrow { transform: rotate(-90deg); }
+
+        /* SECTION BODY */
+        .cv-sec-body { padding: 0 18px 16px 18px; animation: cvFadeIn 0.2s ease; }
+        .cv-sec.collapsed .cv-sec-body { display: none; }
+        @keyframes cvFadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ITEMS */
+        .cv-item { font-size: 13px; color: #4b5563; padding: 7px 0; line-height: 1.6; border-bottom: 1px solid #f3f4f6; }
+        .cv-item:last-child { border-bottom: none; }
+
+        .cv-item-contact {
+            display: flex; align-items: center; gap: 8px;
+            color: #059669; font-weight: 500; font-size: 13px;
+        }
+        .cv-contact-icon {
+            width: 26px; height: 26px; border-radius: 8px; background: #ecfdf5;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
+        }
+
+        .cv-item-date {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            color: #5b48c8; font-size: 12px; font-weight: 600; padding: 4px 12px;
+            border-radius: 20px; border: 1px solid #667eea25; margin: 4px 0;
+        }
+
+        .cv-item-org {
+            display: flex; align-items: flex-start; gap: 8px;
+            color: #1a1a2e; font-weight: 700; font-size: 13px;
+        }
+        .cv-org-badge {
+            width: 26px; height: 26px; border-radius: 8px; background: #f0f2f5;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px;
+        }
+
+        .cv-item-role {
+            display: flex; align-items: center; gap: 8px;
+            color: #764ba2; font-weight: 600; font-size: 13px; font-style: italic;
+        }
+        .cv-role-dot { width: 8px; height: 8px; border-radius: 50%; background: #764ba2; flex-shrink: 0; }
+
+        .cv-item-bullet { display: flex; gap: 10px; align-items: flex-start; }
+        .cv-bullet-dot {
+            width: 6px; height: 6px; border-radius: 50%; background: #667eea;
+            flex-shrink: 0; margin-top: 7px;
+        }
+
+        /* SKILLS TAGS (for habilidades section) */
+        .cv-skills-cloud { display: flex; flex-wrap: wrap; gap: 7px; padding: 8px 0 4px; }
+        .cv-skill-pill {
+            font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
+            background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe;
+        }
+
+        /* EMPTY */
+        .cv-pro-empty { padding: 40px; text-align: center; color: #9ca3af; font-size: 14px; }
+
+        /* FOOTER */
+        .cv-pro-footer {
+            margin: 16px 18px 0;
+            padding: 14px 18px;
+            background: white; border-radius: 14px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+        }
+        .cv-footer-label { font-size: 11px; color: #9ca3af; }
+        .cv-copy-btn {
+            padding: 7px 16px; border-radius: 10px; border: 1px solid #e5e7eb;
+            background: white; font-size: 12px; cursor: pointer; font-weight: 500;
+            color: #374151; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .cv-copy-btn:hover { background: #f9fafb; border-color: #667eea; color: #667eea; }
     </style>
 </head>
 <body>
@@ -282,40 +399,54 @@
         }
 
         // ══════════════════════════════════════════════════════════
-        //  FUNCIÓN DE FORMATEO DE CV PROFESIONAL (VERSIÓN MEJORADA)
+        //  CV PRO v3 - DISEÑO PROFESIONAL CON SMART PARSING
         // ══════════════════════════════════════════════════════════
         function formatearCVProfesional(texto) {
+            const candidatoActual = candidates.find(c => c.id === currentEditCandidateId);
+            const nombreCandidato = candidatoActual ? candidatoActual.name : 'Candidato';
+            const especialidad = candidatoActual ? (candidatoActual.specialty || '') : '';
+
             if (!texto || texto === 'No se guardó el texto original del CV') {
                 return `<div class="cv-pro-wrapper">
-                    <div class="cv-pro-hero"><div class="cv-pro-hero-icon">📄</div><h3>Currículum Vitae</h3><p>Documento del candidato</p></div>
+                    <div class="cv-pro-hero">
+                        <div class="cv-hero-avatar">📄</div>
+                        <h3>Currículum Vitae</h3>
+                        <div class="cv-hero-name">${escapeHtml(nombreCandidato)}</div>
+                    </div>
                     <div class="cv-pro-body"><div class="cv-pro-empty">⚠️ No hay texto del CV disponible</div></div>
                 </div>`;
             }
 
-            // Limpiar texto que viene mal del PDF (espacios raros entre letras)
-            let textoLimpio = texto
-                .replace(/([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])\s([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])/g, '$1$2')
-                .replace(/\s{3,}/g, '  ')
-                .replace(/ \. /g, '. ')
-                .replace(/ , /g, ', ')
-                .replace(/ : /g, ': ');
+            // ── SMART TEXT CLEANER ──
+            // El problema: PDFs exportan "CarlosAlberto" en vez de "Carlos Alberto"
+            // Estrategia: insertar salto donde cambia minúscula→mayúscula (excepto siglas)
+            function limpiarTexto(t) {
+                // Separar palabras pegadas: minúscula seguida de mayúscula
+                t = t.replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2');
+                // Separar números pegados a texto
+                t = t.replace(/([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])(\d{4,})/g, '$1 $2');
+                t = t.replace(/(\d{4,})([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])/g, '$1 $2');
+                // Limpiar espacios múltiples
+                t = t.replace(/[ 	]{2,}/g, ' ');
+                // Limpiar puntuación con espacios
+                t = t.replace(/ \. /g, '. ').replace(/ , /g, ', ').replace(/ : /g, ': ');
+                return t.trim();
+            }
 
-            // Definición de secciones con emojis y palabras clave
+            // ── SECCIONES ──
             const SECCIONES = [
-                { id:'perfil',       emoji:'🎯', titulo:'Perfil Profesional',        keywords:['PERFIL PROFESIONAL','PERFIL','OBJETIVO','SOBRE MÍ','SOBRE MI','PRESENTACIÓN','PRESENTACION','RESUMEN PROFESIONAL','RESUMEN'] },
-                { id:'formacion',    emoji:'🎓', titulo:'Formación Académica',        keywords:['FORMACIÓN ACADÉMICA','FORMACION ACADEMICA','EDUCACIÓN','EDUCACION','ESTUDIOS','ACADÉMICA','ACADEMICA','TITULOS','TÍTULOS','ISFD','CARRERA UNIVERSITARIA'] },
-                { id:'capacitacion', emoji:'📚', titulo:'Capacitaciones y Cursos',    keywords:['CAPACITACIÓN','CAPACITACION','CURSOS','CURSO','CERTIFICACIONES','CERTIFICADOS','POSGRADO','POSTGRADO','TALLERES','FORMACIÓN COMPLEMENTARIA','FORMACION COMPLEMENTARIA'] },
-                { id:'experiencia',  emoji:'💼', titulo:'Experiencia Laboral',         keywords:['EXPERIENCIA LABORAL','EXPERIENCIA PROFESIONAL','EXPERIENCIA','TRAYECTORIA','HISTORIAL LABORAL','EMPLEOS','TRABAJOS'] },
-                { id:'habilidades',  emoji:'⚡', titulo:'Habilidades y Competencias', keywords:['HABILIDADES','COMPETENCIAS','APTITUDES','SKILLS','DESTREZAS','CONOCIMIENTOS','HARD SKILLS','SOFT SKILLS'] },
-                { id:'idiomas',      emoji:'🌐', titulo:'Idiomas',                     keywords:['IDIOMAS','IDIOMA','LENGUAS','LANGUAGES'] },
-                { id:'contacto',     emoji:'📬', titulo:'Datos de Contacto',           keywords:['CONTACTO','DATOS PERSONALES','DATOS DE CONTACTO','INFORMACIÓN PERSONAL','INFORMACION PERSONAL'] },
+                { id:'perfil',       emoji:'🎯', titulo:'Perfil Profesional',        sub:'Presentación y objetivos',     keywords:['PERFIL PROFESIONAL','PERFIL LABORAL','SOBRE MÍ','SOBRE MI','PRESENTACIÓN','PRESENTACION','RESUMEN PROFESIONAL','RESUMEN','OBJETIVO PROFESIONAL','OBJETIVO'] },
+                { id:'experiencia',  emoji:'💼', titulo:'Experiencia Laboral',         sub:'Historial de trabajo',         keywords:['EXPERIENCIA LABORAL','EXPERIENCIA PROFESIONAL','EXPERIENCIAPROFESIONAL','EXPERIENCIA','TRAYECTORIA','HISTORIAL LABORAL','EMPLEOS','TRABAJOS'] },
+                { id:'formacion',    emoji:'🎓', titulo:'Formación Académica',          sub:'Títulos y estudios',           keywords:['FORMACIÓN ACADÉMICA','FORMACION ACADEMICA','EDUCACIÓN','EDUCACION','ESTUDIOS','ACADÉMICA','ACADEMICA','TITULOS','TÍTULOS','ISFD','CARRERA UNIVERSITARIA','UNIVERSIDAD','EDUCACION'] },
+                { id:'capacitacion', emoji:'📚', titulo:'Capacitaciones y Cursos',     sub:'Cursos y certificaciones',     keywords:['CAPACITACIÓN','CAPACITACION','CAPACITACIONES','CURSOS','CURSO','CERTIFICACIONES','CERTIFICADOS','POSGRADO','POSTGRADO','TALLERES','FORMACIÓN COMPLEMENTARIA','FORMACION COMPLEMENTARIA'] },
+                { id:'habilidades',  emoji:'⚡', titulo:'Habilidades y Competencias',  sub:'Skills técnicas y blandas',    keywords:['HABILIDADES','COMPETENCIAS','APTITUDES','SKILLS','DESTREZAS','CONOCIMIENTOS','HARD SKILLS','SOFT SKILLS'] },
+                { id:'idiomas',      emoji:'🌐', titulo:'Idiomas',                      sub:'Lenguas y nivel',              keywords:['IDIOMAS','IDIOMA','LENGUAS','LANGUAGES'] },
+                { id:'contacto',     emoji:'📬', titulo:'Datos de Contacto',            sub:'Información personal',         keywords:['CONTACTO','DATOS PERSONALES','DATOS DE CONTACTO','INFORMACIÓN PERSONAL','INFORMACION PERSONAL'] },
             ];
 
-            const lineas = textoLimpio.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 1);
-
             function detectarSeccion(linea) {
-                const up = linea.toUpperCase().trim();
-                if (up.length > 60) return null;
+                const up = linea.toUpperCase().trim().replace(/[^A-ZÁÉÍÓÚÜÑ\s]/g, '');
+                if (up.length > 60 || up.length < 3) return null;
                 for (const sec of SECCIONES) {
                     for (const kw of sec.keywords) {
                         if (up.includes(kw)) return sec;
@@ -324,7 +455,13 @@
                 return null;
             }
 
-            // Agrupar líneas en secciones
+            // ── TOKENIZAR ──
+            const rawLineas = texto.split(/
+?
+/);
+            const lineas = rawLineas.map(l => limpiarTexto(l)).filter(l => l.length > 1);
+
+            // Agrupar en secciones
             let seccionActual = null;
             const grupos = [];
             for (const linea of lineas) {
@@ -334,7 +471,6 @@
                     grupos.push(seccionActual);
                 } else {
                     if (!seccionActual) {
-                        // Líneas sin sección → van a "Perfil" por defecto
                         seccionActual = { seccion: SECCIONES[0], lineas: [] };
                         grupos.push(seccionActual);
                     }
@@ -342,61 +478,90 @@
                 }
             }
 
-            // Renderizar cada línea con detección de tipo
-            function renderLinea(linea) {
+            // ── RENDER DE LÍNEAS ──
+            function renderLinea(linea, secId) {
                 const esc = escapeHtml(linea);
+
+                // Email
                 if (/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(linea))
-                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📧</span>${esc}</div>`;
-                if (/\+?\d[\d\s\-\(\)]{6,}/.test(linea) && !linea.match(/\b(19|20)\d{2}\b/))
-                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📞</span>${esc}</div>`;
-                if (/\b(19|20)\d{2}\b/.test(linea))
-                    return `<div class="cv-item cv-item-date"><span class="cv-date-pill">📅 ${esc}</span></div>`;
-                if (/(ESCUELA|CENTRO|CLÍNICA|CLINICA|HOSPITAL|UNIVERSIDAD|INSTITUTO|ISFD|CEAL|UBA|UTN|MEGATLON|FITER|FITONE)/i.test(linea))
-                    return `<div class="cv-item cv-item-org"><span class="cv-icon-inline">🏢</span>${esc}</div>`;
-                if (/(ENTRENADOR|KINESIÓLOGO|KINESIÓLOGA|KINESIOLOGA|INSTRUCTOR|DOCENTE|PROFESORA|PROFESOR|ENCARGADO|COORDINADOR|PRECEPTORA|FISIOTERAPEUTA)/i.test(linea))
-                    return `<div class="cv-item cv-item-role"><span class="cv-icon-inline">👤</span>${esc}</div>`;
+                    return `<div class="cv-item cv-item-contact"><div class="cv-contact-icon">📧</div><span>${esc}</span></div>`;
+
+                // Teléfono (sin ser año)
+                if (/\+?\d[\d\s\-\(\)]{8,}/.test(linea) && !/^\s*(19|20)\d{2}\s*$/.test(linea.trim()))
+                    return `<div class="cv-item cv-item-contact"><div class="cv-contact-icon">📞</div><span>${esc}</span></div>`;
+
+                // Fechas / rangos de año
+                if (/(19|20)\d{2}/.test(linea) && linea.replace(/[^a-zA-Z]/g,'').length < 5)
+                    return `<div class="cv-item"><span class="cv-item-date">📅 ${esc}</span></div>`;
+
+                // Institución
+                if (/(ESCUELA|CENTRO|CLÍNICA|CLINICA|HOSPITAL|UNIVERSIDAD|INSTITUTO|ISFD|CEAL|UBA|UTN|MEGATLON|FITER|FITONE|PUENTE|CAREM|MEDIN|ARCOIRIS|DR\.|HOSP\.)/i.test(linea))
+                    return `<div class="cv-item cv-item-org"><div class="cv-org-badge">🏢</div><span>${esc}</span></div>`;
+
+                // Cargo / rol
+                if (/(ENTRENADOR|KINESIÓLOGO|KINESIÓLOGA|KINESIOLOGA|INSTRUCTOR|DOCENTE|PROFESORA|PROFESOR|ENCARGADO|COORDINADOR|PRECEPTORA|FISIOTERAPEUTA|PPS|PASANTE)/i.test(linea))
+                    return `<div class="cv-item cv-item-role"><div class="cv-role-dot"></div><span>${esc}</span></div>`;
+
+                // Skills section → render as pills
+                if (secId === 'habilidades' && linea.length < 40 && !linea.includes('.'))
+                    return `__SKILL__${esc}`;
+
+                // Bullet
                 if (/^[•\-\*]/.test(linea) || /^\d+\./.test(linea))
-                    return `<div class="cv-item cv-item-bullet"><span class="cv-bullet-dot">▸</span>${esc.replace(/^[•\-\*\d\.]\s*/, '')}</div>`;
+                    return `<div class="cv-item cv-item-bullet"><div class="cv-bullet-dot"></div><span>${esc.replace(/^[•\-\*\d\.]\s*/, '')}</span></div>`;
+
                 return `<div class="cv-item">${esc}</div>`;
             }
 
-            // Obtener nombre del candidato para el header
-            const candidatoActual = candidates.find(c => c.id === currentEditCandidateId);
-            const nombreCandidato = candidatoActual ? candidatoActual.name : 'Candidato';
-
+            // ── BUILD HTML ──
             let html = `<div class="cv-pro-wrapper">
                 <div class="cv-pro-hero">
-                    <div class="cv-pro-hero-icon">📄</div>
+                    <div class="cv-hero-avatar">👤</div>
                     <h3>Currículum Vitae</h3>
                     <div class="cv-hero-name">${escapeHtml(nombreCandidato)}</div>
-                    <p>Documento original del candidato</p>
+                    ${especialidad ? `<div class="cv-hero-specialty">${escapeHtml(especialidad)}</div>` : ''}
                 </div>
                 <div class="cv-pro-body">`;
 
             if (grupos.length === 0) {
-                html += `<div class="cv-pro-empty">No se pudo procesar el contenido del CV.</div>`;
+                html += `<div class="cv-pro-empty">⚠️ No se pudo procesar el CV.</div>`;
             } else {
                 grupos.forEach((grupo, idx) => {
                     if (grupo.lineas.length === 0) return;
                     const sec = grupo.seccion;
-                    const lineasHTML = grupo.lineas.map(renderLinea).join('');
-                    html += `<div class="cv-sec" id="cvSec_${idx}">
+
+                    // Renderizar líneas
+                    const rendered = grupo.lineas.map(l => renderLinea(l, sec.id));
+
+                    // Agrupar skills en cloud
+                    const skills = rendered.filter(r => r.startsWith('__SKILL__')).map(r => r.replace('__SKILL__',''));
+                    const otrasLineas = rendered.filter(r => !r.startsWith('__SKILL__'));
+
+                    let bodyHTML = otrasLineas.join('');
+                    if (skills.length > 0) {
+                        bodyHTML += `<div class="cv-skills-cloud">${skills.map(s => `<span class="cv-skill-pill">${s}</span>`).join('')}</div>`;
+                    }
+
+                    html += `<div class="cv-sec" id="cvSec_${idx}" data-id="${sec.id}">
                         <div class="cv-sec-header" onclick="toggleCVSec(${idx})">
-                            <span class="cv-sec-emoji">${sec.emoji}</span>
-                            <span class="cv-sec-title">${sec.titulo}</span>
+                            <div class="cv-sec-emoji-wrap">${sec.emoji}</div>
+                            <div class="cv-sec-info">
+                                <div class="cv-sec-title">${sec.titulo}</div>
+                                <div class="cv-sec-sub">${sec.sub}</div>
+                            </div>
                             <span class="cv-sec-count">${grupo.lineas.length}</span>
                             <span class="cv-sec-arrow">▼</span>
                         </div>
-                        <div class="cv-sec-body">${lineasHTML}</div>
+                        <div class="cv-sec-body">${bodyHTML}</div>
                     </div>`;
                 });
             }
 
-            html += `</div></div>
-            <div class="cv-copy-bar">
-                <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding:8px 18px;font-size:12px;">
-                    📋 Copiar CV completo
-                </button>
+            html += `</div>
+                <div class="cv-pro-footer">
+                    <span class="cv-footer-label">📄 Documento original guardado</span>
+                    <button class="cv-copy-btn" onclick="copyCVCompleto()">📋 Copiar texto completo</button>
+                </div>
             </div>`;
 
             return html;
