@@ -506,6 +506,7 @@
 
             document.getElementById('tabCV').innerHTML = formatearCVProfesional(c.rawCV);
             document.getElementById('tabPDF').innerHTML = ''; // reset so previous candidate's doc doesn't show
+            switchTab('info'); // always start on Información tab
             document.getElementById('candidateModal').style.display = 'flex';
         }
 
