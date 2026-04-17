@@ -72,72 +72,91 @@
         .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
         .analytics-card { background: #f8f9fa; border-radius: 16px; padding: 20px; }
 
-                /* ── CV VIEWER v4 ── */
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cvv { font-family: "DM Sans", sans-serif; background: #0e0e14; border-radius: 20px; overflow: hidden; }
-        .cvv-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:60px 20px; color:#888; font-size:13px; background:#f7f8fc; border-radius:0 0 20px 20px; }
-        .cvv-spinner { width:32px; height:32px; border:3px solid #e5e7eb; border-top-color:#7c6bff; border-radius:50%; animation:cvvspin 0.8s linear infinite; }
-        @keyframes cvvspin { to { transform:rotate(360deg); } }
-        .cvv-hero { position:relative; padding:36px 32px 28px; overflow:hidden; background:linear-gradient(135deg,#13111c 0%,#1c1730 60%,#0e1420 100%); }
-        .cvv-hero-orb1 { position:absolute; width:260px; height:260px; border-radius:50%; background:#7c6bff; opacity:0.12; top:-80px; right:-60px; pointer-events:none; }
-        .cvv-hero-orb2 { position:absolute; width:160px; height:160px; border-radius:50%; background:#2dd4bf; opacity:0.10; bottom:-50px; left:8%; pointer-events:none; }
-        .cvv-hero-inner { position:relative; z-index:1; display:flex; align-items:center; gap:20px; }
-        .cvv-avatar { width:68px; height:68px; border-radius:18px; flex-shrink:0; background:linear-gradient(135deg,#7c6bff,#2dd4bf); display:flex; align-items:center; justify-content:center; font-family:"DM Serif Display",serif; font-size:26px; color:white; box-shadow:0 8px 24px rgba(124,107,255,0.35); }
-        .cvv-hero-meta { flex:1; }
-        .cvv-hero-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#7c6bff; font-weight:600; margin-bottom:5px; }
-        .cvv-hero-name { font-family:"DM Serif Display",Georgia,serif; font-size:21px; color:white; line-height:1.25; margin-bottom:8px; }
-        .cvv-hero-spec { display:inline-flex; align-items:center; gap:6px; background:rgba(124,107,255,0.15); border:1px solid rgba(124,107,255,0.3); border-radius:20px; padding:4px 12px; font-size:10px; color:#a89fff; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
-        .cvv-ai-row { display:flex; align-items:center; gap:6px; margin-top:10px; font-size:10px; color:#2dd4bf; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
-        .cvv-ai-dot { width:6px; height:6px; border-radius:50%; background:#2dd4bf; animation:cvvpulse 1.5s ease-in-out infinite; }
-        @keyframes cvvpulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-        .cvv-body { background:#f4f5f9; padding:16px; display:flex; flex-direction:column; gap:10px; }
-        .cvv-sec { background:white; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); transition:box-shadow 0.2s; }
-        .cvv-sec:hover { box-shadow:0 4px 20px rgba(124,107,255,0.1); }
-        .cvv-sec-head { display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer; user-select:none; border-left:3px solid #e5e7eb; transition:border-color 0.2s,background 0.15s; }
-        .cvv-sec-head:hover { background:#fafbff; }
-        .cvv-sec[data-s="perfil"] .cvv-sec-head       { border-left-color:#7c6bff; }
-        .cvv-sec[data-s="experiencia"] .cvv-sec-head  { border-left-color:#f59e0b; }
-        .cvv-sec[data-s="formacion"] .cvv-sec-head    { border-left-color:#10b981; }
-        .cvv-sec[data-s="capacitacion"] .cvv-sec-head { border-left-color:#8b5cf6; }
-        .cvv-sec[data-s="habilidades"] .cvv-sec-head  { border-left-color:#ef4444; }
-        .cvv-sec[data-s="idiomas"] .cvv-sec-head      { border-left-color:#06b6d4; }
-        .cvv-sec[data-s="contacto"] .cvv-sec-head     { border-left-color:#84cc16; }
-        .cvv-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
-        .cvv-sec[data-s="perfil"] .cvv-ico       { background:#ede9fe; }
-        .cvv-sec[data-s="experiencia"] .cvv-ico  { background:#fef3c7; }
-        .cvv-sec[data-s="formacion"] .cvv-ico    { background:#d1fae5; }
-        .cvv-sec[data-s="capacitacion"] .cvv-ico { background:#f3e8ff; }
-        .cvv-sec[data-s="habilidades"] .cvv-ico  { background:#fee2e2; }
-        .cvv-sec[data-s="idiomas"] .cvv-ico      { background:#cffafe; }
-        .cvv-sec[data-s="contacto"] .cvv-ico     { background:#ecfccb; }
-        .cvv-sec-info { flex:1; }
-        .cvv-sec-title { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#111827; }
-        .cvv-sec-sub { font-size:11px; color:#9ca3af; margin-top:2px; }
-        .cvv-badge { font-size:11px; font-weight:600; color:#7c6bff; background:#ede9fe; padding:2px 9px; border-radius:10px; }
-        .cvv-arrow { font-size:10px; color:#d1d5db; transition:transform 0.2s; margin-left:4px; }
-        .cvv-sec.closed .cvv-arrow { transform:rotate(-90deg); }
-        .cvv-sec-body { padding:4px 18px 16px 18px; animation:cvvslide 0.18s ease; }
-        .cvv-sec.closed .cvv-sec-body { display:none; }
-        @keyframes cvvslide { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
-        .cvv-entry { padding:10px 0; border-bottom:1px solid #f3f4f6; }
-        .cvv-entry:last-child { border-bottom:none; }
-        .cvv-entry-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:4px; }
-        .cvv-entry-title { font-size:13px; font-weight:600; color:#111827; }
-        .cvv-entry-place { font-size:12px; color:#6b7280; }
-        .cvv-entry-date { font-size:11px; color:#7c6bff; font-weight:600; white-space:nowrap; background:#ede9fe; padding:2px 8px; border-radius:8px; flex-shrink:0; }
-        .cvv-entry-desc { font-size:12px; color:#4b5563; line-height:1.6; margin-top:4px; }
-        .cvv-contact-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #f3f4f6; font-size:13px; color:#374151; }
-        .cvv-contact-item:last-child { border-bottom:none; }
-        .cvv-contact-ico { width:30px; height:30px; border-radius:8px; background:#ecfdf5; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-        .cvv-skills { display:flex; flex-wrap:wrap; gap:8px; padding:8px 0 4px; }
-        .cvv-skill { font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; }
-        .cvv-plain { font-size:13px; color:#374151; line-height:1.7; padding:6px 0; }
-        .cvv-footer { padding:14px 18px; background:white; display:flex; align-items:center; justify-content:space-between; border-top:1px solid #f3f4f6; }
-        .cvv-footer-note { font-size:11px; color:#9ca3af; }
-        .cvv-copy { padding:7px 16px; border-radius:10px; border:1px solid #e5e7eb; background:white; font-size:12px; cursor:pointer; font-weight:600; color:#374151; transition:all 0.15s; }
-        .cvv-copy:hover { background:#ede9fe; border-color:#7c6bff; color:#7c6bff; }
-        .cvv-error { padding:30px; text-align:center; color:#9ca3af; font-size:13px; }
+        /* ── CV PRO STYLES ── */
+        .cv-pro-wrapper { font-family: 'Georgia', 'Times New Roman', serif; max-width: 100%; }
+        .cv-pro-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #16213e 100%);
+            color: white; padding: 28px 25px; border-radius: 16px 16px 0 0;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .cv-pro-hero::before {
+            content: ''; position: absolute; top: -40px; right: -40px;
+            width: 150px; height: 150px; background: rgba(102,126,234,0.2); border-radius: 50%;
+        }
+        .cv-pro-hero-icon { font-size: 34px; margin-bottom: 8px; }
+        .cv-pro-hero h3 { font-size: 20px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+        .cv-hero-name { font-size: 15px; opacity: 0.85; font-style: italic; }
+        .cv-pro-hero p { font-size: 11px; opacity: 0.55; margin-top: 4px; }
+        .cv-pro-body { background: #fff; border-radius: 0 0 16px 16px; border: 1px solid #e5e7eb; border-top: none; padding: 6px 0 14px; }
+        .cv-sec { border-bottom: 1px solid #f3f4f6; }
+        .cv-sec:last-child { border-bottom: none; }
+        .cv-sec-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 13px 18px 10px; cursor: pointer; user-select: none; transition: background 0.15s;
+        }
+        .cv-sec-header:hover { background: #fafbff; }
+        .cv-sec-emoji { font-size: 17px; }
+        .cv-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #667eea; flex: 1; }
+        .cv-sec-count { font-size: 11px; color: #aaa; background: #f3f4f6; padding: 2px 7px; border-radius: 10px; }
+        .cv-sec-arrow { font-size: 11px; color: #ccc; transition: transform 0.2s; }
+        .cv-sec.collapsed .cv-sec-arrow { transform: rotate(-90deg); }
+        .cv-sec-body { padding: 2px 18px 12px 28px; animation: cvFadeIn 0.2s ease; }
+        .cv-sec.collapsed .cv-sec-body { display: none; }
+        @keyframes cvFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+        .cv-item { font-size: 13px; color: #374151; padding: 4px 0; line-height: 1.55; border-bottom: 1px dashed #f3f4f6; }
+        .cv-item:last-child { border-bottom: none; }
+        .cv-item-contact { color: #059669; font-weight: 500; }
+        .cv-item-date { margin: 5px 0 2px; }
+        .cv-date-pill {
+            display: inline-block; background: linear-gradient(135deg, #667eea22, #764ba222);
+            color: #5b48c8; font-size: 12px; font-weight: 700; padding: 2px 10px;
+            border-radius: 20px; border: 1px solid #667eea33;
+        }
+        .cv-item-org { color: #1a1a2e; font-weight: 600; }
+        .cv-item-role { color: #764ba2; font-weight: 600; font-style: italic; }
+        .cv-item-bullet { display: flex; gap: 8px; align-items: flex-start; }
+        .cv-bullet-dot { color: #667eea; font-size: 11px; margin-top: 3px; flex-shrink: 0; }
+        .cv-icon-inline { margin-right: 6px; font-size: 13px; }
+        .cv-pro-empty { padding: 30px; text-align: center; color: #999; font-size: 14px; }
+        .cv-copy-bar { text-align: center; padding: 12px 0 0; }
     </style>
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDwYRQoUTllt9OqU7GORcx0ytdbgsnhXTM",
+        authDomain: "talent-kinesio.firebaseapp.com",
+        projectId: "talent-kinesio",
+        storageBucket: "talent-kinesio.firebasestorage.app",
+        messagingSenderId: "632180525266",
+        appId: "1:632180525266:web:c32e036638dcdf564b050b"
+      };
+
+      const fbApp = initializeApp(firebaseConfig);
+      const db = getFirestore(fbApp);
+      const colRef = collection(db, "candidates");
+
+      // Expose to global scope so main script can use them
+      window._db = db;
+      window._colRef = colRef;
+      window._fbSetDoc = setDoc;
+      window._fbDeleteDoc = deleteDoc;
+      window._fbDoc = doc;
+      window._fbOnSnapshot = onSnapshot;
+      window._fbGetDocs = getDocs;
+      window._fbReady = true;
+
+      // Start real-time listener — updates app whenever DB changes
+      onSnapshot(colRef, function(snapshot) {
+        window._candidates = [];
+        snapshot.forEach(function(d) {
+          window._candidates.push(d.data());
+        });
+        if (window._onFirebaseUpdate) window._onFirebaseUpdate();
+      });
+    </script>
 </head>
 <body>
     <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>🤖 Procesando CV con IA...</div></div>
@@ -229,17 +248,38 @@
         let specialtyChart, skillsChart, statusChart, locationChart, trendChart;
 
         function loadData() {
-            const saved = localStorage.getItem('kinesioCandidatesPro');
-            if (saved) {
-                try { candidates = JSON.parse(saved); }
-                catch(e) { console.error('Error parsing saved data:', e); candidates = []; }
+            // Firebase real-time listener handles updates
+            // Register callback for when Firebase sends data
+            window._onFirebaseUpdate = function() {
+                if (window._candidates) {
+                    candidates = window._candidates.slice();
+                    // sort by id desc (newest first)
+                    candidates.sort(function(a,b){ return (b.id||0)-(a.id||0); });
+                }
+                updateDashboard();
+                renderCandidates();
+            };
+            // If Firebase already loaded, trigger immediately
+            if (window._candidates) {
+                window._onFirebaseUpdate();
             }
-            updateDashboard();
-            renderCandidates();
         }
 
         function saveData() {
-            localStorage.setItem('kinesioCandidatesPro', JSON.stringify(candidates));
+            // Save to Firebase (real-time listener will update all users)
+            if (!window._fbReady) {
+                console.warn('Firebase not ready yet');
+                updateDashboard();
+                renderCandidates();
+                return;
+            }
+            var db = window._db;
+            var fbSetDoc = window._fbSetDoc;
+            var fbDoc = window._fbDoc;
+            // Write all candidates to Firestore
+            candidates.forEach(function(c) {
+                fbSetDoc(fbDoc(db, 'candidates', String(c.id)), c).catch(function(e){ console.error('save error', e); });
+            });
             updateDashboard();
             renderCandidates();
             if (document.getElementById('analyticsSection').style.display !== 'none') updateAnalyticsCharts();
@@ -299,215 +339,144 @@
             });
         }
 
-        // ── CV VIEWER v4: usa Groq para parsear el texto crudo ──
-
-        var cvCacheId = null;
-        var cvCacheHTML = null;
-
+        // ══════════════════════════════════════════════════════════
+        //  FUNCIÓN DE FORMATEO DE CV PROFESIONAL (VERSIÓN MEJORADA)
+        // ══════════════════════════════════════════════════════════
         function formatearCVProfesional(texto) {
-            var cand = candidates.find(function(c){ return c.id === currentEditCandidateId; });
-            var nombre = cand ? (cand.name || 'Candidato') : 'Candidato';
-            var spec   = cand ? (cand.specialty || '') : '';
-            var iniciales = nombre.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join('').toUpperCase();
-
-            var heroHTML = '<div class="cvv">'
-                + '<div class="cvv-hero">'
-                + '<div class="cvv-hero-orb1"></div><div class="cvv-hero-orb2"></div>'
-                + '<div class="cvv-hero-inner">'
-                + '<div class="cvv-avatar">' + iniciales + '</div>'
-                + '<div class="cvv-hero-meta">'
-                + '<div class="cvv-hero-label">Currículum Vitae</div>'
-                + '<div class="cvv-hero-name">' + escapeHtml(nombre) + '</div>'
-                + (spec ? '<div class="cvv-hero-spec">' + escapeHtml(spec) + '</div>' : '')
-                + '<div class="cvv-ai-row"><div class="cvv-ai-dot"></div>Estructurado con IA</div>'
-                + '</div></div></div>';
-
-            if (!texto || texto.length < 20) {
-                return heroHTML + '<div class="cvv-body"><div class="cvv-error">No hay texto de CV disponible.</div></div></div>';
+            if (!texto || texto === 'No se guardó el texto original del CV') {
+                return `<div class="cv-pro-wrapper">
+                    <div class="cv-pro-hero"><div class="cv-pro-hero-icon">📄</div><h3>Currículum Vitae</h3><p>Documento del candidato</p></div>
+                    <div class="cv-pro-body"><div class="cv-pro-empty">⚠️ No hay texto del CV disponible</div></div>
+                </div>`;
             }
 
-            // Si ya parseamos este candidato, usar cache
-            if (cvCacheId === currentEditCandidateId && cvCacheHTML) {
-                return heroHTML + cvCacheHTML + '</div>';
-            }
+            // Limpiar texto que viene mal del PDF (espacios raros entre letras)
+            let textoLimpio = texto
+                .replace(/([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])\s([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])/g, '$1$2')
+                .replace(/\s{3,}/g, '  ')
+                .replace(/ \. /g, '. ')
+                .replace(/ , /g, ', ')
+                .replace(/ : /g, ': ');
 
-            // Mostrar spinner y lanzar parseo async
-            var loadingBody = '<div class="cvv-loading"><div class="cvv-spinner"></div><span>La IA está estructurando el CV...</span></div>';
-            setTimeout(function(){ parsearCVConIA(texto, currentEditCandidateId); }, 100);
-            return heroHTML + loadingBody + '</div>';
-        }
+            // Definición de secciones con emojis y palabras clave
+            const SECCIONES = [
+                { id:'perfil',       emoji:'🎯', titulo:'Perfil Profesional',        keywords:['PERFIL PROFESIONAL','PERFIL','OBJETIVO','SOBRE MÍ','SOBRE MI','PRESENTACIÓN','PRESENTACION','RESUMEN PROFESIONAL','RESUMEN'] },
+                { id:'formacion',    emoji:'🎓', titulo:'Formación Académica',        keywords:['FORMACIÓN ACADÉMICA','FORMACION ACADEMICA','EDUCACIÓN','EDUCACION','ESTUDIOS','ACADÉMICA','ACADEMICA','TITULOS','TÍTULOS','ISFD','CARRERA UNIVERSITARIA'] },
+                { id:'capacitacion', emoji:'📚', titulo:'Capacitaciones y Cursos',    keywords:['CAPACITACIÓN','CAPACITACION','CURSOS','CURSO','CERTIFICACIONES','CERTIFICADOS','POSGRADO','POSTGRADO','TALLERES','FORMACIÓN COMPLEMENTARIA','FORMACION COMPLEMENTARIA'] },
+                { id:'experiencia',  emoji:'💼', titulo:'Experiencia Laboral',         keywords:['EXPERIENCIA LABORAL','EXPERIENCIA PROFESIONAL','EXPERIENCIA','TRAYECTORIA','HISTORIAL LABORAL','EMPLEOS','TRABAJOS'] },
+                { id:'habilidades',  emoji:'⚡', titulo:'Habilidades y Competencias', keywords:['HABILIDADES','COMPETENCIAS','APTITUDES','SKILLS','DESTREZAS','CONOCIMIENTOS','HARD SKILLS','SOFT SKILLS'] },
+                { id:'idiomas',      emoji:'🌐', titulo:'Idiomas',                     keywords:['IDIOMAS','IDIOMA','LENGUAS','LANGUAGES'] },
+                { id:'contacto',     emoji:'📬', titulo:'Datos de Contacto',           keywords:['CONTACTO','DATOS PERSONALES','DATOS DE CONTACTO','INFORMACIÓN PERSONAL','INFORMACION PERSONAL'] },
+            ];
 
-        function parsearCVConIA(texto, candidateId) {
-            var prompt = 'Eres un asistente de RRHH. Recibís el texto crudo de un CV extraído de un PDF (puede tener palabras pegadas, caracteres raros, sin formato). Tu tarea: devolver SOLO un objeto JSON válido, sin explicaciones, sin markdown, sin backticks. El JSON debe tener esta estructura exacta:\n{\n  "contacto": [{"tipo":"email/telefono/ubicacion/web","valor":"..."}],\n  "perfil": "texto del perfil profesional en 2-4 oraciones claras",\n  "experiencia": [{"cargo":"...","empresa":"...","fecha":"...","descripcion":"..."}],\n  "formacion": [{"titulo":"...","institucion":"...","fecha":"..."}],\n  "capacitaciones": [{"nombre":"...","institucion":"...","fecha":"..."}],\n  "habilidades": ["skill1","skill2"],\n  "idiomas": [{"idioma":"...","nivel":"..."}]\n}\nSi una sección no existe en el CV, pon un array vacío o string vacío. Texto del CV:\n\n';
+            const lineas = textoLimpio.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 1);
 
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-                body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',
-                    messages: [{ role: 'user', content: prompt + texto.substring(0, 4000) }],
-                    temperature: 0.1,
-                    max_tokens: 2000
-                })
-            })
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                var raw = data.choices[0].message.content;
-                // Limpiar posibles backticks o texto extra
-                raw = raw.replace(/```json/g,'').replace(/```/g,'').trim();
-                var first = raw.indexOf('{');
-                var last  = raw.lastIndexOf('}');
-                if (first === -1 || last === -1) throw new Error('JSON no encontrado');
-                var parsed = JSON.parse(raw.substring(first, last+1));
-                var html = renderCVParsed(parsed);
-                cvCacheId   = candidateId;
-                cvCacheHTML = html;
-                // Re-render si el modal sigue abierto con el mismo candidato
-                if (currentEditCandidateId === candidateId) {
-                    var tab = document.getElementById('tabCV');
-                    if (tab && tab.classList.contains('active')) {
-                        var cand2 = candidates.find(function(c){ return c.id === candidateId; });
-                        var nombre2 = cand2 ? (cand2.name||'Candidato') : 'Candidato';
-                        var spec2   = cand2 ? (cand2.specialty||'') : '';
-                        var ini2 = nombre2.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join('').toUpperCase();
-                        var heroHTML2 = '<div class="cvv"><div class="cvv-hero"><div class="cvv-hero-orb1"></div><div class="cvv-hero-orb2"></div><div class="cvv-hero-inner"><div class="cvv-avatar">' + ini2 + '</div><div class="cvv-hero-meta"><div class="cvv-hero-label">Curr\u00edculum Vitae</div><div class="cvv-hero-name">' + escapeHtml(nombre2) + '</div>' + (spec2 ? '<div class="cvv-hero-spec">' + escapeHtml(spec2) + '</div>' : '') + '<div class="cvv-ai-row"><div class="cvv-ai-dot"></div>Estructurado con IA</div></div></div></div>';
-                        tab.innerHTML = heroHTML2 + html + '</div>';
+            function detectarSeccion(linea) {
+                const up = linea.toUpperCase().trim();
+                if (up.length > 60) return null;
+                for (const sec of SECCIONES) {
+                    for (const kw of sec.keywords) {
+                        if (up.includes(kw)) return sec;
                     }
                 }
-            })
-            .catch(function(err) {
-                console.error('CV parse error:', err);
-                if (currentEditCandidateId === candidateId) {
-                    var tab = document.getElementById('tabCV');
-                    if (tab) {
-                        var errDiv = '<div class="cvv-body"><div class="cvv-error">No se pudo estructurar el CV. Mostrando texto original.</div>'
-                            + '<div class="cvv-sec" data-s="perfil"><div class="cvv-sec-head"><div class="cvv-ico">📄</div><div class="cvv-sec-info"><div class="cvv-sec-title">Texto del CV</div></div></div>'
-                            + '<div class="cvv-sec-body"><div class="cvv-plain" style="white-space:pre-wrap;font-size:12px;">' + escapeHtml(candidates.find(function(c){return c.id===candidateId;})||{rawCV:''}).rawCV || '' + '</div></div></div></div>';
-                        // just show error cleanly
-                        var cand3 = candidates.find(function(c){ return c.id === candidateId; });
-                        tab.innerHTML = tab.innerHTML.replace(/<div class="cvv-loading">[\s\S]*?<\/div>/, '<div class="cvv-body"><div class="cvv-error">\u26a0\ufe0f No se pudo procesar. Intent\u00e1 de nuevo.</div></div>');
+                return null;
+            }
+
+            // Agrupar líneas en secciones
+            let seccionActual = null;
+            const grupos = [];
+            for (const linea of lineas) {
+                const sec = detectarSeccion(linea);
+                if (sec) {
+                    seccionActual = { seccion: sec, lineas: [] };
+                    grupos.push(seccionActual);
+                } else {
+                    if (!seccionActual) {
+                        // Líneas sin sección → van a "Perfil" por defecto
+                        seccionActual = { seccion: SECCIONES[0], lineas: [] };
+                        grupos.push(seccionActual);
                     }
+                    seccionActual.lineas.push(linea);
                 }
-            });
-        }
-
-        function renderCVParsed(d) {
-            var html = '<div class="cvv-body">';
-
-            // CONTACTO
-            if (d.contacto && d.contacto.length > 0) {
-                var iconMap = { email:'📧', telefono:'📞', ubicacion:'📍', web:'🌐' };
-                var items = '';
-                for (var i=0;i<d.contacto.length;i++) {
-                    var ic = iconMap[d.contacto[i].tipo] || '📌';
-                    items += '<div class="cvv-contact-item"><div class="cvv-contact-ico">' + ic + '</div>' + escapeHtml(d.contacto[i].valor) + '</div>';
-                }
-                html += makeSec('contacto','📬','Contacto','Datos personales', items, d.contacto.length);
             }
 
-            // PERFIL
-            if (d.perfil && d.perfil.length > 5) {
-                var pHTML = '<div class="cvv-plain">' + escapeHtml(d.perfil) + '</div>';
-                html += makeSec('perfil','🎯','Perfil Profesional','Presentación y objetivos', pHTML, 1);
+            // Renderizar cada línea con detección de tipo
+            function renderLinea(linea) {
+                const esc = escapeHtml(linea);
+                if (/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(linea))
+                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📧</span>${esc}</div>`;
+                if (/\+?\d[\d\s\-\(\)]{6,}/.test(linea) && !linea.match(/\b(19|20)\d{2}\b/))
+                    return `<div class="cv-item cv-item-contact"><span class="cv-icon-inline">📞</span>${esc}</div>`;
+                if (/\b(19|20)\d{2}\b/.test(linea))
+                    return `<div class="cv-item cv-item-date"><span class="cv-date-pill">📅 ${esc}</span></div>`;
+                if (/(ESCUELA|CENTRO|CLÍNICA|CLINICA|HOSPITAL|UNIVERSIDAD|INSTITUTO|ISFD|CEAL|UBA|UTN|MEGATLON|FITER|FITONE)/i.test(linea))
+                    return `<div class="cv-item cv-item-org"><span class="cv-icon-inline">🏢</span>${esc}</div>`;
+                if (/(ENTRENADOR|KINESIÓLOGO|KINESIÓLOGA|KINESIOLOGA|INSTRUCTOR|DOCENTE|PROFESORA|PROFESOR|ENCARGADO|COORDINADOR|PRECEPTORA|FISIOTERAPEUTA)/i.test(linea))
+                    return `<div class="cv-item cv-item-role"><span class="cv-icon-inline">👤</span>${esc}</div>`;
+                if (/^[•\-\*]/.test(linea) || /^\d+\./.test(linea))
+                    return `<div class="cv-item cv-item-bullet"><span class="cv-bullet-dot">▸</span>${esc.replace(/^[•\-\*\d\.]\s*/, '')}</div>`;
+                return `<div class="cv-item">${esc}</div>`;
             }
 
-            // EXPERIENCIA
-            if (d.experiencia && d.experiencia.length > 0) {
-                var eHTML = '';
-                for (var i=0;i<d.experiencia.length;i++) {
-                    var e = d.experiencia[i];
-                    eHTML += '<div class="cvv-entry">'
-                        + '<div class="cvv-entry-head">'
-                        + '<div><div class="cvv-entry-title">' + escapeHtml(e.cargo||'') + '</div>'
-                        + '<div class="cvv-entry-place">' + escapeHtml(e.empresa||'') + '</div></div>'
-                        + (e.fecha ? '<div class="cvv-entry-date">' + escapeHtml(e.fecha) + '</div>' : '')
-                        + '</div>'
-                        + (e.descripcion ? '<div class="cvv-entry-desc">' + escapeHtml(e.descripcion) + '</div>' : '')
-                        + '</div>';
-                }
-                html += makeSec('experiencia','💼','Experiencia Laboral','Historial de trabajo', eHTML, d.experiencia.length);
+            // Obtener nombre del candidato para el header
+            const candidatoActual = candidates.find(c => c.id === currentEditCandidateId);
+            const nombreCandidato = candidatoActual ? candidatoActual.name : 'Candidato';
+
+            let html = `<div class="cv-pro-wrapper">
+                <div class="cv-pro-hero">
+                    <div class="cv-pro-hero-icon">📄</div>
+                    <h3>Currículum Vitae</h3>
+                    <div class="cv-hero-name">${escapeHtml(nombreCandidato)}</div>
+                    <p>Documento original del candidato</p>
+                </div>
+                <div class="cv-pro-body">`;
+
+            if (grupos.length === 0) {
+                html += `<div class="cv-pro-empty">No se pudo procesar el contenido del CV.</div>`;
+            } else {
+                grupos.forEach((grupo, idx) => {
+                    if (grupo.lineas.length === 0) return;
+                    const sec = grupo.seccion;
+                    const lineasHTML = grupo.lineas.map(renderLinea).join('');
+                    html += `<div class="cv-sec" id="cvSec_${idx}">
+                        <div class="cv-sec-header" onclick="toggleCVSec(${idx})">
+                            <span class="cv-sec-emoji">${sec.emoji}</span>
+                            <span class="cv-sec-title">${sec.titulo}</span>
+                            <span class="cv-sec-count">${grupo.lineas.length}</span>
+                            <span class="cv-sec-arrow">▼</span>
+                        </div>
+                        <div class="cv-sec-body">${lineasHTML}</div>
+                    </div>`;
+                });
             }
 
-            // FORMACION
-            if (d.formacion && d.formacion.length > 0) {
-                var fHTML = '';
-                for (var i=0;i<d.formacion.length;i++) {
-                    var f = d.formacion[i];
-                    fHTML += '<div class="cvv-entry">'
-                        + '<div class="cvv-entry-head">'
-                        + '<div><div class="cvv-entry-title">' + escapeHtml(f.titulo||'') + '</div>'
-                        + '<div class="cvv-entry-place">' + escapeHtml(f.institucion||'') + '</div></div>'
-                        + (f.fecha ? '<div class="cvv-entry-date">' + escapeHtml(f.fecha) + '</div>' : '')
-                        + '</div></div>';
-                }
-                html += makeSec('formacion','🎓','Formación Académica','Títulos y estudios', fHTML, d.formacion.length);
-            }
+            html += `</div></div>
+            <div class="cv-copy-bar">
+                <button class="btn btn-outline" onclick="copyCVCompleto()" style="padding:8px 18px;font-size:12px;">
+                    📋 Copiar CV completo
+                </button>
+            </div>`;
 
-            // CAPACITACIONES
-            if (d.capacitaciones && d.capacitaciones.length > 0) {
-                var cHTML = '';
-                for (var i=0;i<d.capacitaciones.length;i++) {
-                    var cap = d.capacitaciones[i];
-                    cHTML += '<div class="cvv-entry">'
-                        + '<div class="cvv-entry-head">'
-                        + '<div><div class="cvv-entry-title">' + escapeHtml(cap.nombre||'') + '</div>'
-                        + '<div class="cvv-entry-place">' + escapeHtml(cap.institucion||'') + '</div></div>'
-                        + (cap.fecha ? '<div class="cvv-entry-date">' + escapeHtml(cap.fecha) + '</div>' : '')
-                        + '</div></div>';
-                }
-                html += makeSec('capacitacion','📚','Capacitaciones','Cursos y certificaciones', cHTML, d.capacitaciones.length);
-            }
-
-            // HABILIDADES
-            if (d.habilidades && d.habilidades.length > 0) {
-                var skHTML = '<div class="cvv-skills">';
-                for (var i=0;i<d.habilidades.length;i++) {
-                    skHTML += '<span class="cvv-skill">' + escapeHtml(d.habilidades[i]) + '</span>';
-                }
-                skHTML += '</div>';
-                html += makeSec('habilidades','⚡','Habilidades','Skills técnicas y blandas', skHTML, d.habilidades.length);
-            }
-
-            // IDIOMAS
-            if (d.idiomas && d.idiomas.length > 0) {
-                var idHTML = '';
-                for (var i=0;i<d.idiomas.length;i++) {
-                    idHTML += '<div class="cvv-entry"><div class="cvv-entry-head"><div class="cvv-entry-title">' + escapeHtml(d.idiomas[i].idioma||'') + '</div>'
-                        + (d.idiomas[i].nivel ? '<div class="cvv-entry-date">' + escapeHtml(d.idiomas[i].nivel) + '</div>' : '')
-                        + '</div></div>';
-                }
-                html += makeSec('idiomas','🌐','Idiomas','Lenguas y nivel', idHTML, d.idiomas.length);
-            }
-
-            html += '</div>';
-            html += '<div class="cvv-footer"><span class="cvv-footer-note">📄 Estructurado con IA · Groq LLaMA 3</span><button class="cvv-copy" onclick="copyCVCompleto()">📋 Copiar original</button></div>';
             return html;
         }
 
-        function makeSec(sid, emoji, titulo, sub, bodyHTML, count) {
-            return '<div class="cvv-sec" data-s="' + sid + '">'
-                + '<div class="cvv-sec-head" onclick="this.parentElement.classList.toggle(\'closed\')">'
-                + '<div class="cvv-ico">' + emoji + '</div>'
-                + '<div class="cvv-sec-info"><div class="cvv-sec-title">' + titulo + '</div><div class="cvv-sec-sub">' + sub + '</div></div>'
-                + '<span class="cvv-badge">' + count + '</span>'
-                + '<span class="cvv-arrow">▼</span>'
-                + '</div>'
-                + '<div class="cvv-sec-body">' + bodyHTML + '</div>'
-                + '</div>';
+        function toggleCVSec(idx) {
+            const el = document.getElementById('cvSec_' + idx);
+            if (el) el.classList.toggle('collapsed');
         }
 
         function copyCVCompleto() {
-            var c = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            const c = candidates.find(c=>c.id===currentEditCandidateId);
             if (c && c.rawCV) {
                 navigator.clipboard.writeText(c.rawCV);
-                alert('Copiado al portapapeles');
+                alert('✅ CV completo copiado al portapapeles');
+            } else {
+                alert('No hay CV para copiar');
             }
         }
+        // ══════════════════════════════════════════════════════════
 
-        // Reset cache when modal closes
-        var _origCloseModal = closeModal;
-
-                function openCandidateDetail(id) {
+        function openCandidateDetail(id) {
             currentEditCandidateId = id;
             const c = candidates.find(c=>c.id===id);
             if (!c) return;
@@ -565,10 +534,14 @@
 
         function deleteCurrentCandidate() {
             if(confirm('¿Estás seguro de que querés eliminar este candidato? Esta acción no se puede deshacer.')) {
-                const index = candidates.findIndex(c => c.id === currentEditCandidateId);
+                var index = candidates.findIndex(function(c){ return c.id === currentEditCandidateId; });
                 if(index !== -1) {
+                    var delId = String(currentEditCandidateId);
                     candidates.splice(index, 1);
-                    saveData();
+                    // Delete from Firestore
+                    if (window._fbReady) {
+                        window._fbDeleteDoc(window._fbDoc(window._db, 'candidates', delId)).catch(function(e){ console.error('delete error', e); });
+                    }
                     closeModal();
                     alert('✅ Candidato eliminado correctamente');
                 }
