@@ -776,15 +776,18 @@
                 if (pendingUploadFile) {
                     var fileToConvert = pendingUploadFile;
                     pendingUploadFile = null;
-                    alert('✅ Candidato agregado: '+candidate.name+'\n📍 '+candidate.location+'\nScore: '+candidate.score+'%\n\n🖼️ Guardando el documento automáticamente...');
-                    // Set context so savePDFPages knows which candidate to attach to
-                    currentEditCandidateId = candidate.id;
+                    var targetCandidateId = candidate.id; // capture ID now, never use currentEditCandidateId
+                    alert('✅ Candidato agregado: '+candidate.name+'\n📍 '+candidate.location+'\nScore: '+candidate.score+'%\n\n🖼️ El documento se guardará automáticamente.');
                     convertFileToPages(fileToConvert, function(pages) {
                         if (pages && pages.length > 0) {
-                            candidate.cvPages = pages;
-                            if (window._fbReady) {
-                                window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(candidate.id)), candidate)
-                                    .catch(function(e){ console.error('auto-save doc error', e); });
+                            // Find the candidate by its own ID, not by currentEditCandidateId
+                            var targetCand = candidates.find(function(x){ return x.id === targetCandidateId; });
+                            if (targetCand) {
+                                targetCand.cvPages = pages;
+                                if (window._fbReady) {
+                                    window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(targetCandidateId)), targetCand)
+                                        .catch(function(e){ console.error('auto-save doc error', e); });
+                                }
                             }
                         }
                     });
