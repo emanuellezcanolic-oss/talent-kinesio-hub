@@ -505,6 +505,7 @@
                 +'<div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="'+(c.nextContact||'')+'" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;"></div>';
 
             document.getElementById('tabCV').innerHTML = formatearCVProfesional(c.rawCV);
+            document.getElementById('tabPDF').innerHTML = ''; // reset so previous candidate's doc doesn't show
             document.getElementById('candidateModal').style.display = 'flex';
         }
 
