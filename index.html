@@ -72,64 +72,71 @@
         .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
         .analytics-card { background: #f8f9fa; border-radius: 16px; padding: 20px; }
 
-        /* ── CV PRO STYLES v3 ── */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
-        .cv-pro-wrapper { font-family: 'Inter', sans-serif; max-width: 100%; background: #f8f9fc; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-        .cv-pro-hero { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; padding: 36px 30px 30px; text-align: center; position: relative; overflow: hidden; }
-        .cv-pro-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; background: rgba(102,126,234,0.15); border-radius: 50%; }
-        .cv-pro-hero::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px; background: rgba(118,75,162,0.12); border-radius: 50%; }
-        .cv-hero-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 14px; border: 2px solid rgba(255,255,255,0.2); position: relative; z-index: 1; }
-        .cv-pro-hero h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; position: relative; z-index: 1; }
-        .cv-hero-name { font-size: 13px; opacity: 0.75; font-weight: 300; letter-spacing: 0.5px; position: relative; z-index: 1; }
-        .cv-hero-specialty { display: inline-block; margin-top: 10px; padding: 4px 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; position: relative; z-index: 1; }
-        .cv-pro-body { background: #f8f9fc; padding: 8px 0 20px; }
-        .cv-sec { margin: 12px 18px 0; background: white; border-radius: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); overflow: hidden; transition: box-shadow 0.2s; }
-        .cv-sec:hover { box-shadow: 0 4px 16px rgba(102,126,234,0.12); }
-        .cv-sec-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; background: white; transition: background 0.15s; border-left: 4px solid transparent; }
-        .cv-sec-header:hover { background: #fafbff; }
-        .cv-sec[data-id="perfil"] .cv-sec-header { border-left-color: #667eea; }
-        .cv-sec[data-id="experiencia"] .cv-sec-header { border-left-color: #f59e0b; }
-        .cv-sec[data-id="formacion"] .cv-sec-header { border-left-color: #10b981; }
-        .cv-sec[data-id="capacitacion"] .cv-sec-header { border-left-color: #8b5cf6; }
-        .cv-sec[data-id="habilidades"] .cv-sec-header { border-left-color: #ef4444; }
-        .cv-sec[data-id="idiomas"] .cv-sec-header { border-left-color: #06b6d4; }
-        .cv-sec[data-id="contacto"] .cv-sec-header { border-left-color: #84cc16; }
-        .cv-sec-emoji-wrap { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .cv-sec[data-id="perfil"] .cv-sec-emoji-wrap { background: #eef2ff; }
-        .cv-sec[data-id="experiencia"] .cv-sec-emoji-wrap { background: #fffbeb; }
-        .cv-sec[data-id="formacion"] .cv-sec-emoji-wrap { background: #ecfdf5; }
-        .cv-sec[data-id="capacitacion"] .cv-sec-emoji-wrap { background: #f5f3ff; }
-        .cv-sec[data-id="habilidades"] .cv-sec-emoji-wrap { background: #fef2f2; }
-        .cv-sec[data-id="idiomas"] .cv-sec-emoji-wrap { background: #ecfeff; }
-        .cv-sec[data-id="contacto"] .cv-sec-emoji-wrap { background: #f7fee7; }
-        .cv-sec-info { flex: 1; }
-        .cv-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #1a1a2e; }
-        .cv-sec-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
-        .cv-sec-count { font-size: 11px; color: #667eea; background: #eef2ff; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
-        .cv-sec-arrow { font-size: 10px; color: #d1d5db; transition: transform 0.25s; margin-left: 4px; }
-        .cv-sec.collapsed .cv-sec-arrow { transform: rotate(-90deg); }
-        .cv-sec-body { padding: 0 18px 16px 18px; animation: cvFadeIn 0.2s ease; }
-        .cv-sec.collapsed .cv-sec-body { display: none; }
-        @keyframes cvFadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-        .cv-item { font-size: 13px; color: #4b5563; padding: 7px 0; line-height: 1.6; border-bottom: 1px solid #f3f4f6; }
-        .cv-item:last-child { border-bottom: none; }
-        .cv-item-contact { display: flex; align-items: center; gap: 8px; color: #059669; font-weight: 500; }
-        .cv-contact-icon { width: 26px; height: 26px; border-radius: 8px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
-        .cv-item-date { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #667eea15, #764ba215); color: #5b48c8; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; border: 1px solid #667eea25; margin: 4px 0; }
-        .cv-item-org { display: flex; align-items: flex-start; gap: 8px; color: #1a1a2e; font-weight: 700; font-size: 13px; }
-        .cv-org-badge { width: 26px; height: 26px; border-radius: 8px; background: #f0f2f5; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-        .cv-item-role { display: flex; align-items: center; gap: 8px; color: #764ba2; font-weight: 600; font-size: 13px; font-style: italic; }
-        .cv-role-dot { width: 8px; height: 8px; border-radius: 50%; background: #764ba2; flex-shrink: 0; }
-        .cv-item-bullet { display: flex; gap: 10px; align-items: flex-start; }
-        .cv-bullet-dot { width: 6px; height: 6px; border-radius: 50%; background: #667eea; flex-shrink: 0; margin-top: 7px; }
-        .cv-skills-cloud { display: flex; flex-wrap: wrap; gap: 7px; padding: 8px 0 4px; }
-        .cv-skill-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
-        .cv-pro-empty { padding: 40px; text-align: center; color: #9ca3af; font-size: 14px; }
-        .cv-pro-footer { margin: 16px 18px 0; padding: 14px 18px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
-        .cv-footer-label { font-size: 11px; color: #9ca3af; }
-        .cv-copy-btn { padding: 7px 16px; border-radius: 10px; border: 1px solid #e5e7eb; background: white; font-size: 12px; cursor: pointer; font-weight: 500; color: #374151; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-        .cv-copy-btn:hover { background: #f9fafb; border-color: #667eea; color: #667eea; }
-
+                /* ── CV VIEWER v4 ── */
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+        .cvv { font-family: "DM Sans", sans-serif; background: #0e0e14; border-radius: 20px; overflow: hidden; }
+        .cvv-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:60px 20px; color:#888; font-size:13px; background:#f7f8fc; border-radius:0 0 20px 20px; }
+        .cvv-spinner { width:32px; height:32px; border:3px solid #e5e7eb; border-top-color:#7c6bff; border-radius:50%; animation:cvvspin 0.8s linear infinite; }
+        @keyframes cvvspin { to { transform:rotate(360deg); } }
+        .cvv-hero { position:relative; padding:36px 32px 28px; overflow:hidden; background:linear-gradient(135deg,#13111c 0%,#1c1730 60%,#0e1420 100%); }
+        .cvv-hero-orb1 { position:absolute; width:260px; height:260px; border-radius:50%; background:#7c6bff; opacity:0.12; top:-80px; right:-60px; pointer-events:none; }
+        .cvv-hero-orb2 { position:absolute; width:160px; height:160px; border-radius:50%; background:#2dd4bf; opacity:0.10; bottom:-50px; left:8%; pointer-events:none; }
+        .cvv-hero-inner { position:relative; z-index:1; display:flex; align-items:center; gap:20px; }
+        .cvv-avatar { width:68px; height:68px; border-radius:18px; flex-shrink:0; background:linear-gradient(135deg,#7c6bff,#2dd4bf); display:flex; align-items:center; justify-content:center; font-family:"DM Serif Display",serif; font-size:26px; color:white; box-shadow:0 8px 24px rgba(124,107,255,0.35); }
+        .cvv-hero-meta { flex:1; }
+        .cvv-hero-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#7c6bff; font-weight:600; margin-bottom:5px; }
+        .cvv-hero-name { font-family:"DM Serif Display",Georgia,serif; font-size:21px; color:white; line-height:1.25; margin-bottom:8px; }
+        .cvv-hero-spec { display:inline-flex; align-items:center; gap:6px; background:rgba(124,107,255,0.15); border:1px solid rgba(124,107,255,0.3); border-radius:20px; padding:4px 12px; font-size:10px; color:#a89fff; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
+        .cvv-ai-row { display:flex; align-items:center; gap:6px; margin-top:10px; font-size:10px; color:#2dd4bf; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
+        .cvv-ai-dot { width:6px; height:6px; border-radius:50%; background:#2dd4bf; animation:cvvpulse 1.5s ease-in-out infinite; }
+        @keyframes cvvpulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .cvv-body { background:#f4f5f9; padding:16px; display:flex; flex-direction:column; gap:10px; }
+        .cvv-sec { background:white; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); transition:box-shadow 0.2s; }
+        .cvv-sec:hover { box-shadow:0 4px 20px rgba(124,107,255,0.1); }
+        .cvv-sec-head { display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer; user-select:none; border-left:3px solid #e5e7eb; transition:border-color 0.2s,background 0.15s; }
+        .cvv-sec-head:hover { background:#fafbff; }
+        .cvv-sec[data-s="perfil"] .cvv-sec-head       { border-left-color:#7c6bff; }
+        .cvv-sec[data-s="experiencia"] .cvv-sec-head  { border-left-color:#f59e0b; }
+        .cvv-sec[data-s="formacion"] .cvv-sec-head    { border-left-color:#10b981; }
+        .cvv-sec[data-s="capacitacion"] .cvv-sec-head { border-left-color:#8b5cf6; }
+        .cvv-sec[data-s="habilidades"] .cvv-sec-head  { border-left-color:#ef4444; }
+        .cvv-sec[data-s="idiomas"] .cvv-sec-head      { border-left-color:#06b6d4; }
+        .cvv-sec[data-s="contacto"] .cvv-sec-head     { border-left-color:#84cc16; }
+        .cvv-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+        .cvv-sec[data-s="perfil"] .cvv-ico       { background:#ede9fe; }
+        .cvv-sec[data-s="experiencia"] .cvv-ico  { background:#fef3c7; }
+        .cvv-sec[data-s="formacion"] .cvv-ico    { background:#d1fae5; }
+        .cvv-sec[data-s="capacitacion"] .cvv-ico { background:#f3e8ff; }
+        .cvv-sec[data-s="habilidades"] .cvv-ico  { background:#fee2e2; }
+        .cvv-sec[data-s="idiomas"] .cvv-ico      { background:#cffafe; }
+        .cvv-sec[data-s="contacto"] .cvv-ico     { background:#ecfccb; }
+        .cvv-sec-info { flex:1; }
+        .cvv-sec-title { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#111827; }
+        .cvv-sec-sub { font-size:11px; color:#9ca3af; margin-top:2px; }
+        .cvv-badge { font-size:11px; font-weight:600; color:#7c6bff; background:#ede9fe; padding:2px 9px; border-radius:10px; }
+        .cvv-arrow { font-size:10px; color:#d1d5db; transition:transform 0.2s; margin-left:4px; }
+        .cvv-sec.closed .cvv-arrow { transform:rotate(-90deg); }
+        .cvv-sec-body { padding:4px 18px 16px 18px; animation:cvvslide 0.18s ease; }
+        .cvv-sec.closed .cvv-sec-body { display:none; }
+        @keyframes cvvslide { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+        .cvv-entry { padding:10px 0; border-bottom:1px solid #f3f4f6; }
+        .cvv-entry:last-child { border-bottom:none; }
+        .cvv-entry-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:4px; }
+        .cvv-entry-title { font-size:13px; font-weight:600; color:#111827; }
+        .cvv-entry-place { font-size:12px; color:#6b7280; }
+        .cvv-entry-date { font-size:11px; color:#7c6bff; font-weight:600; white-space:nowrap; background:#ede9fe; padding:2px 8px; border-radius:8px; flex-shrink:0; }
+        .cvv-entry-desc { font-size:12px; color:#4b5563; line-height:1.6; margin-top:4px; }
+        .cvv-contact-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #f3f4f6; font-size:13px; color:#374151; }
+        .cvv-contact-item:last-child { border-bottom:none; }
+        .cvv-contact-ico { width:30px; height:30px; border-radius:8px; background:#ecfdf5; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+        .cvv-skills { display:flex; flex-wrap:wrap; gap:8px; padding:8px 0 4px; }
+        .cvv-skill { font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; }
+        .cvv-plain { font-size:13px; color:#374151; line-height:1.7; padding:6px 0; }
+        .cvv-footer { padding:14px 18px; background:white; display:flex; align-items:center; justify-content:space-between; border-top:1px solid #f3f4f6; }
+        .cvv-footer-note { font-size:11px; color:#9ca3af; }
+        .cvv-copy { padding:7px 16px; border-radius:10px; border:1px solid #e5e7eb; background:white; font-size:12px; cursor:pointer; font-weight:600; color:#374151; transition:all 0.15s; }
+        .cvv-copy:hover { background:#ede9fe; border-color:#7c6bff; color:#7c6bff; }
+        .cvv-error { padding:30px; text-align:center; color:#9ca3af; font-size:13px; }
     </style>
 </head>
 <body>
@@ -292,193 +299,215 @@
             });
         }
 
-        // ══════════════════════════════════════════════════════════
-        //  CV PRO v3 - DISEÑO PROFESIONAL CON SMART PARSING
-        // ══════════════════════════════════════════════════════════
+        // ── CV VIEWER v4: usa Groq para parsear el texto crudo ──
+
+        var cvCacheId = null;
+        var cvCacheHTML = null;
+
         function formatearCVProfesional(texto) {
-            var candidatoActual = candidates.find(function(c){ return c.id === currentEditCandidateId; });
-            var nombreCandidato = candidatoActual ? candidatoActual.name : 'Candidato';
-            var especialidad = candidatoActual ? (candidatoActual.specialty || '') : '';
+            var cand = candidates.find(function(c){ return c.id === currentEditCandidateId; });
+            var nombre = cand ? (cand.name || 'Candidato') : 'Candidato';
+            var spec   = cand ? (cand.specialty || '') : '';
+            var iniciales = nombre.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join('').toUpperCase();
 
-            if (!texto || texto === 'No se guardó el texto original del CV') {
-                return '<div class="cv-pro-wrapper">'
-                     + '<div class="cv-pro-hero"><div class="cv-hero-avatar">📄</div><h3>Currículum Vitae</h3>'
-                     + '<div class="cv-hero-name">' + escapeHtml(nombreCandidato) + '</div></div>'
-                     + '<div class="cv-pro-body"><div class="cv-pro-empty">⚠️ No hay texto del CV disponible</div></div></div>';
+            var heroHTML = '<div class="cvv">'
+                + '<div class="cvv-hero">'
+                + '<div class="cvv-hero-orb1"></div><div class="cvv-hero-orb2"></div>'
+                + '<div class="cvv-hero-inner">'
+                + '<div class="cvv-avatar">' + iniciales + '</div>'
+                + '<div class="cvv-hero-meta">'
+                + '<div class="cvv-hero-label">Currículum Vitae</div>'
+                + '<div class="cvv-hero-name">' + escapeHtml(nombre) + '</div>'
+                + (spec ? '<div class="cvv-hero-spec">' + escapeHtml(spec) + '</div>' : '')
+                + '<div class="cvv-ai-row"><div class="cvv-ai-dot"></div>Estructurado con IA</div>'
+                + '</div></div></div>';
+
+            if (!texto || texto.length < 20) {
+                return heroHTML + '<div class="cvv-body"><div class="cvv-error">No hay texto de CV disponible.</div></div></div>';
             }
 
-            // SMART CLEANER: arregla palabras pegadas que vienen del PDF
-            function limpiarTexto(t) {
-                // Separar cuando minúscula va seguida de mayúscula+minúscula (ej: "CarlosAlberto" → "Carlos Alberto")
-                t = t.replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2');
-                // Separar números largos pegados a letras
-                t = t.replace(/([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])([0-9]{4,})/g, '$1 $2');
-                t = t.replace(/([0-9]{4,})([a-záéíóúüñA-ZÁÉÍÓÚÜÑ])/g, '$1 $2');
-                // Limpiar espacios múltiples
-                t = t.replace(/[ \t]{2,}/g, ' ');
-                t = t.replace(/ \. /g, '. ').replace(/ , /g, ', ').replace(/ : /g, ': ');
-                return t.trim();
+            // Si ya parseamos este candidato, usar cache
+            if (cvCacheId === currentEditCandidateId && cvCacheHTML) {
+                return heroHTML + cvCacheHTML + '</div>';
             }
 
-            var SECCIONES = [
-                { id:'perfil',       emoji:'🎯', titulo:'Perfil Profesional',       sub:'Presentación y objetivos',    keys:['PERFIL PROFESIONAL','PERFIL LABORAL','SOBRE MI','SOBRE MÍ','PRESENTACION','PRESENTACIÓN','RESUMEN PROFESIONAL','RESUMEN','OBJETIVO PROFESIONAL','OBJETIVO'] },
-                { id:'experiencia',  emoji:'💼', titulo:'Experiencia Laboral',        sub:'Historial de trabajo',        keys:['EXPERIENCIA LABORAL','EXPERIENCIA PROFESIONAL','EXPERIENCIAPROFESIONAL','EXPERIENCIA','TRAYECTORIA','HISTORIAL LABORAL'] },
-                { id:'formacion',    emoji:'🎓', titulo:'Formación Académica',         sub:'Títulos y estudios',          keys:['FORMACION ACADEMICA','FORMACIÓN ACADÉMICA','EDUCACION','EDUCACIÓN','ESTUDIOS','TITULOS','TÍTULOS','ISFD','CARRERA UNIVERSITARIA'] },
-                { id:'capacitacion', emoji:'📚', titulo:'Capacitaciones y Cursos',    sub:'Cursos y certificaciones',    keys:['CAPACITACION','CAPACITACIÓN','CAPACITACIONES','CURSOS','CURSO','CERTIFICACIONES','CERTIFICADOS','POSGRADO','TALLERES','FORMACION COMPLEMENTARIA','FORMACIÓN COMPLEMENTARIA'] },
-                { id:'habilidades',  emoji:'⚡', titulo:'Habilidades',               sub:'Skills técnicas y blandas',   keys:['HABILIDADES','COMPETENCIAS','APTITUDES','SKILLS','DESTREZAS','CONOCIMIENTOS'] },
-                { id:'idiomas',      emoji:'🌐', titulo:'Idiomas',                    sub:'Lenguas y nivel',             keys:['IDIOMAS','IDIOMA','LENGUAS','LANGUAGES'] },
-                { id:'contacto',     emoji:'📬', titulo:'Datos de Contacto',          sub:'Información personal',        keys:['CONTACTO','DATOS PERSONALES','DATOS DE CONTACTO','INFORMACION PERSONAL','INFORMACIÓN PERSONAL'] }
-            ];
+            // Mostrar spinner y lanzar parseo async
+            var loadingBody = '<div class="cvv-loading"><div class="cvv-spinner"></div><span>La IA está estructurando el CV...</span></div>';
+            setTimeout(function(){ parsearCVConIA(texto, currentEditCandidateId); }, 100);
+            return heroHTML + loadingBody + '</div>';
+        }
 
-            function detectarSeccion(linea) {
-                var up = linea.toUpperCase().trim();
-                if (up.length > 65 || up.length < 3) return null;
-                for (var i = 0; i < SECCIONES.length; i++) {
-                    for (var j = 0; j < SECCIONES[i].keys.length; j++) {
-                        if (up.indexOf(SECCIONES[i].keys[j]) !== -1) return SECCIONES[i];
+        function parsearCVConIA(texto, candidateId) {
+            var prompt = 'Eres un asistente de RRHH. Recibís el texto crudo de un CV extraído de un PDF (puede tener palabras pegadas, caracteres raros, sin formato). Tu tarea: devolver SOLO un objeto JSON válido, sin explicaciones, sin markdown, sin backticks. El JSON debe tener esta estructura exacta:\n{\n  "contacto": [{"tipo":"email/telefono/ubicacion/web","valor":"..."}],\n  "perfil": "texto del perfil profesional en 2-4 oraciones claras",\n  "experiencia": [{"cargo":"...","empresa":"...","fecha":"...","descripcion":"..."}],\n  "formacion": [{"titulo":"...","institucion":"...","fecha":"..."}],\n  "capacitaciones": [{"nombre":"...","institucion":"...","fecha":"..."}],\n  "habilidades": ["skill1","skill2"],\n  "idiomas": [{"idioma":"...","nivel":"..."}]\n}\nSi una sección no existe en el CV, pon un array vacío o string vacío. Texto del CV:\n\n';
+
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+                body: JSON.stringify({
+                    model: 'llama-3.1-8b-instant',
+                    messages: [{ role: 'user', content: prompt + texto.substring(0, 4000) }],
+                    temperature: 0.1,
+                    max_tokens: 2000
+                })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var raw = data.choices[0].message.content;
+                // Limpiar posibles backticks o texto extra
+                raw = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+                var first = raw.indexOf('{');
+                var last  = raw.lastIndexOf('}');
+                if (first === -1 || last === -1) throw new Error('JSON no encontrado');
+                var parsed = JSON.parse(raw.substring(first, last+1));
+                var html = renderCVParsed(parsed);
+                cvCacheId   = candidateId;
+                cvCacheHTML = html;
+                // Re-render si el modal sigue abierto con el mismo candidato
+                if (currentEditCandidateId === candidateId) {
+                    var tab = document.getElementById('tabCV');
+                    if (tab && tab.classList.contains('active')) {
+                        var cand2 = candidates.find(function(c){ return c.id === candidateId; });
+                        var nombre2 = cand2 ? (cand2.name||'Candidato') : 'Candidato';
+                        var spec2   = cand2 ? (cand2.specialty||'') : '';
+                        var ini2 = nombre2.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join('').toUpperCase();
+                        var heroHTML2 = '<div class="cvv"><div class="cvv-hero"><div class="cvv-hero-orb1"></div><div class="cvv-hero-orb2"></div><div class="cvv-hero-inner"><div class="cvv-avatar">' + ini2 + '</div><div class="cvv-hero-meta"><div class="cvv-hero-label">Curr\u00edculum Vitae</div><div class="cvv-hero-name">' + escapeHtml(nombre2) + '</div>' + (spec2 ? '<div class="cvv-hero-spec">' + escapeHtml(spec2) + '</div>' : '') + '<div class="cvv-ai-row"><div class="cvv-ai-dot"></div>Estructurado con IA</div></div></div></div>';
+                        tab.innerHTML = heroHTML2 + html + '</div>';
                     }
                 }
-                return null;
-            }
-
-            var rawLineas = texto.split('\n');
-            var lineas = [];
-            for (var i = 0; i < rawLineas.length; i++) {
-                var l = limpiarTexto(rawLineas[i]);
-                if (l.length > 1) lineas.push(l);
-            }
-
-            var seccionActual = null;
-            var grupos = [];
-            for (var i = 0; i < lineas.length; i++) {
-                var sec = detectarSeccion(lineas[i]);
-                if (sec) {
-                    seccionActual = { seccion: sec, lineas: [] };
-                    grupos.push(seccionActual);
-                } else {
-                    if (!seccionActual) {
-                        seccionActual = { seccion: SECCIONES[0], lineas: [] };
-                        grupos.push(seccionActual);
+            })
+            .catch(function(err) {
+                console.error('CV parse error:', err);
+                if (currentEditCandidateId === candidateId) {
+                    var tab = document.getElementById('tabCV');
+                    if (tab) {
+                        var errDiv = '<div class="cvv-body"><div class="cvv-error">No se pudo estructurar el CV. Mostrando texto original.</div>'
+                            + '<div class="cvv-sec" data-s="perfil"><div class="cvv-sec-head"><div class="cvv-ico">📄</div><div class="cvv-sec-info"><div class="cvv-sec-title">Texto del CV</div></div></div>'
+                            + '<div class="cvv-sec-body"><div class="cvv-plain" style="white-space:pre-wrap;font-size:12px;">' + escapeHtml(candidates.find(function(c){return c.id===candidateId;})||{rawCV:''}).rawCV || '' + '</div></div></div></div>';
+                        // just show error cleanly
+                        var cand3 = candidates.find(function(c){ return c.id === candidateId; });
+                        tab.innerHTML = tab.innerHTML.replace(/<div class="cvv-loading">[\s\S]*?<\/div>/, '<div class="cvv-body"><div class="cvv-error">\u26a0\ufe0f No se pudo procesar. Intent\u00e1 de nuevo.</div></div>');
                     }
-                    seccionActual.lineas.push(lineas[i]);
                 }
-            }
+            });
+        }
 
-            function esEmail(t) { return t.indexOf('@') !== -1 && t.indexOf('.') !== -1; }
-            function esTelefono(t) { return /^\+?[\d\s\-\(\)]{8,}$/.test(t); }
-            function esFecha(t) { return /\b(19|20)\d{2}\b/.test(t) && t.replace(/[^a-zA-Z]/g,'').length < 5; }
-            function esOrg(t) {
-                var kw = ['ESCUELA','CENTRO','CLINICA','CLÍNICA','HOSPITAL','UNIVERSIDAD','INSTITUTO','ISFD','CEAL','UBA','UTN','MEGATLON','FITER','FITONE','PUENTE','CAREM','MEDIN','ARCOIRIS'];
-                var up = t.toUpperCase();
-                for (var i=0;i<kw.length;i++) { if (up.indexOf(kw[i]) !== -1) return true; }
-                return false;
-            }
-            function esCargo(t) {
-                var kw = ['ENTRENADOR','KINESIOLOGO','KINESIÓLOGA','KINESIOLOGA','INSTRUCTOR','DOCENTE','PROFESORA','PROFESOR','ENCARGADO','COORDINADOR','PRECEPTORA','FISIOTERAPEUTA','PPS','PASANTE'];
-                var up = t.toUpperCase();
-                for (var i=0;i<kw.length;i++) { if (up.indexOf(kw[i]) !== -1) return true; }
-                return false;
-            }
-            function esBullet(t) { return (t.charAt(0)==='•'||t.charAt(0)==='-'||t.charAt(0)==='*') || /^\d+\./.test(t); }
+        function renderCVParsed(d) {
+            var html = '<div class="cvv-body">';
 
-            function renderLinea(linea, secId) {
-                var esc = escapeHtml(linea);
-                if (esEmail(linea))
-                    return '<div class="cv-item cv-item-contact"><div class="cv-contact-icon">📧</div><span>' + esc + '</span></div>';
-                if (esTelefono(linea))
-                    return '<div class="cv-item cv-item-contact"><div class="cv-contact-icon">📞</div><span>' + esc + '</span></div>';
-                if (esFecha(linea))
-                    return '<div class="cv-item"><span class="cv-item-date">📅 ' + esc + '</span></div>';
-                if (esOrg(linea))
-                    return '<div class="cv-item cv-item-org"><div class="cv-org-badge">🏢</div><span>' + esc + '</span></div>';
-                if (esCargo(linea))
-                    return '<div class="cv-item cv-item-role"><div class="cv-role-dot"></div><span>' + esc + '</span></div>';
-                if (secId === 'habilidades' && linea.length < 40 && linea.indexOf('.') === -1)
-                    return '__SKILL__' + esc;
-                if (esBullet(linea))
-                    return '<div class="cv-item cv-item-bullet"><div class="cv-bullet-dot"></div><span>' + esc.replace(/^[•\-\*\d\.]\s*/,'') + '</span></div>';
-                return '<div class="cv-item">' + esc + '</div>';
-            }
-
-            var html = '<div class="cv-pro-wrapper">'
-                + '<div class="cv-pro-hero">'
-                + '<div class="cv-hero-avatar">👤</div>'
-                + '<h3>Currículum Vitae</h3>'
-                + '<div class="cv-hero-name">' + escapeHtml(nombreCandidato) + '</div>'
-                + (especialidad ? '<div class="cv-hero-specialty">' + escapeHtml(especialidad) + '</div>' : '')
-                + '</div>'
-                + '<div class="cv-pro-body">';
-
-            if (grupos.length === 0) {
-                html += '<div class="cv-pro-empty">⚠️ No se pudo procesar el CV.</div>';
-            } else {
-                for (var g = 0; g < grupos.length; g++) {
-                    var grupo = grupos[g];
-                    if (grupo.lineas.length === 0) continue;
-                    var sec = grupo.seccion;
-                    var rendered = [];
-                    for (var li = 0; li < grupo.lineas.length; li++) {
-                        rendered.push(renderLinea(grupo.lineas[li], sec.id));
-                    }
-                    var skills = [];
-                    var otras = [];
-                    for (var ri = 0; ri < rendered.length; ri++) {
-                        if (rendered[ri].indexOf('__SKILL__') === 0) {
-                            skills.push(rendered[ri].replace('__SKILL__',''));
-                        } else {
-                            otras.push(rendered[ri]);
-                        }
-                    }
-                    var bodyHTML = otras.join('');
-                    if (skills.length > 0) {
-                        bodyHTML += '<div class="cv-skills-cloud">';
-                        for (var si = 0; si < skills.length; si++) {
-                            bodyHTML += '<span class="cv-skill-pill">' + skills[si] + '</span>';
-                        }
-                        bodyHTML += '</div>';
-                    }
-                    html += '<div class="cv-sec" id="cvSec_' + g + '" data-id="' + sec.id + '">'
-                          + '<div class="cv-sec-header" onclick="toggleCVSec(' + g + ')">'
-                          + '<div class="cv-sec-emoji-wrap">' + sec.emoji + '</div>'
-                          + '<div class="cv-sec-info">'
-                          + '<div class="cv-sec-title">' + sec.titulo + '</div>'
-                          + '<div class="cv-sec-sub">' + sec.sub + '</div>'
-                          + '</div>'
-                          + '<span class="cv-sec-count">' + grupo.lineas.length + '</span>'
-                          + '<span class="cv-sec-arrow">▼</span>'
-                          + '</div>'
-                          + '<div class="cv-sec-body">' + bodyHTML + '</div>'
-                          + '</div>';
+            // CONTACTO
+            if (d.contacto && d.contacto.length > 0) {
+                var iconMap = { email:'📧', telefono:'📞', ubicacion:'📍', web:'🌐' };
+                var items = '';
+                for (var i=0;i<d.contacto.length;i++) {
+                    var ic = iconMap[d.contacto[i].tipo] || '📌';
+                    items += '<div class="cvv-contact-item"><div class="cvv-contact-ico">' + ic + '</div>' + escapeHtml(d.contacto[i].valor) + '</div>';
                 }
+                html += makeSec('contacto','📬','Contacto','Datos personales', items, d.contacto.length);
             }
 
-            html += '</div>'
-                  + '<div class="cv-pro-footer">'
-                  + '<span class="cv-footer-label">📄 Documento original guardado</span>'
-                  + '<button class="cv-copy-btn" onclick="copyCVCompleto()">📋 Copiar texto completo</button>'
-                  + '</div>'
-                  + '</div>';
+            // PERFIL
+            if (d.perfil && d.perfil.length > 5) {
+                var pHTML = '<div class="cvv-plain">' + escapeHtml(d.perfil) + '</div>';
+                html += makeSec('perfil','🎯','Perfil Profesional','Presentación y objetivos', pHTML, 1);
+            }
 
+            // EXPERIENCIA
+            if (d.experiencia && d.experiencia.length > 0) {
+                var eHTML = '';
+                for (var i=0;i<d.experiencia.length;i++) {
+                    var e = d.experiencia[i];
+                    eHTML += '<div class="cvv-entry">'
+                        + '<div class="cvv-entry-head">'
+                        + '<div><div class="cvv-entry-title">' + escapeHtml(e.cargo||'') + '</div>'
+                        + '<div class="cvv-entry-place">' + escapeHtml(e.empresa||'') + '</div></div>'
+                        + (e.fecha ? '<div class="cvv-entry-date">' + escapeHtml(e.fecha) + '</div>' : '')
+                        + '</div>'
+                        + (e.descripcion ? '<div class="cvv-entry-desc">' + escapeHtml(e.descripcion) + '</div>' : '')
+                        + '</div>';
+                }
+                html += makeSec('experiencia','💼','Experiencia Laboral','Historial de trabajo', eHTML, d.experiencia.length);
+            }
+
+            // FORMACION
+            if (d.formacion && d.formacion.length > 0) {
+                var fHTML = '';
+                for (var i=0;i<d.formacion.length;i++) {
+                    var f = d.formacion[i];
+                    fHTML += '<div class="cvv-entry">'
+                        + '<div class="cvv-entry-head">'
+                        + '<div><div class="cvv-entry-title">' + escapeHtml(f.titulo||'') + '</div>'
+                        + '<div class="cvv-entry-place">' + escapeHtml(f.institucion||'') + '</div></div>'
+                        + (f.fecha ? '<div class="cvv-entry-date">' + escapeHtml(f.fecha) + '</div>' : '')
+                        + '</div></div>';
+                }
+                html += makeSec('formacion','🎓','Formación Académica','Títulos y estudios', fHTML, d.formacion.length);
+            }
+
+            // CAPACITACIONES
+            if (d.capacitaciones && d.capacitaciones.length > 0) {
+                var cHTML = '';
+                for (var i=0;i<d.capacitaciones.length;i++) {
+                    var cap = d.capacitaciones[i];
+                    cHTML += '<div class="cvv-entry">'
+                        + '<div class="cvv-entry-head">'
+                        + '<div><div class="cvv-entry-title">' + escapeHtml(cap.nombre||'') + '</div>'
+                        + '<div class="cvv-entry-place">' + escapeHtml(cap.institucion||'') + '</div></div>'
+                        + (cap.fecha ? '<div class="cvv-entry-date">' + escapeHtml(cap.fecha) + '</div>' : '')
+                        + '</div></div>';
+                }
+                html += makeSec('capacitacion','📚','Capacitaciones','Cursos y certificaciones', cHTML, d.capacitaciones.length);
+            }
+
+            // HABILIDADES
+            if (d.habilidades && d.habilidades.length > 0) {
+                var skHTML = '<div class="cvv-skills">';
+                for (var i=0;i<d.habilidades.length;i++) {
+                    skHTML += '<span class="cvv-skill">' + escapeHtml(d.habilidades[i]) + '</span>';
+                }
+                skHTML += '</div>';
+                html += makeSec('habilidades','⚡','Habilidades','Skills técnicas y blandas', skHTML, d.habilidades.length);
+            }
+
+            // IDIOMAS
+            if (d.idiomas && d.idiomas.length > 0) {
+                var idHTML = '';
+                for (var i=0;i<d.idiomas.length;i++) {
+                    idHTML += '<div class="cvv-entry"><div class="cvv-entry-head"><div class="cvv-entry-title">' + escapeHtml(d.idiomas[i].idioma||'') + '</div>'
+                        + (d.idiomas[i].nivel ? '<div class="cvv-entry-date">' + escapeHtml(d.idiomas[i].nivel) + '</div>' : '')
+                        + '</div></div>';
+                }
+                html += makeSec('idiomas','🌐','Idiomas','Lenguas y nivel', idHTML, d.idiomas.length);
+            }
+
+            html += '</div>';
+            html += '<div class="cvv-footer"><span class="cvv-footer-note">📄 Estructurado con IA · Groq LLaMA 3</span><button class="cvv-copy" onclick="copyCVCompleto()">📋 Copiar original</button></div>';
             return html;
         }
 
-        function toggleCVSec(idx) {
-            var el = document.getElementById('cvSec_' + idx);
-            if (el) el.classList.toggle('collapsed');
+        function makeSec(sid, emoji, titulo, sub, bodyHTML, count) {
+            return '<div class="cvv-sec" data-s="' + sid + '">'
+                + '<div class="cvv-sec-head" onclick="this.parentElement.classList.toggle(\'closed\')">'
+                + '<div class="cvv-ico">' + emoji + '</div>'
+                + '<div class="cvv-sec-info"><div class="cvv-sec-title">' + titulo + '</div><div class="cvv-sec-sub">' + sub + '</div></div>'
+                + '<span class="cvv-badge">' + count + '</span>'
+                + '<span class="cvv-arrow">▼</span>'
+                + '</div>'
+                + '<div class="cvv-sec-body">' + bodyHTML + '</div>'
+                + '</div>';
         }
 
         function copyCVCompleto() {
             var c = candidates.find(function(x){ return x.id === currentEditCandidateId; });
             if (c && c.rawCV) {
                 navigator.clipboard.writeText(c.rawCV);
-                alert('✅ CV completo copiado al portapapeles');
-            } else {
-                alert('No hay CV para copiar');
+                alert('Copiado al portapapeles');
             }
         }
-        // ══════════════════════════════════════════════════════════
 
-        function openCandidateDetail(id) {
+        // Reset cache when modal closes
+        var _origCloseModal = closeModal;
+
+                function openCandidateDetail(id) {
             currentEditCandidateId = id;
             const c = candidates.find(c=>c.id===id);
             if (!c) return;
