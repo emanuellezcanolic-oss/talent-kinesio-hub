@@ -136,6 +136,48 @@
         .cvv-copy { padding:7px 16px; border-radius:10px; border:1px solid #e5e7eb; background:white; font-size:12px; cursor:pointer; font-weight:600; color:#374151; transition:all 0.15s; }
         .cvv-copy:hover { background:#ede9fe; border-color:#7c6bff; color:#7c6bff; }
         .cvv-error { padding:30px; text-align:center; color:#9ca3af; font-size:13px; }
+/* ── INTERVIEW SCORECARD ── */
+        .iq-block { margin-bottom: 28px; }
+        .iq-block-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #667eea; border-left: 4px solid #667eea; padding-left: 10px; margin-bottom: 14px; }
+        .iq-q { background: #f8f9fc; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
+        .iq-q-text { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+        .iq-q-hint { font-size: 11px; color: #9ca3af; margin-bottom: 10px; font-style: italic; }
+        .iq-score-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .iq-score-label { font-size: 11px; font-weight: 600; color: #6b7280; }
+        .iq-score-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e5e7eb; background: white; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; color: #6b7280; }
+        .iq-score-btn:hover { transform: scale(1.15); }
+        .iq-score-btn.s1, .iq-score-btn.s2 { border-color: #ef4444; color: #ef4444; }
+        .iq-score-btn.s3 { border-color: #f59e0b; color: #f59e0b; }
+        .iq-score-btn.s4, .iq-score-btn.s5 { border-color: #10b981; color: #10b981; }
+        .iq-score-btn.active.s1, .iq-score-btn.active.s2 { background: #ef4444; color: white; border-color: #ef4444; }
+        .iq-score-btn.active.s3 { background: #f59e0b; color: white; border-color: #f59e0b; }
+        .iq-score-btn.active.s4, .iq-score-btn.active.s5 { background: #10b981; color: white; border-color: #10b981; }
+        .iq-obs { width: 100%; padding: 8px 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 12px; resize: vertical; min-height: 50px; font-family: inherit; color: #374151; }
+        .iq-obs:focus { outline: none; border-color: #667eea; }
+        .iq-total { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: 16px; padding: 20px 24px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; }
+        .iq-total-label { font-size: 13px; opacity: 0.8; }
+        .iq-total-score { font-size: 36px; font-weight: 700; }
+        .iq-total-verdict { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; margin-top: 4px; display: inline-block; }
+        .iq-verdict-green { background: #10b981; }
+        .iq-verdict-yellow { background: #f59e0b; }
+        .iq-verdict-red { background: #ef4444; }
+        .iq-ai-btn { width: 100%; padding: 12px; border-radius: 12px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 14px; font-weight: 600; cursor: pointer; margin: 10px 0; transition: all 0.2s; }
+        .iq-ai-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+        .iq-ai-result { background: #f0f2f5; border-radius: 12px; padding: 16px; margin-top: 10px; font-size: 13px; line-height: 1.7; color: #374151; display: none; }
+        .iq-ai-result.visible { display: block; }
+        .iq-checklist { background: #f8f9fc; border-radius: 14px; padding: 16px; margin-top: 16px; }
+        .iq-checklist-title { font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 12px; }
+        .iq-check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151; }
+        .iq-check-item:last-child { border-bottom: none; }
+        .iq-check-item input[type=checkbox] { width: 16px; height: 16px; accent-color: #667eea; cursor: pointer; }
+        .iq-check-item input[type=date] { border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 8px; font-size: 12px; color: #374151; }
+        /* NEW badge on cards */
+        .badge-new { position: absolute; top: 15px; left: 15px; background: #7c6bff; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .card-interview-score { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+        .card-iscore { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
+        .card-iscore-green { background: #d1fae5; color: #059669; }
+        .card-iscore-yellow { background: #fef3c7; color: #d97706; }
+        .card-iscore-red { background: #fee2e2; color: #dc2626; }
         /* PDF/IMAGE VIEWER */
         .pdfv-wrap { padding: 16px; }
         .pdfv-upload { border: 2px dashed #d1d5db; border-radius: 16px; padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
@@ -321,15 +363,24 @@
             if (filtered.length === 0) { grid.innerHTML = '<p style="text-align:center;color:#999;">No hay candidatos</p>'; return; }
             const statusText = { pendiente:'Pendiente', entrevistado:'Entrevistado', contratado:'Contratado', descartado:'Descartado' };
             const statusClass = { pendiente:'status-pendiente', entrevistado:'status-entrevistado', contratado:'status-contratado', descartado:'status-descartado' };
-            grid.innerHTML = filtered.map(c=>'<div class="candidate-card" onclick="openCandidateDetail('+c.id+')">'
+            grid.innerHTML = filtered.map(c=>{
+                var iScore = c.interviewScore || 0;
+                var iScoreClass = iScore>=70?'card-iscore-green':iScore>=45?'card-iscore-yellow':'card-iscore-red';
+                var iVerdict = iScore>=70?'CONTRATAR':iScore>=45?'OBSERVAR':'';
+                return '<div class="candidate-card" onclick="openCandidateDetail('+c.id+')">'
+                +(!c.checkCV?'<div class="badge-new">NUEVO</div>':'')
                 +'<div class="status-badge '+(statusClass[c.status]||'status-pendiente')+'">'+(statusText[c.status]||'Pendiente')+'</div>'
-                +'<div class="candidate-name">'+escapeHtml(c.name)+'</div>'
+                +'<div class="candidate-name" style="margin-top:'+((!c.checkCV)?'28px':'4px')+'">'+escapeHtml(c.name)+'</div>'
                 +'<div class="candidate-specialty">'+(c.specialty||'No especificado')+'</div>'
-                +'<div class="score-badge" style="margin-top:10px;">'+(c.score||70)+'%</div>'
+                +'<div style="display:flex;align-items:center;gap:10px;margin-top:8px;">'
+                +'<span class="score-badge">'+(c.score||70)+'%</span>'
+                +(iScore>0?'<span class="card-iscore '+iScoreClass+'">🎤 '+iScore+'/100'+(iVerdict?' · '+iVerdict:'')+'</span>':'')
+                +'</div>'
                 +'<div class="skills-list">'+(c.hardSkills||[]).slice(0,3).map(s=>'<span class="skill-tag">'+escapeHtml(s)+'</span>').join('')+'</div>'
-                +'<div style="margin-top:10px;font-size:12px;color:#999;">📍 '+(c.location||'Sin ubicación')+' | 📅 '+(c.date||'')+'</div>'
-                +(c.availability?'<div style="font-size:11px;color:#10b981;margin-top:5px;">✅ '+c.availability+'</div>':'')
-                +'</div>').join('');
+                +'<div style="margin-top:8px;font-size:12px;color:#999;">📍 '+(c.location||'Sin ubicación')+' | 📅 '+(c.date||'')+'</div>'
+                +(c.availability?'<div style="font-size:11px;color:#10b981;margin-top:4px;">✅ '+c.availability+'</div>':'')
+                +'</div>';
+            }).join('');
         }
 
         function escapeHtml(text) {
@@ -489,20 +540,8 @@
                 +'<div class="form-group"><label>Info adicional</label><textarea id="editPersonalInfo" rows="2">'+escapeHtml(c.personalInfo||'')+'</textarea></div>'
                 +'</form>';
 
-            const pt = generarPreguntasSegunSkills(c.hardSkills||[], c.specialty);
-            const ps = generarPreguntasSituacionales();
-            document.getElementById('tabInterview').innerHTML = '<h3>🎤 Preguntas sugeridas para la entrevista</h3>'
-                +'<div style="margin-bottom:20px;"><h4>Preguntas Técnicas</h4>'+pt.map((q,i)=>'<div class="question-suggestion"><strong>'+(i+1)+'.</strong> '+escapeHtml(q)+'</div>').join('')+'</div>'
-                +'<div style="margin-bottom:20px;"><h4>Preguntas Situacionales</h4>'+ps.map((q,i)=>'<div class="question-suggestion"><strong>'+(i+1)+'.</strong> '+escapeHtml(q)+'</div>').join('')+'</div>'
-                +'<hr style="margin:20px 0;"><h4>✅ Checklist de seguimiento</h4>'
-                +'<div><input type="checkbox" id="checkCV" '+(c.checkCV?'checked':'')+'> CV revisado</div>'
-                +'<div><input type="checkbox" id="checkVideoCall" '+(c.checkVideoCall?'checked':'')+'> Video llamada <input type="date" id="videoCallDate" value="'+(c.videoCallDate||'')+'"></div>'
-                +'<div><input type="checkbox" id="checkTechnical" '+(c.checkTechnical?'checked':'')+'> Entrevista técnica <input type="date" id="technicalDate" value="'+(c.technicalDate||'')+'"></div>'
-                +'<div><input type="checkbox" id="checkHR" '+(c.checkHR?'checked':'')+'> Entrevista RRHH <input type="date" id="hrDate" value="'+(c.hrDate||'')+'"></div>'
-                +'<div><input type="checkbox" id="checkOffer" '+(c.checkOffer?'checked':'')+'> Oferta enviada</div>'
-                +'<h4 style="margin-top:20px;">📝 Notas de entrevista</h4>'
-                +'<textarea id="interviewNotes" rows="4" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;">'+escapeHtml(c.interviewNotes||'')+'</textarea>'
-                +'<div style="margin-top:10px;"><label>Próximo contacto</label><input type="date" id="nextContact" value="'+(c.nextContact||'')+'" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;"></div>';
+            document.getElementById('tabInterview').innerHTML = renderInterviewTab(c);
+            if (c.interviewAIResult) { var r=document.getElementById('iqAiResult'); if(r) r.classList.add('visible'); }
 
             document.getElementById('tabCV').innerHTML = formatearCVProfesional(c.rawCV);
             document.getElementById('tabPDF').innerHTML = ''; // reset so previous candidate's doc doesn't show
@@ -522,6 +561,269 @@
                 }
             }
         }
+
+
+        // ── INTERVIEW QUESTIONS BY SPECIALTY ──
+        function getQuestions(specialty) {
+            var sp = (specialty||'').toLowerCase();
+            var isKine = sp.includes('kinesio') || sp.includes('fisio');
+            var isEntrenador = sp.includes('entrenador') || sp.includes('personal trainer') || sp.includes('profesor') || sp.includes('educacion fisica') || sp.includes('educación física');
+            var isNutricion = sp.includes('nutri');
+            var isRecepcion = sp.includes('recep') || sp.includes('administra');
+
+            var bloques = [
+                {
+                    titulo: 'BLOQUE 1 — Estructura Personal',
+                    color: '#667eea',
+                    preguntas: [
+                        { texto: '¿Cómo empezó tu semana y qué es lo primero que hacés al levantarte?', hint: 'Buscá: rutinas, estructura mental, proactividad.', peso: 1 },
+                        { texto: '¿Quién arma la cama en tu casa y cada cuánto? ¿Qué 3 hábitos diarios te ponen orgulloso/a?', hint: 'Buscá: disciplina, orden, autoexigencia.', peso: 1.5 },
+                        { texto: '¿Cómo es un fin de semana típico en tu vida?', hint: 'Buscá: equilibrio, actividad física, descanso activo.', peso: 1 },
+                        { texto: 'Contame algo significativo que te haya pasado (un error o fracaso) y qué aprendiste.', hint: 'Buscá: accountability, no culpar a terceros, aprendizaje.', peso: 1.5 },
+                        { texto: 'Contame de una situación laboral donde las cosas salieron muy mal. ¿Cuál fue tu responsabilidad en eso?', hint: 'Buscá: locus de control interno, madurez.', peso: 2 },
+                        { texto: '¿Cuáles son tus tres valores no negociables en un ambiente laboral?', hint: 'Buscá: alineación con MOVE, integridad, compromiso.', peso: 1.5 },
+                    ]
+                },
+                {
+                    titulo: 'BLOQUE 2 — Excelencia Técnica',
+                    color: '#f59e0b',
+                    preguntas: isKine ? [
+                        { texto: 'Llega un paciente post-op de LCA: ¿Qué evaluaciones de rendimiento usás y por qué?', hint: 'Buscá: tests específicos (Limb Symmetry, hop tests), razonamiento clínico.', peso: 2 },
+                        { texto: '¿Cómo convencés a un corredor de que debe hacer entrenamiento de fuerza?', hint: 'Buscá: educación al paciente, evidencia científica.', peso: 1.5 },
+                        { texto: '¿Qué es lo que NO puede faltar en tu indagación inicial con un nuevo ingresante?', hint: 'Buscá: anamnesis completa, objetivos, red flags.', peso: 1.5 },
+                        { texto: 'Un paciente con dolor crónico tiene pánico a moverse. ¿Cómo construís confianza para el primer ejercicio?', hint: 'Buscá: kinesiofobia, graded exposure, vínculo terapéutico.', peso: 2 },
+                        { texto: '¿Cómo manejás a un paciente que se vuelve dependiente de la camilla y se resiste a ganar autonomía?', hint: 'Buscá: límites profesionales, educación en dolor.', peso: 1.5 },
+                    ] : isEntrenador ? [
+                        { texto: 'Un deportista quiere mejorar su salto vertical: ¿Qué evaluaciones usás y cómo periodizás?', hint: 'Buscá: CMJ, encoder, periodización específica.', peso: 2 },
+                        { texto: '¿Cómo detectás desbalances musculares en un atleta joven y cómo los corregís?', hint: 'Buscá: FMS, asimetrías, plan correctivo.', peso: 1.5 },
+                        { texto: '¿Qué es lo que NO puede faltar en la primera consulta con un nuevo ingresante?', hint: 'Buscá: historial, objetivos, evaluación funcional.', peso: 1.5 },
+                        { texto: 'Tenés un alumno "sabelotodo" que cuestiona tus ejercicios frente al grupo. ¿Cómo retomás el liderazgo?', hint: 'Buscá: manejo de egos, asertividad, no entrar en conflicto.', peso: 2 },
+                        { texto: '¿Cómo te das cuenta, antes de que deje de venir, que un alumno está perdiendo el entusiasmo?', hint: 'Buscá: detección temprana, acción proactiva.', peso: 1.5 },
+                    ] : isNutricion ? [
+                        { texto: 'Un paciente se larga a llorar porque el estrés lo desbordó. ¿Qué hacés con los 15 minutos que quedan?', hint: 'Buscá: inteligencia emocional, derivación, contención.', peso: 2 },
+                        { texto: '¿Cómo manejás a un paciente perfeccionista que se castiga cuando no cumple el plan al 100%?', hint: 'Buscá: negociación, flexibilidad cognitiva, adherencia.', peso: 2 },
+                        { texto: '¿Cómo convencés a un paciente resistente al cambio de que pequenas modificaciones valen la pena?', hint: 'Buscá: motivational interviewing, empatía.', peso: 1.5 },
+                    ] : isRecepcion ? [
+                        { texto: 'Entra un socio con lenguaje corporal de pésimo día. ¿Cómo adaptás tu atención?', hint: 'Buscá: lectura de personas, hospitalidad, empatía activa.', peso: 2 },
+                        { texto: 'Tenés que decirle a un socio histórico que ya no puede usar su horario de siempre. ¿Cómo lo manejás?', hint: 'Buscá: comunicación asertiva, fidelización.', peso: 2 },
+                    ] : [
+                        { texto: '¿Qué evaluaciones o herramientas usás para medir el progreso de tus clientes/pacientes?', hint: 'Buscá: métricas, evidencia, sistematización.', peso: 2 },
+                        { texto: '¿Qué es lo que NO puede faltar en tu primera interacción con alguien nuevo?', hint: 'Buscá: escucha activa, diagnóstico, objetivos claros.', peso: 1.5 },
+                    ]
+                },
+                {
+                    titulo: 'BLOQUE 3 — Compromiso con MOVE',
+                    color: '#10b981',
+                    preguntas: [
+                        { texto: 'Si el software de seguimiento falla, ¿cómo garantizás la calidad y el registro de tus próximas 4 sesiones?', hint: 'Buscá: cultura del dato, plan B, responsabilidad.', peso: 2 },
+                        { texto: '¿Qué hacés cuando un paciente/socio empieza a faltar o pierde la motivación?', hint: 'Buscá: fidelización, proactividad, venta de salud.', peso: 1.5 },
+                        { texto: '¿Qué hacés cuando un socio te ignora una corrección después de haberle dedicado mucho tiempo?', hint: 'Buscá: paciencia, estrategias de persuasión vs. resignación.', peso: 1.5 },
+                        { texto: 'Si hoy yo fuera un socio que entra por primera vez con vergüenza por su estado físico, ¿qué me dirías primero?', hint: 'Buscá: empatía real, servicio, no sermón.', peso: 1.5 },
+                        { texto: 'Si tuvieras que dar una capacitación interna a tus compañeros, ¿sobre qué tema sería y cómo lo harías?', hint: 'Buscá: liderazgo, expertise, generosidad.', peso: 1.5 },
+                        { texto: '¿Qué estás dispuesto/a a dar para que este equipo sea el mejor de la región?', hint: 'Buscá: ambición alineada, compromiso real.', peso: 2 },
+                        { texto: '¿Qué tendría que pasar en los próximos 6 meses para que sientas que aceptar este trabajo fue la mejor decisión de tu vida?', hint: 'Buscá: expectativas realistas, visión compartida con MOVE.', peso: 1.5 },
+                    ]
+                }
+            ];
+            return bloques;
+        }
+
+        function renderInterviewTab(cand) {
+            var bloques = getQuestions(cand.specialty);
+            var scores = cand.interviewScores || {};
+            var obs = cand.interviewObs || {};
+
+            var html = '<div style="padding:4px 0;">';
+
+            // Score total banner
+            var totalScore = calcInterviewScore(cand);
+            var verdictClass = totalScore >= 70 ? 'iq-verdict-green' : totalScore >= 45 ? 'iq-verdict-yellow' : 'iq-verdict-red';
+            var verdictText = totalScore >= 70 ? '✅ CONTRATAR' : totalScore >= 45 ? '⚠️ OBSERVAR' : '❌ DESCARTAR';
+            html += '<div class="iq-total">'
+                + '<div><div class="iq-total-label">Score de Entrevista</div>'
+                + '<div class="iq-total-score">' + totalScore + '<span style="font-size:16px;opacity:0.6;">/100</span></div>'
+                + '<span class="iq-total-verdict ' + verdictClass + '">' + verdictText + '</span></div>'
+                + '<div style="text-align:right;font-size:12px;opacity:0.7;">Rojo 1-2 · Amarillo 3 · Verde 4-5</div>'
+                + '</div>';
+
+            // Question blocks
+            bloques.forEach(function(bloque, bi) {
+                html += '<div class="iq-block">'
+                    + '<div class="iq-block-title" style="border-left-color:' + bloque.color + ';color:' + bloque.color + ';">' + bloque.titulo + '</div>';
+
+                bloque.preguntas.forEach(function(q, qi) {
+                    var key = 'b' + bi + 'q' + qi;
+                    var curScore = scores[key] || 0;
+                    html += '<div class="iq-q" id="iqq_' + key + '">'
+                        + '<div class="iq-q-text">' + escapeHtml(q.texto) + '</div>'
+                        + '<div class="iq-q-hint">💡 ' + escapeHtml(q.hint) + '</div>'
+                        + '<div class="iq-score-row">'
+                        + '<span class="iq-score-label">Puntuación:</span>';
+                    for (var n = 1; n <= 5; n++) {
+                        var active = curScore === n ? ' active' : '';
+                        html += '<button class="iq-score-btn s' + n + active + '" onclick="setIScore(\'' + key + '\',' + n + ')">' + n + '</button>';
+                    }
+                    html += '</div>'
+                        + '<textarea class="iq-obs" id="iqobs_' + key + '" placeholder="Observación..." onchange="saveObsDebounced()">' + escapeHtml(obs[key]||'') + '</textarea>'
+                        + '</div>';
+                });
+
+                html += '</div>';
+            });
+
+            // AI Analysis button
+            html += '<button class="iq-ai-btn" onclick="analizarConIA()">🤖 Analizar con IA (Groq) — Veredicto Psicológico</button>'
+                + '<div class="iq-ai-result" id="iqAiResult">' + escapeHtml(cand.interviewAIResult||'') + '</div>';
+
+            // Checklist
+            html += '<div class="iq-checklist"><div class="iq-checklist-title">✅ Checklist de seguimiento</div>'
+                + '<div class="iq-check-item"><input type="checkbox" id="checkCV" ' + (cand.checkCV?'checked':'') + ' onchange="autoSaveChecklist()"><span>📄 CV revisado</span></div>'
+                + '<div class="iq-check-item"><input type="checkbox" id="checkVideoCall" ' + (cand.checkVideoCall?'checked':'') + ' onchange="autoSaveChecklist()"><span>📹 Video llamada</span><input type="date" id="videoCallDate" value="' + (cand.videoCallDate||'') + '" onchange="autoSaveChecklist()"></div>'
+                + '<div class="iq-check-item"><input type="checkbox" id="checkTechnical" ' + (cand.checkTechnical?'checked':'') + ' onchange="autoSaveChecklist()"><span>🔧 Entrevista técnica</span><input type="date" id="technicalDate" value="' + (cand.technicalDate||'') + '" onchange="autoSaveChecklist()"></div>'
+                + '<div class="iq-check-item"><input type="checkbox" id="checkHR" ' + (cand.checkHR?'checked':'') + ' onchange="autoSaveChecklist()"><span>👥 Entrevista RRHH</span><input type="date" id="hrDate" value="' + (cand.hrDate||'') + '" onchange="autoSaveChecklist()"></div>'
+                + '<div class="iq-check-item"><input type="checkbox" id="checkOffer" ' + (cand.checkOffer?'checked':'') + ' onchange="autoSaveChecklist()"><span>💼 Oferta enviada</span></div>'
+                + '</div>'
+                + '<div style="margin-top:14px;"><label style="font-size:13px;font-weight:600;">📝 Notas generales</label>'
+                + '<textarea id="interviewNotes" rows="3" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:6px;font-size:13px;" onchange="autoSaveChecklist()">' + escapeHtml(cand.interviewNotes||'') + '</textarea></div>'
+                + '<div style="margin-top:10px;"><label style="font-size:13px;font-weight:600;">📅 Próximo contacto</label>'
+                + '<input type="date" id="nextContact" value="' + (cand.nextContact||'') + '" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:6px;" onchange="autoSaveChecklist()"></div>'
+                + '</div>';
+
+            return html;
+        }
+
+        function calcInterviewScore(cand) {
+            var scores = cand.interviewScores || {};
+            var bloques = getQuestions(cand.specialty);
+            var totalPeso = 0, totalPuntos = 0;
+            bloques.forEach(function(b, bi) {
+                b.preguntas.forEach(function(q, qi) {
+                    var key = 'b' + bi + 'q' + qi;
+                    var s = scores[key] || 0;
+                    totalPeso += q.peso;
+                    totalPuntos += s * q.peso;
+                });
+            });
+            if (totalPeso === 0) return 0;
+            return Math.round((totalPuntos / (totalPeso * 5)) * 100);
+        }
+
+        function setIScore(key, val) {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            if (!cand.interviewScores) cand.interviewScores = {};
+            cand.interviewScores[key] = val;
+
+            // Update buttons UI
+            var container = document.getElementById('iqq_' + key);
+            if (container) {
+                container.querySelectorAll('.iq-score-btn').forEach(function(btn, i) {
+                    btn.classList.remove('active');
+                    if (i + 1 === val) btn.classList.add('active');
+                });
+            }
+
+            // Update total score display
+            var totalScore = calcInterviewScore(cand);
+            var totalEl = document.querySelector('.iq-total-score');
+            if (totalEl) totalEl.innerHTML = totalScore + '<span style="font-size:16px;opacity:0.6;">/100</span>';
+            var verdictEl = document.querySelector('.iq-total-verdict');
+            if (verdictEl) {
+                verdictEl.className = 'iq-total-verdict ' + (totalScore >= 70 ? 'iq-verdict-green' : totalScore >= 45 ? 'iq-verdict-yellow' : 'iq-verdict-red');
+                verdictEl.innerText = totalScore >= 70 ? '✅ CONTRATAR' : totalScore >= 45 ? '⚠️ OBSERVAR' : '❌ DESCARTAR';
+            }
+
+            // Auto save
+            saveInterviewData();
+        }
+
+        var obsDebounceTimer = null;
+        function saveObsDebounced() {
+            clearTimeout(obsDebounceTimer);
+            obsDebounceTimer = setTimeout(saveInterviewData, 800);
+        }
+
+        function saveInterviewData() {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            if (!cand.interviewObs) cand.interviewObs = {};
+            var bloques = getQuestions(cand.specialty);
+            bloques.forEach(function(b, bi) {
+                b.preguntas.forEach(function(q, qi) {
+                    var key = 'b' + bi + 'q' + qi;
+                    var el = document.getElementById('iqobs_' + key);
+                    if (el) cand.interviewObs[key] = el.value;
+                });
+            });
+            cand.interviewScore = calcInterviewScore(cand);
+            if (window._fbReady) {
+                window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(cand.id)), cand)
+                    .catch(function(e){ console.error('interview save err', e); });
+            }
+        }
+
+        function autoSaveChecklist() {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            var el = function(id){ return document.getElementById(id); };
+            if(el('checkCV')) cand.checkCV = el('checkCV').checked;
+            if(el('checkVideoCall')) cand.checkVideoCall = el('checkVideoCall').checked;
+            if(el('videoCallDate')) cand.videoCallDate = el('videoCallDate').value;
+            if(el('checkTechnical')) cand.checkTechnical = el('checkTechnical').checked;
+            if(el('technicalDate')) cand.technicalDate = el('technicalDate').value;
+            if(el('checkHR')) cand.checkHR = el('checkHR').checked;
+            if(el('hrDate')) cand.hrDate = el('hrDate').value;
+            if(el('checkOffer')) cand.checkOffer = el('checkOffer').checked;
+            if(el('interviewNotes')) cand.interviewNotes = el('interviewNotes').value;
+            if(el('nextContact')) cand.nextContact = el('nextContact').value;
+            saveInterviewData();
+        }
+
+        function analizarConIA() {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            var bloques = getQuestions(cand.specialty);
+            var scores = cand.interviewScores || {};
+            var obs = cand.interviewObs || {};
+            var resumen = '';
+            bloques.forEach(function(b, bi) {
+                resumen += b.titulo + ':\n';
+                b.preguntas.forEach(function(q, qi) {
+                    var key = 'b' + bi + 'q' + qi;
+                    var s = scores[key] || 'Sin puntuar';
+                    var o = obs[key] || '';
+                    resumen += '- ' + q.texto + ' → Puntaje: ' + s + (o ? ' | Obs: ' + o : '') + '\n';
+                });
+            });
+
+            var promptText = 'Actuá como un PhD en Psicología Organizacional y Selección de Personal. Analizá las respuestas de la entrevista del candidato para el puesto de ' + (cand.specialty||'profesional de salud') + ' en MOVE (centro de kinesiología y entrenamiento de alto rendimiento).\n\nDatos del candidato: ' + cand.name + ' | Score automático: ' + calcInterviewScore(cand) + '/100\n\nResumen de la entrevista (puntaje 1-5 por pregunta):\n' + resumen + '\n\nTu análisis debe incluir:\n1. BANDERAS ROJAS (actitudes peligrosas o riesgosas detectadas)\n2. BANDERAS VERDES (fortalezas y rasgos de líder)\n3. VEREDICTO FINAL: CONTRATAR / OBSERVAR (con capacitación) / DESCARTAR\n4. Justificación breve del veredicto en 2-3 oraciones.\n\nSé directo y profesional. No repitas los puntajes, interpretá los patrones.';
+
+            var btn = document.querySelector('.iq-ai-btn');
+            if (btn) { btn.disabled = true; btn.innerText = '🤖 Analizando...'; }
+            var result = document.getElementById('iqAiResult');
+            if (result) { result.classList.remove('visible'); result.innerText = ''; }
+
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+                body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: promptText }], temperature: 0.4, max_tokens: 800 })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (!data.choices || !data.choices[0]) throw new Error('Sin respuesta de IA');
+                var text = data.choices[0].message.content;
+                if (result) { result.innerText = text; result.classList.add('visible'); }
+                cand.interviewAIResult = text;
+                saveInterviewData();
+            })
+            .catch(function(e) {
+                if (result) { result.innerText = 'Error: ' + e.message; result.classList.add('visible'); }
+            })
+            .finally(function() {
+                if (btn) { btn.disabled = false; btn.innerText = '🤖 Analizar con IA (Groq) — Veredicto Psicológico'; }
+            });
+        }
+
 
         function generarPreguntasSegunSkills(hardSkills, specialty) {
             var p = [];
@@ -568,6 +870,7 @@
             c.checkOffer = document.getElementById('checkOffer').checked||false;
             c.interviewNotes = document.getElementById('interviewNotes').value||'';
             c.nextContact = document.getElementById('nextContact').value||'';
+            saveInterviewData();
             saveData();
             alert('✅ Cambios guardados');
             closeModal();
