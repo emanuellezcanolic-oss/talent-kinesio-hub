@@ -759,6 +759,10 @@
                     body: JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'Eres experto en HR Tech. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 })
                 });
                 const data = await r.json();
+                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    var errMsg = data.error ? data.error.message : 'Respuesta inesperada de la IA';
+                    throw new Error(errMsg);
+                }
                 const parsed = limpiarRespuestaAI(data.choices[0].message.content);
                 const candidate = {
                     id:Date.now(), name:parsed.nombre||'Candidato', specialty:parsed.especialidad||'',
