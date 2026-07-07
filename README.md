@@ -21,8 +21,14 @@ Sistema de evaluación de CVs con IA para centros de Kinesiología y Entrenamien
 
 ## 🔧 Configuración de la API
 
-La API key de OpenRouter ya está configurada. Si quieres cambiarla:
-- Edita la línea `const API_KEY = 'tu-api-key'` en el archivo
+El sistema usa la IA de **Groq** (modelo LLaMA 3.1). La API key **no** está en el código: se guarda en tu navegador.
+
+1. Conseguí una API key gratis en https://console.groq.com/keys (empieza con `gsk_`)
+2. Abrí la página del sistema
+3. Hacé clic en **🔑 API Key** en el menú lateral
+4. Pegá la key y aceptá — queda guardada en ese navegador
+
+⚠️ **Importante:** nunca pegues la API key dentro del código en GitHub. Como el repositorio es público, GitHub y Groq la detectan y la revocan automáticamente en minutos (por eso dejaba de funcionar). Guardándola desde el botón 🔑 no se publica nunca.
 
 ## 📋 Formato de ficha generada
 
@@ -34,12 +40,10 @@ La API key de OpenRouter ya está configurada. Si quieres cambiarla:
 
 ## 💾 Almacenamiento
 
-Los datos se guardan en el `localStorage` del navegador. Para exportar:
-- Abre las herramientas de desarrollador (F12)
-- Console: `copy(localStorage.getItem('kinesioCandidates'))`
+Los candidatos se guardan en la nube (Firebase), así se ven desde cualquier dispositivo. También podés exportar todo a Excel desde la Biblioteca de Talentos.
 
 ## ⚠️ Notas
 
-- La API de OpenRouter requiere créditos (modelo usado: GPT-3.5-turbo)
-- Los CVs deben estar en texto plano
-- Los datos se guardan localmente, no en servidor
+- La API de Groq tiene un plan gratuito (modelo usado: LLaMA 3.1 8B)
+- Podés subir PDFs o pegar el texto del CV
+- La API key se guarda solo en tu navegador; si cambiás de computadora o navegador, volvé a pegarla con el botón 🔑

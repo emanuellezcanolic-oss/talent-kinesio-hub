@@ -236,6 +236,7 @@
         <div class="nav-item" onclick="showSection('candidates')">👥 Biblioteca de Talentos</div>
         <div class="nav-item" onclick="showSection('upload')">📤 Cargar CV</div>
         <div class="nav-item" onclick="showSection('analytics')">📈 Analytics</div>
+        <div class="nav-item" onclick="configurarApiKey()">🔑 API Key</div>
     </div>
     <div class="main-content">
         <div id="dashboardSection" class="section">
@@ -307,7 +308,34 @@
         </div>
     </div>
     <script>
-        const GROQ_API_KEY = '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';
+        // La API key NO se guarda en el código (GitHub la revocaría automáticamente).
+        // Se guarda en el localStorage del navegador: botón "🔑 API Key" en el menú lateral.
+        var GROQ_API_KEY = (localStorage.getItem('groqApiKey') || '').trim();
+
+        function configurarApiKey() {
+            var actual = GROQ_API_KEY ? '\n\nKey actual guardada: ' + GROQ_API_KEY.substring(0, 12) + '...' : '\n\nTodavía no hay ninguna key guardada.';
+            var nueva = prompt('🔑 Pegá tu API Key de Groq (empieza con "gsk_").\nSe guarda solo en este navegador, nunca se publica en internet.' + actual);
+            if (nueva === null) return false;
+            nueva = nueva.trim();
+            if (!nueva) { alert('No ingresaste ninguna key. No se hicieron cambios.'); return false; }
+            if (nueva.indexOf('gsk_') !== 0) {
+                alert('⚠️ Esa key no parece de Groq (deberían empezar con "gsk_"). La guardo igual, pero si falla revisala.');
+            }
+            localStorage.setItem('groqApiKey', nueva);
+            GROQ_API_KEY = nueva;
+            alert('✅ API Key guardada. ¡Ya podés analizar CVs con IA!');
+            return true;
+        }
+
+        function requireGroqKey() {
+            if (GROQ_API_KEY) return true;
+            alert('🔑 Falta configurar tu API Key de Groq.\nAhora te pido que la pegues.');
+            return configurarApiKey();
+        }
+
+        function esErrorDeApiKey(data) {
+            return data && data.error && (data.error.code === 'invalid_api_key' || (data.error.message || '').toLowerCase().indexOf('api key') !== -1);
+        }
         var candidates = [];
         var currentEditCandidateId = null;
         var specialtyChart, skillsChart, statusChart, locationChart, trendChart;
@@ -423,6 +451,11 @@
         }
 
         function parsearCVConGroq(texto, candId) {
+            if (!GROQ_API_KEY) {
+                var tabK = document.getElementById('tabCV');
+                if (tabK) tabK.innerHTML = tabK.innerHTML.replace('<div class="cvv-loading"><div class="cvv-spinner"></div><span>La IA está estructurando el CV...</span></div>', '<div class="cvv-body"><div class="cvv-error">🔑 Falta configurar la API Key de Groq. Andá al botón "🔑 API Key" del menú lateral, pegala y volvé a abrir este CV.</div></div>');
+                return;
+            }
             var prompt = 'Eres asistente de RRHH. Recib\u00eds el texto crudo de un CV extra\u00eddo de PDF (puede tener palabras pegadas, sin formato). Devuelve SOLO JSON v\u00e1lido sin explicaciones ni backticks:\n{"contacto":[{"tipo":"email|telefono|ubicacion","valor":"..."}],"perfil":"texto del perfil en 2-4 oraciones","experiencia":[{"cargo":"...","empresa":"...","fecha":"...","descripcion":"..."}],"formacion":[{"titulo":"...","institucion":"...","fecha":"..."}],"capacitaciones":[{"nombre":"...","institucion":"...","fecha":"..."}],"habilidades":["..."],"idiomas":[{"idioma":"...","nivel":"..."}]}\n\nCV:\n';
             fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -431,6 +464,7 @@
             })
             .then(function(r){ return r.json(); })
             .then(function(data) {
+                if (esErrorDeApiKey(data)) throw new Error('API key inválida');
                 var raw = data.choices[0].message.content.replace(/```json/g,'').replace(/```/g,'').trim();
                 var f = raw.indexOf('{'), l = raw.lastIndexOf('}');
                 if (f===-1||l===-1) throw new Error('no json');
@@ -798,6 +832,7 @@
 
             var promptText = 'Actuá como un PhD en Psicología Organizacional y Selección de Personal. Analizá las respuestas de la entrevista del candidato para el puesto de ' + (cand.specialty||'profesional de salud') + ' en MOVE (centro de kinesiología y entrenamiento de alto rendimiento).\n\nDatos del candidato: ' + cand.name + ' | Score automático: ' + calcInterviewScore(cand) + '/100\n\nResumen de la entrevista (puntaje 1-5 por pregunta):\n' + resumen + '\n\nTu análisis debe incluir:\n1. BANDERAS ROJAS (actitudes peligrosas o riesgosas detectadas)\n2. BANDERAS VERDES (fortalezas y rasgos de líder)\n3. VEREDICTO FINAL: CONTRATAR / OBSERVAR (con capacitación) / DESCARTAR\n4. Justificación breve del veredicto en 2-3 oraciones.\n\nSé directo y profesional. No repitas los puntajes, interpretá los patrones.';
 
+            if (!requireGroqKey()) return;
             var btn = document.querySelector('.iq-ai-btn');
             if (btn) { btn.disabled = true; btn.innerText = '🤖 Analizando...'; }
             var result = document.getElementById('iqAiResult');
@@ -810,6 +845,7 @@
             })
             .then(function(r){ return r.json(); })
             .then(function(data) {
+                if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
                 if (!data.choices || !data.choices[0]) throw new Error('Sin respuesta de IA');
                 var text = data.choices[0].message.content;
                 if (result) { result.innerText = text; result.classList.add('visible'); }
@@ -1055,6 +1091,7 @@
         async function analyzeCVWithGroq() {
             const cvText = document.getElementById('cvTextInput').value.trim();
             if (!cvText) { alert('Pega el texto del CV'); return; }
+            if (!requireGroqKey()) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
             try {
                 const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -1062,6 +1099,9 @@
                     body: JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'Eres experto en HR Tech. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 })
                 });
                 const data = await r.json();
+                if (esErrorDeApiKey(data)) {
+                    throw new Error('La API Key no es válida o fue revocada. Andá al botón "🔑 API Key" del menú y pegá una nueva.');
+                }
                 if (!data.choices || !data.choices[0] || !data.choices[0].message) {
                     var errMsg = data.error ? data.error.message : 'Respuesta inesperada de la IA';
                     throw new Error(errMsg);
