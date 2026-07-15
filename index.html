@@ -309,12 +309,32 @@
     </div>
     <script>
         // La API key NO se guarda en el código (GitHub la revocaría automáticamente).
-        // Se guarda en el localStorage del navegador: botón "🔑 API Key" en el menú lateral.
+        // Se guarda en la base de datos (Firestore, documento config/groq) y la página
+        // la carga sola al abrirse: funciona para cualquier persona que use la página.
+        // El botón "🔑 API Key" del menú permite cambiarla para todos.
         var GROQ_API_KEY = (localStorage.getItem('groqApiKey') || '').trim();
+        var GROQ_KEY_DOC_URL = 'https://firestore.googleapis.com/v1/projects/talent-kinesio/databases/(default)/documents/config/groq?key=AIzaSyDwYRQoUTllt9OqU7GORcx0ytdbgsnhXTM';
+
+        // Al abrir la página, buscar la key compartida guardada en la nube
+        fetch(GROQ_KEY_DOC_URL)
+            .then(function(r){ return r.json(); })
+            .then(function(d) {
+                var k = (d && d.fields && d.fields.apiKey && d.fields.apiKey.stringValue) ? d.fields.apiKey.stringValue.trim() : '';
+                if (k && !GROQ_API_KEY) GROQ_API_KEY = k;
+            })
+            .catch(function(e){ console.error('No se pudo leer la API key compartida:', e); });
+
+        function guardarKeyCompartida(key) {
+            return fetch(GROQ_KEY_DOC_URL, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fields: { apiKey: { stringValue: key } } })
+            });
+        }
 
         function configurarApiKey() {
-            var actual = GROQ_API_KEY ? '\n\nKey actual guardada: ' + GROQ_API_KEY.substring(0, 12) + '...' : '\n\nTodavía no hay ninguna key guardada.';
-            var nueva = prompt('🔑 Pegá tu API Key de Groq (empieza con "gsk_").\nSe guarda solo en este navegador, nunca se publica en internet.' + actual);
+            var actual = GROQ_API_KEY ? '\n\nKey actual: ' + GROQ_API_KEY.substring(0, 12) + '...' : '\n\nTodavía no hay ninguna key configurada.';
+            var nueva = prompt('🔑 Pegá tu API Key de Groq (empieza con "gsk_").\nSe guarda en la nube y sirve para todas las personas que usen esta página.' + actual);
             if (nueva === null) return false;
             nueva = nueva.trim();
             if (!nueva) { alert('No ingresaste ninguna key. No se hicieron cambios.'); return false; }
@@ -323,7 +343,9 @@
             }
             localStorage.setItem('groqApiKey', nueva);
             GROQ_API_KEY = nueva;
-            alert('✅ API Key guardada. ¡Ya podés analizar CVs con IA!');
+            guardarKeyCompartida(nueva)
+                .then(function(){ alert('✅ API Key guardada para todos los usuarios de la página.'); })
+                .catch(function(){ alert('✅ Key guardada en este navegador, pero no se pudo guardar en la nube. Revisá tu conexión e intentá de nuevo.'); });
             return true;
         }
 

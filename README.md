@@ -21,12 +21,13 @@ Sistema de evaluación de CVs con IA para centros de Kinesiología y Entrenamien
 
 ## 🔧 Configuración de la API
 
-El sistema usa la IA de **Groq** (modelo LLaMA 3.1). La API key **no** está en el código: se guarda en tu navegador.
+El sistema usa la IA de **Groq** (modelo LLaMA 3.1). La API key **no** está en el código: se guarda en la nube (Firebase, documento `config/groq`) y la página la carga sola al abrirse, así **funciona para cualquier persona que use la página** sin configurar nada.
 
-1. Conseguí una API key gratis en https://console.groq.com/keys (empieza con `gsk_`)
+Para cambiarla (por ejemplo si Groq la anula):
+1. Conseguí una API key nueva gratis en https://console.groq.com/keys (empieza con `gsk_`)
 2. Abrí la página del sistema
 3. Hacé clic en **🔑 API Key** en el menú lateral
-4. Pegá la key y aceptá — queda guardada en ese navegador
+4. Pegá la key y aceptá — queda guardada en la nube para todos los usuarios
 
 ⚠️ **Importante:** nunca pegues la API key dentro del código en GitHub. Como el repositorio es público, GitHub y Groq la detectan y la revocan automáticamente en minutos (por eso dejaba de funcionar). Guardándola desde el botón 🔑 no se publica nunca.
 
