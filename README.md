@@ -46,5 +46,5 @@ Los candidatos se guardan en la nube (Firebase), así se ven desde cualquier dis
 ## ⚠️ Notas
 
 - La API de Groq tiene un plan gratuito (modelo usado: LLaMA 3.1 8B)
-- Podés subir PDFs o pegar el texto del CV
+- Podés subir PDFs (incluso escaneados), imágenes (JPG/PNG) o pegar el texto del CV — la IA lee todo
 - La API key se guarda solo en tu navegador; si cambiás de computadora o navegador, volvé a pegarla con el botón 🔑
