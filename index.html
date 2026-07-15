@@ -256,7 +256,7 @@
             <div class="section-header"><h2 class="section-title">👥 Biblioteca de Talentos</h2><button class="btn btn-outline" onclick="exportToExcel()">📊 Exportar Excel</button></div>
             <div class="filters-bar">
                 <input type="text" id="searchFilter" placeholder="🔍 Buscar..." class="filter-input" style="flex:2;">
-                <select id="specialtyFilter" class="filter-select"><option value="">Todas</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Profesor de Educación Física">Profesor de Educación Física</option><option value="Nutricionista">Nutricionista</option><option value="Recepcionista">Recepcionista</option><option value="Otro">Otro</option></select>
+                <select id="specialtyFilter" class="filter-select"><option value="">Todas</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option><option value="Nutricionista">Nutricionista</option><option value="Recepcionista">Recepcionista</option><option value="Otro">Otro</option></select>
                 <select id="statusFilter" class="filter-select"><option value="">Estado</option><option value="pendiente">Pendiente</option><option value="entrevistado">Entrevistado</option><option value="contratado">Contratado</option><option value="descartado">Descartado</option></select>
                 <button class="btn btn-primary" onclick="resetFilters()">Limpiar</button>
             </div>
@@ -270,7 +270,7 @@
             <input type="file" id="fileInput" accept=".pdf,.txt,image/*" style="display:none;" onchange="handleFileUpload(this.files[0])">
             <textarea id="cvTextInput" rows="6" placeholder="O pega el texto del CV aquí..." style="width:100%; margin-top:15px; padding:12px; border:1px solid #ddd; border-radius:12px;"></textarea>
             <select id="profileTypeSelect" style="width:100%; margin-top:15px; padding:12px; border:1px solid #ddd; border-radius:12px;">
-                <option value="">Seleccionar tipo de búsqueda</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Profesor de Educación Física">Profesor de Educación Física</option><option value="Nutricionista">Nutricionista</option><option value="Recepcionista">Recepcionista</option><option value="Otro">Otro</option>
+                <option value="">Seleccionar tipo de búsqueda</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option><option value="Nutricionista">Nutricionista</option><option value="Recepcionista">Recepcionista</option><option value="Otro">Otro</option>
             </select>
             <button class="btn btn-primary" onclick="analyzeCVWithGroq()" style="width:100%; margin-top:20px;">🤖 Analizar CV con IA</button>
         </div>
@@ -360,7 +360,7 @@
         }
 
         // ── RUBROS FIJOS: toda especialidad se clasifica en una de estas categorías ──
-        var ESPECIALIDADES = ['Kinesiólogo', 'Profesor de Educación Física', 'Nutricionista', 'Recepcionista', 'Otro'];
+        var ESPECIALIDADES = ['Kinesiólogo', 'Entrenador', 'Nutricionista', 'Recepcionista', 'Otro'];
 
         function normalizarEspecialidad(valor) {
             var v = (valor || '').toLowerCase();
@@ -368,7 +368,7 @@
             if (/kinesi|fisiot|fisiat|fisioterap|rehabilitad/.test(v)) return 'Kinesiólogo';
             if (/nutri|dietis/.test(v)) return 'Nutricionista';
             if (/recep|administrat|secretar|atención al|atencion al/.test(v)) return 'Recepcionista';
-            if (/educaci|entrenad|trainer|instructor|musculaci|preparador|spinning|funcional|guardavid|natac|deporti|gimnas|fitness|coach/.test(v)) return 'Profesor de Educación Física';
+            if (/educaci|entrenad|trainer|instructor|musculaci|preparador|spinning|funcional|guardavid|natac|deporti|gimnas|fitness|coach/.test(v)) return 'Entrenador';
             for (var i = 0; i < ESPECIALIDADES.length; i++) { if (v === ESPECIALIDADES[i].toLowerCase()) return ESPECIALIDADES[i]; }
             return 'Otro';
         }
@@ -411,7 +411,7 @@
             const rubroCounts = ESPECIALIDADES.map(function(cat){ return candidates.filter(function(c){ return normalizarEspecialidad(c.specialty) === cat; }).length; });
             if (specialtyChart) specialtyChart.destroy();
             const ctx = document.getElementById('specialtyChart') ? document.getElementById('specialtyChart').getContext('2d') : null;
-            if(ctx) specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Prof. Ed. Física','Nutricionistas','Recepcionistas','Otros'], datasets:[{ data:rubroCounts, backgroundColor:['#667eea','#f59e0b','#10b981','#ec4899','#9ca3af'] }] } });
+            if(ctx) specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Entrenadores','Nutricionistas','Recepcionistas','Otros'], datasets:[{ data:rubroCounts, backgroundColor:['#667eea','#f59e0b','#10b981','#ec4899','#9ca3af'] }] } });
             const top = [...candidates].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
             document.getElementById('topCandidatesList').innerHTML = top.map(c=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee"><span><strong>'+escapeHtml(c.name)+'</strong><br><small>'+(c.specialty||'')+' | '+(c.location||'Sin ubicación')+'</small></span><span style="font-weight:bold;color:#667eea;">'+(c.score||70)+'%</span></div>').join('');
         }
@@ -1134,7 +1134,7 @@
             try {
                 const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
-                    body: JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'Eres experto en RRHH de un centro de kinesiología y entrenamiento. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","titulo_original":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}. REGLA OBLIGATORIA para "especialidad": elegí EXACTAMENTE una de estas 5 categorías según la profesión PRINCIPAL del candidato, aunque mencione varias: "Kinesiólogo" (kinesiólogos, fisioterapeutas, fisiatras, lic. en kinesiología y fisiatría), "Profesor de Educación Física" (profesores de educación física, entrenadores, personal trainers, instructores de musculación/spinning/funcional/natación, preparadores físicos, coaches deportivos), "Nutricionista" (nutricionistas, dietistas), "Recepcionista" (recepcionistas, administrativos, atención al cliente), "Otro" (cualquier otra profesión). En "titulo_original" copiá el título o profesión textual tal como figura en el CV.'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 })
+                    body: JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'Eres experto en RRHH de un centro de kinesiología y entrenamiento. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","titulo_original":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}. REGLA OBLIGATORIA para "especialidad": elegí EXACTAMENTE una de estas 5 categorías según la profesión PRINCIPAL del candidato, aunque mencione varias: "Kinesiólogo" (kinesiólogos, fisioterapeutas, fisiatras, lic. en kinesiología y fisiatría), "Entrenador" (entrenadores, personal trainers, profesores de educación física, instructores de musculación/spinning/funcional/natación, preparadores físicos, coaches deportivos), "Nutricionista" (nutricionistas, dietistas), "Recepcionista" (recepcionistas, administrativos, atención al cliente), "Otro" (cualquier otra profesión). En "titulo_original" copiá el título o profesión textual tal como figura en el CV.'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 })
                 });
                 const data = await r.json();
                 if (esErrorDeApiKey(data)) {
