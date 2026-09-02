@@ -172,6 +172,7 @@
         .iq-check-item input[type=checkbox] { width: 16px; height: 16px; accent-color: #667eea; cursor: pointer; }
         .iq-check-item input[type=date] { border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 8px; font-size: 12px; color: #374151; }
         /* NEW badge on cards */
+        .badge-pendiente { position: absolute; top: 15px; left: 15px; background: #9ca3af; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
         .badge-new { position: absolute; top: 15px; left: 15px; background: #7c6bff; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
         .card-interview-score { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
         .card-iscore { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
@@ -533,6 +534,24 @@
             return c.sede ? normalizarSede(c.sede) : normalizarSede((c.location || '') + ' ' + (c.rawCV || '').substring(0, 600));
         }
 
+        // Un candidato es "NUEVO" mientras nadie haya tildado "CV revisado" y haga
+        // menos de 15 días que se cargó. Después queda como "SIN REVISAR", que sigue
+        // marcando el pendiente pero sin ocupar el lugar de lo recién llegado.
+        var DIAS_NUEVO = 15;
+
+        function diasDesdeQueSeCargo(c) {
+            // El id es el momento de la carga (Date.now()); c.date es sólo para mostrar.
+            var t = (typeof c.id === 'number' && c.id > 1000000000000) ? c.id : Date.parse(c.date);
+            if (!t || isNaN(t)) return null;
+            return (Date.now() - t) / 86400000;
+        }
+
+        function estadoDeNovedad(c) {
+            if (c.checkCV) return '';
+            var dias = diasDesdeQueSeCargo(c);
+            return (dias !== null && dias < DIAS_NUEVO) ? 'nuevo' : 'sin-revisar';
+        }
+
         var candidates = [];
         var currentEditCandidateId = null;
         var specialtyChart, skillsChart, statusChart, locationChart, trendChart;
@@ -589,13 +608,14 @@
             const statusText = { pendiente:'Pendiente', entrevistado:'Entrevistado', contratado:'Contratado', descartado:'Descartado' };
             const statusClass = { pendiente:'status-pendiente', entrevistado:'status-entrevistado', contratado:'status-contratado', descartado:'status-descartado' };
             grid.innerHTML = filtered.map(c=>{
+                var novedad = estadoDeNovedad(c);
                 var iScore = c.interviewScore || 0;
                 var iScoreClass = iScore>=70?'card-iscore-green':iScore>=45?'card-iscore-yellow':'card-iscore-red';
                 var iVerdict = iScore>=70?'CONTRATAR':iScore>=45?'OBSERVAR':'';
                 return '<div class="candidate-card" onclick="openCandidateDetail('+c.id+')">'
-                +(!c.checkCV?'<div class="badge-new">NUEVO</div>':'')
+                +(novedad==='nuevo'?'<div class="badge-new">NUEVO</div>':novedad==='sin-revisar'?'<div class="badge-pendiente">Sin revisar</div>':'')
                 +'<div class="status-badge '+(statusClass[c.status]||'status-pendiente')+'">'+(statusText[c.status]||'Pendiente')+'</div>'
-                +'<div class="candidate-name" style="margin-top:'+((!c.checkCV)?'28px':'4px')+'">'+escapeHtml(c.name)+'</div>'
+                +'<div class="candidate-name" style="margin-top:'+(novedad?'28px':'4px')+'">'+escapeHtml(c.name)+'</div>'
                 +'<div class="candidate-specialty">'+(normalizarEspecialidad(c.specialty))+'</div>'
                 +((c.tituloOriginal&&c.tituloOriginal!==c.specialty)?'<div style="font-size:11px;color:#888;margin-top:4px;">'+escapeHtml(c.tituloOriginal)+'</div>':'')
                 +'<div style="display:flex;align-items:center;gap:10px;margin-top:8px;">'
