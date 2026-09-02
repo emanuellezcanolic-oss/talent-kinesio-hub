@@ -1162,6 +1162,39 @@
         // así lo ve cualquier persona desde cualquier PC. También se puede pegar
         // un link de YouTube o Google Drive si el video ya está subido en otro lado.
         var STORAGE_BUCKET = 'talent-kinesio.firebasestorage.app';
+        // Cloudinary: alternativa gratis y sin tarjeta a Firebase Storage. Los datos
+        // se guardan una sola vez en Firestore (config/cloudinary) y sirven para todos.
+        var CLOUDINARY = { cloudName: '', uploadPreset: '' };
+        var CLOUDINARY_DOC_URL = 'https://firestore.googleapis.com/v1/projects/talent-kinesio/databases/(default)/documents/config/cloudinary?key=AIzaSyDwYRQoUTllt9OqU7GORcx0ytdbgsnhXTM';
+
+        fetch(CLOUDINARY_DOC_URL)
+            .then(function(r){ return r.json(); })
+            .then(function(d) {
+                var f = (d && d.fields) || {};
+                CLOUDINARY.cloudName = (f.cloudName && f.cloudName.stringValue || '').trim();
+                CLOUDINARY.uploadPreset = (f.uploadPreset && f.uploadPreset.stringValue || '').trim();
+            })
+            .catch(function(){});
+
+        function configurarCloudinary() {
+            var cn = prompt('1 de 2 — Pegá tu "Cloud name" de Cloudinary:', CLOUDINARY.cloudName || '');
+            if (cn === null) return;
+            cn = cn.trim();
+            if (!cn) { alert('No ingresaste el Cloud name.'); return; }
+            var up = prompt('2 de 2 — Pegá el nombre del "Upload preset" (tiene que ser Unsigned):', CLOUDINARY.uploadPreset || '');
+            if (up === null) return;
+            up = up.trim();
+            if (!up) { alert('No ingresaste el Upload preset.'); return; }
+            CLOUDINARY.cloudName = cn;
+            CLOUDINARY.uploadPreset = up;
+            fetch(CLOUDINARY_DOC_URL, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fields: { cloudName: { stringValue: cn }, uploadPreset: { stringValue: up } } })
+            })
+            .then(function(){ alert('✅ Listo. Ahora todos pueden subir videos desde la página.'); renderVideoTab(); })
+            .catch(function(){ alert('Se guardó en esta compu pero no en la nube. Revisá la conexión.'); renderVideoTab(); });
+        }
         var VIDEO_MAX_MB = 200;
 
         function videoEmbedHTML(url) {
@@ -1204,7 +1237,8 @@
                 + '<input type="text" id="videoLinkInput" placeholder="https://youtu.be/... o link de Google Drive">'
                 + '<button class="btn btn-primary" onclick="guardarVideoLink()">Guardar link</button>'
                 + '</div>'
-                + '<div class="vid-help" id="videoHelp" style="display:none"></div>'
+                + '<div class="vid-help" id="videoHelp"' + (CLOUDINARY.cloudName ? ' style="display:none"' : '') + '>' + (CLOUDINARY.cloudName ? '' : ayudaSubidaHTML()) + '</div>'
+                + '<div style="text-align:center;margin-top:12px;"><button class="btn btn-outline" onclick="configurarCloudinary()">⚙️ ' + (CLOUDINARY.cloudName ? 'Cambiar dónde se guardan los videos' : 'Activar subida de videos') + '</button></div>'
                 + '<input type="file" id="videoFileInput" accept="video/*" style="display:none" onchange="handleVideoUpload(this.files[0])">'
                 + '</div>';
         }
@@ -1234,6 +1268,8 @@
                 return;
             }
 
+            if (CLOUDINARY.cloudName && CLOUDINARY.uploadPreset) { subirACloudinary(file); return; }
+
             var nombre = 'videos/' + cand.id + '-' + Date.now() + '-' + file.name.replace(/[^A-Za-z0-9._-]/g, '_');
             var url = 'https://firebasestorage.googleapis.com/v0/b/' + STORAGE_BUCKET + '/o?uploadType=media&name=' + encodeURIComponent(nombre);
             var xhr = new XMLHttpRequest();
@@ -1250,10 +1286,8 @@
                     var publica = 'https://firebasestorage.googleapis.com/v0/b/' + STORAGE_BUCKET + '/o/' + encodeURIComponent(nombre) + '?alt=media' + (token ? '&token=' + token : '');
                     videoProgreso(95, 'Guardando...');
                     guardarVideoEnCandidato(publica, file.name);
-                } else if (xhr.status === 404) {
-                    mostrarAyudaVideo('⚠️ <b>Falta activar el almacenamiento de videos.</b><br>Entrá a <a href="https://console.firebase.google.com/project/talent-kinesio/storage" target="_blank" rel="noopener">Firebase → Storage</a>, tocá <b>Comenzar</b> y aceptá. Después volvé acá y subilo de nuevo.<br>Mientras tanto podés subir el video a YouTube o Drive y pegar el link abajo.');
-                } else if (xhr.status === 403 || xhr.status === 401) {
-                    mostrarAyudaVideo('⚠️ <b>El almacenamiento no permite subir sin permiso.</b><br>Entrá a <a href="https://console.firebase.google.com/project/talent-kinesio/storage/rules" target="_blank" rel="noopener">Firebase → Storage → Reglas</a> y dejá: <code>allow read, write: if true;</code><br>Mientras tanto podés pegar un link de YouTube o Drive abajo.');
+                } else if (xhr.status === 404 || xhr.status === 403 || xhr.status === 401) {
+                    mostrarAyudaVideo(ayudaSubidaHTML());
                 } else {
                     mostrarAyudaVideo('No se pudo subir el video (error ' + xhr.status + '). Probá con un archivo más chico o pegá un link.');
                 }
@@ -1261,6 +1295,40 @@
             xhr.onerror = function() { mostrarAyudaVideo('Se cortó la conexión durante la subida. Intentá de nuevo.'); };
             videoProgreso(5, 'Subiendo...');
             xhr.send(file);
+        }
+
+        function ayudaSubidaHTML() {
+            return '⚠️ <b>Todavía no está activada la subida de archivos.</b>'
+                + '<br>Se activa una sola vez y después sube cualquiera del equipo. Es gratis y no pide tarjeta:'
+                + '<br>1) Creá una cuenta en <a href="https://cloudinary.com/users/register_free" target="_blank" rel="noopener">cloudinary.com</a>.'
+                + '<br>2) Entrá a Settings → Upload → Upload presets → Add upload preset, poné <b>Signing Mode: Unsigned</b> y guardá.'
+                + '<br>3) Volvé acá y tocá <b>⚙️ Activar subida de videos</b>. Te va a pedir el <i>Cloud name</i> y el nombre del <i>preset</i>.'
+                + '<br><br>Mientras tanto, subí el video a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo: eso ya funciona.';
+        }
+
+        function subirACloudinary(file) {
+            var fd = new FormData();
+            fd.append('file', file);
+            fd.append('upload_preset', CLOUDINARY.uploadPreset);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + CLOUDINARY.cloudName + '/video/upload', true);
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) videoProgreso(Math.round(e.loaded / e.total * 90), 'Subiendo... ' + Math.round(e.loaded / e.total * 100) + '%');
+            };
+            xhr.onload = function() {
+                var res = {};
+                try { res = JSON.parse(xhr.responseText); } catch(e) {}
+                if (xhr.status >= 200 && xhr.status < 300 && res.secure_url) {
+                    videoProgreso(95, 'Guardando...');
+                    guardarVideoEnCandidato(res.secure_url, file.name);
+                } else {
+                    var msg = (res.error && res.error.message) || ('error ' + xhr.status);
+                    mostrarAyudaVideo('No se pudo subir el video: ' + escapeHtml(msg) + '<br>Revisá que el upload preset esté en modo <b>Unsigned</b>, o pegá un link de YouTube/Drive abajo.');
+                }
+            };
+            xhr.onerror = function() { mostrarAyudaVideo('Se cortó la conexión durante la subida. Intentá de nuevo.'); };
+            videoProgreso(5, 'Subiendo...');
+            xhr.send(fd);
         }
 
         function guardarVideoLink() {
