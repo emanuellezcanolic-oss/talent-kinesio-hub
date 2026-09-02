@@ -199,6 +199,24 @@
         .pdfv-pages { display: flex; flex-direction: column; gap: 10px; }
         .pdfv-page { border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .pdfv-page img { width: 100%; display: block; }
+        .vid-wrap { padding: 6px 0; }
+        .vid-upload { border: 2px dashed #d1d5db; border-radius: 16px; padding: 30px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+        .vid-upload:hover { border-color: #667eea; background: #f5f3ff; }
+        .vid-upload-icon { font-size: 40px; margin-bottom: 8px; }
+        .vid-upload-text { font-weight: 600; color: #374151; }
+        .vid-upload-sub { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+        .vid-or { text-align: center; color: #9ca3af; font-size: 12px; margin: 14px 0 10px; }
+        .vid-link-row { display: flex; gap: 8px; }
+        .vid-link-row input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 13px; }
+        .vid-player { border-radius: 14px; overflow: hidden; background: #000; }
+        .vid-player video, .vid-player iframe { width: 100%; display: block; border: none; aspect-ratio: 16/9; }
+        .vid-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+        .vid-name { font-size: 13px; font-weight: 600; color: #374151; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vid-progress { height: 8px; background: #eee; border-radius: 6px; overflow: hidden; margin-top: 14px; display: none; }
+        .vid-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#667eea,#764ba2); transition: width 0.3s; }
+        .vid-progress-label { font-size: 12px; color: #6b7280; text-align: center; margin-top: 6px; display: none; }
+        .vid-help { font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; margin-top: 14px; line-height: 1.5; }
+        .sede-badge { display: inline-block; background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-top: 6px; }
         .pdfv-size-warn { font-size: 11px; color: #f59e0b; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 12px; margin-top: 10px; text-align: center; display: none; }
     </style>
     <!-- Firebase SDK -->
@@ -257,6 +275,7 @@
             <div class="filters-bar">
                 <input type="text" id="searchFilter" placeholder="🔍 Buscar..." class="filter-input" style="flex:2;">
                 <select id="specialtyFilter" class="filter-select"><option value="">Todas</option><option value="Kinesiólogo">Kinesiólogo</option><option value="Entrenador">Entrenador</option><option value="Nutricionista">Nutricionista</option><option value="Recepcionista">Recepcionista</option><option value="Otro">Otro</option></select>
+                <select id="sedeFilter" class="filter-select"><option value="">Todas las sedes</option><option value="El Bolsón">El Bolsón</option><option value="Lago Puelo">Lago Puelo</option><option value="Bariloche">Bariloche</option><option value="Cualquier sede">Cualquier sede</option></select>
                 <select id="statusFilter" class="filter-select"><option value="">Estado</option><option value="pendiente">Pendiente</option><option value="entrevistado">Entrevistado</option><option value="contratado">Contratado</option><option value="descartado">Descartado</option></select>
                 <button class="btn btn-primary" onclick="resetFilters()">Limpiar</button>
             </div>
@@ -295,11 +314,13 @@
                 <button class="tab-btn" onclick="switchTab('interview')">🎤 Entrevista</button>
                 <button class="tab-btn" onclick="switchTab('cv')">📄 CV Estructurado</button>
                 <button class="tab-btn" onclick="switchTab('pdf')">🖼️ Documento</button>
+                <button class="tab-btn" onclick="switchTab('video')">🎥 Video</button>
             </div>
             <div id="tabInfo" class="tab-content active"></div>
             <div id="tabInterview" class="tab-content"></div>
             <div id="tabCV" class="tab-content"></div>
             <div id="tabPDF" class="tab-content"></div>
+            <div id="tabVideo" class="tab-content"></div>
             <div style="margin-top:20px; display:flex; gap:10px; justify-content:space-between;">
                 <button class="btn btn-danger" onclick="deleteCurrentCandidate()">🗑️ Eliminar candidato</button>
                 <div><button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
@@ -381,6 +402,25 @@
             for (var i = 0; i < ESPECIALIDADES.length; i++) { if (v === ESPECIALIDADES[i].toLowerCase()) return ESPECIALIDADES[i]; }
             return 'Otro';
         }
+        // ── SEDES: El Bolsón, Lago Puelo y Bariloche. Si el candidato es de otro lado
+        //    queda como "Cualquier sede" (puede ir a la que haga falta).
+        var SEDES = ['El Bolsón', 'Lago Puelo', 'Bariloche', 'Cualquier sede'];
+
+        function normalizarSede(valor) {
+            var v = (valor || '').toLowerCase();
+            if (!v) return 'Cualquier sede';
+            if (/bols[oó]n/.test(v)) return 'El Bolsón';
+            if (/puelo|epuy[eé]n|cholila/.test(v)) return 'Lago Puelo';
+            if (/barilo|dina huapi|nahuel huapi|llao/.test(v)) return 'Bariloche';
+            for (var i = 0; i < SEDES.length; i++) { if (v === SEDES[i].toLowerCase()) return SEDES[i]; }
+            return 'Cualquier sede';
+        }
+
+        // Si el candidato no tiene sede elegida a mano, se deduce de su ubicación
+        function sedeDe(c) {
+            return c.sede ? normalizarSede(c.sede) : normalizarSede((c.location || '') + ' ' + (c.rawCV || '').substring(0, 600));
+        }
+
         var candidates = [];
         var currentEditCandidateId = null;
         var specialtyChart, skillsChart, statusChart, locationChart, trendChart;
@@ -429,7 +469,8 @@
             const search = (document.getElementById('searchFilter') ? document.getElementById('searchFilter').value.toLowerCase() : '');
             const specialty = document.getElementById('specialtyFilter') ? document.getElementById('specialtyFilter').value : '';
             const status = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : '';
-            const filtered = candidates.filter(c=>(c.name&&c.name.toLowerCase().includes(search)||c.specialty&&c.specialty.toLowerCase().includes(search)||c.tituloOriginal&&c.tituloOriginal.toLowerCase().includes(search))&&(specialty===''||normalizarEspecialidad(c.specialty)===specialty)&&(status===''||c.status===status));
+            const sede = document.getElementById('sedeFilter') ? document.getElementById('sedeFilter').value : '';
+            const filtered = candidates.filter(c=>(c.name&&c.name.toLowerCase().includes(search)||c.specialty&&c.specialty.toLowerCase().includes(search)||c.tituloOriginal&&c.tituloOriginal.toLowerCase().includes(search))&&(specialty===''||normalizarEspecialidad(c.specialty)===specialty)&&(status===''||c.status===status)&&(sede===''||sedeDe(c)===sede||sedeDe(c)==='Cualquier sede'));
             const grid = document.getElementById('candidatesGrid');
             if (!grid) return;
             if (filtered.length === 0) { grid.innerHTML = '<p style="text-align:center;color:#999;">No hay candidatos</p>'; return; }
@@ -451,6 +492,7 @@
                 +'</div>'
                 +'<div class="skills-list">'+(c.hardSkills||[]).slice(0,3).map(s=>'<span class="skill-tag">'+escapeHtml(s)+'</span>').join('')+'</div>'
                 +'<div style="margin-top:8px;font-size:12px;color:#999;">📍 '+(c.location||'Sin ubicación')+' | 📅 '+(c.date||'')+'</div>'
+                +'<div><span class="sede-badge">🏢 '+sedeDe(c)+'</span>'+(c.videoUrl?'<span class="sede-badge" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca;margin-left:6px;">🎥 Video</span>':'')+'</div>'
                 +(c.availability?'<div style="font-size:11px;color:#10b981;margin-top:4px;">✅ '+c.availability+'</div>':'')
                 +'</div>';
             }).join('');
@@ -603,6 +645,7 @@
                 +'<div class="form-group"><label>Rubro / Especialidad</label><select id="editSpecialty">'+ESPECIALIDADES.map(function(e){ return '<option value="'+e+'"'+(normalizarEspecialidad(c.specialty)===e?' selected':'')+'>'+e+'</option>'; }).join('')+'</select></div>'
                 +(c.tituloOriginal?'<div class="form-group"><label>Título según el CV</label><input type="text" id="editTituloOriginal" value="'+escapeHtml(c.tituloOriginal)+'"></div>':'')
                 +'<div class="form-group"><label>Años de experiencia</label><input type="number" id="editExperience" value="'+(c.experience||0)+'"></div>'
+                +'<div class="form-group"><label>Sede</label><select id="editSede">'+SEDES.map(function(x){ return '<option value="'+x+'"'+(sedeDe(c)===x?' selected':'')+'>'+x+'</option>'; }).join('')+'</select></div>'
                 +'<div class="form-group"><label>Ubicación</label><input type="text" id="editLocation" value="'+escapeHtml(c.location||'')+'" placeholder="Ej: Buenos Aires"></div>'
                 +'<h3>🎯 Desglose del Score</h3>'
                 +'<div class="score-breakdown">'
@@ -625,6 +668,7 @@
 
             document.getElementById('tabCV').innerHTML = formatearCVProfesional(c.rawCV);
             document.getElementById('tabPDF').innerHTML = ''; // reset so previous candidate's doc doesn't show
+            document.getElementById('tabVideo').innerHTML = '';
             switchTab('info'); // always start on Información tab
             document.getElementById('candidateModal').style.display = 'flex';
         }
@@ -926,6 +970,7 @@
             if(tab==='interview'){ btns[1].classList.add('active'); document.getElementById('tabInterview').classList.add('active'); }
             if(tab==='cv')       { btns[2].classList.add('active'); document.getElementById('tabCV').classList.add('active'); }
             if(tab==='pdf')      { btns[3].classList.add('active'); renderPDFTab(); document.getElementById('tabPDF').classList.add('active'); }
+            if(tab==='video')    { btns[4].classList.add('active'); renderVideoTab(); document.getElementById('tabVideo').classList.add('active'); }
         }
 
         function saveCurrentCandidate() {
@@ -936,6 +981,7 @@
             if (document.getElementById('editTituloOriginal')) c.tituloOriginal = document.getElementById('editTituloOriginal').value||'';
             c.experience = parseInt(document.getElementById('editExperience').value)||0;
             c.location = document.getElementById('editLocation').value||'';
+            c.sede = document.getElementById('editSede') ? document.getElementById('editSede').value : sedeDe(c);
             c.score = parseInt(document.getElementById('editScore').value)||70;
             c.hardSkills = document.getElementById('editHardSkills').value.split(',').map(s=>s.trim()).filter(s=>s);
             c.softSkills = document.getElementById('editSoftSkills').value.split(',').map(s=>s.trim()).filter(s=>s);
@@ -1111,6 +1157,147 @@
             }
         }
 
+        // ── VIDEO DEL PROFESIONAL ──
+        // El archivo se sube a Firebase Storage y en Firestore queda sólo el link,
+        // así lo ve cualquier persona desde cualquier PC. También se puede pegar
+        // un link de YouTube o Google Drive si el video ya está subido en otro lado.
+        var STORAGE_BUCKET = 'talent-kinesio.firebasestorage.app';
+        var VIDEO_MAX_MB = 200;
+
+        function videoEmbedHTML(url) {
+            var u = url || '';
+            var yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+            if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" allowfullscreen></iframe>';
+            var dr = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([A-Za-z0-9_-]{10,})/);
+            if (dr) return '<iframe src="https://drive.google.com/file/d/' + dr[1] + '/preview" allowfullscreen></iframe>';
+            if (/vimeo\.com\/(\d+)/.test(u)) return '<iframe src="https://player.vimeo.com/video/' + u.match(/vimeo\.com\/(\d+)/)[1] + '" allowfullscreen></iframe>';
+            return '<video src="' + escapeHtml(u) + '" controls playsinline preload="metadata"></video>';
+        }
+
+        function renderVideoTab() {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            var tab = document.getElementById('tabVideo');
+            if (!cand || !tab) return;
+
+            if (cand.videoUrl) {
+                tab.innerHTML = '<div class="vid-wrap">'
+                    + '<div class="vid-head">'
+                    + '<div class="vid-name">🎥 ' + escapeHtml(cand.videoNombre || 'Video del profesional') + '</div>'
+                    + '<button class="pdfv-btn pdfv-btn-danger" onclick="eliminarVideo()">🗑️ Eliminar</button>'
+                    + '</div>'
+                    + '<div class="vid-player">' + videoEmbedHTML(cand.videoUrl) + '</div>'
+                    + '<div style="margin-top:10px;font-size:12px;"><a href="' + escapeHtml(cand.videoUrl) + '" target="_blank" rel="noopener">Abrir el video en una pestaña nueva</a></div>'
+                    + '</div>';
+                return;
+            }
+
+            tab.innerHTML = '<div class="vid-wrap">'
+                + '<div class="vid-upload" onclick="document.getElementById(\'videoFileInput\').click()">'
+                + '<div class="vid-upload-icon">🎬</div>'
+                + '<div class="vid-upload-text">Subir video del profesional</div>'
+                + '<div class="vid-upload-sub">MP4 o MOV · hasta ' + VIDEO_MAX_MB + 'MB · lo ve todo el equipo</div>'
+                + '</div>'
+                + '<div class="vid-progress"><div class="vid-progress-bar" id="videoProgressBar"></div></div>'
+                + '<div class="vid-progress-label" id="videoProgressLabel">Subiendo...</div>'
+                + '<div class="vid-or">— o pegá el link si ya está en YouTube o Drive —</div>'
+                + '<div class="vid-link-row">'
+                + '<input type="text" id="videoLinkInput" placeholder="https://youtu.be/... o link de Google Drive">'
+                + '<button class="btn btn-primary" onclick="guardarVideoLink()">Guardar link</button>'
+                + '</div>'
+                + '<div class="vid-help" id="videoHelp" style="display:none"></div>'
+                + '<input type="file" id="videoFileInput" accept="video/*" style="display:none" onchange="handleVideoUpload(this.files[0])">'
+                + '</div>';
+        }
+
+        function videoProgreso(pct, texto) {
+            var bar = document.getElementById('videoProgressBar');
+            var lbl = document.getElementById('videoProgressLabel');
+            if (bar) { bar.parentElement.style.display = 'block'; bar.style.width = pct + '%'; }
+            if (lbl) { lbl.style.display = 'block'; lbl.innerText = texto; }
+        }
+
+        function mostrarAyudaVideo(msg) {
+            var h = document.getElementById('videoHelp');
+            if (h) { h.style.display = 'block'; h.innerHTML = msg; }
+            var bar = document.getElementById('videoProgressBar');
+            if (bar) bar.parentElement.style.display = 'none';
+            var lbl = document.getElementById('videoProgressLabel');
+            if (lbl) lbl.style.display = 'none';
+        }
+
+        function handleVideoUpload(file) {
+            if (!file) return;
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            if (file.size > VIDEO_MAX_MB * 1024 * 1024) {
+                alert('El video pesa ' + Math.round(file.size/1024/1024) + 'MB y el máximo es ' + VIDEO_MAX_MB + 'MB.\nSubilo a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo.');
+                return;
+            }
+
+            var nombre = 'videos/' + cand.id + '-' + Date.now() + '-' + file.name.replace(/[^A-Za-z0-9._-]/g, '_');
+            var url = 'https://firebasestorage.googleapis.com/v0/b/' + STORAGE_BUCKET + '/o?uploadType=media&name=' + encodeURIComponent(nombre);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) videoProgreso(Math.round(e.loaded / e.total * 90), 'Subiendo... ' + Math.round(e.loaded / e.total * 100) + '%');
+            };
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var res = {};
+                    try { res = JSON.parse(xhr.responseText); } catch(e) {}
+                    var token = res.downloadTokens || '';
+                    var publica = 'https://firebasestorage.googleapis.com/v0/b/' + STORAGE_BUCKET + '/o/' + encodeURIComponent(nombre) + '?alt=media' + (token ? '&token=' + token : '');
+                    videoProgreso(95, 'Guardando...');
+                    guardarVideoEnCandidato(publica, file.name);
+                } else if (xhr.status === 404) {
+                    mostrarAyudaVideo('⚠️ <b>Falta activar el almacenamiento de videos.</b><br>Entrá a <a href="https://console.firebase.google.com/project/talent-kinesio/storage" target="_blank" rel="noopener">Firebase → Storage</a>, tocá <b>Comenzar</b> y aceptá. Después volvé acá y subilo de nuevo.<br>Mientras tanto podés subir el video a YouTube o Drive y pegar el link abajo.');
+                } else if (xhr.status === 403 || xhr.status === 401) {
+                    mostrarAyudaVideo('⚠️ <b>El almacenamiento no permite subir sin permiso.</b><br>Entrá a <a href="https://console.firebase.google.com/project/talent-kinesio/storage/rules" target="_blank" rel="noopener">Firebase → Storage → Reglas</a> y dejá: <code>allow read, write: if true;</code><br>Mientras tanto podés pegar un link de YouTube o Drive abajo.');
+                } else {
+                    mostrarAyudaVideo('No se pudo subir el video (error ' + xhr.status + '). Probá con un archivo más chico o pegá un link.');
+                }
+            };
+            xhr.onerror = function() { mostrarAyudaVideo('Se cortó la conexión durante la subida. Intentá de nuevo.'); };
+            videoProgreso(5, 'Subiendo...');
+            xhr.send(file);
+        }
+
+        function guardarVideoLink() {
+            var input = document.getElementById('videoLinkInput');
+            var link = input ? input.value.trim() : '';
+            if (!link) { alert('Pegá el link del video.'); return; }
+            if (!/^https?:\/\//i.test(link)) { alert('El link tiene que empezar con http:// o https://'); return; }
+            guardarVideoEnCandidato(link, 'Video (link externo)');
+        }
+
+        function guardarVideoEnCandidato(url, nombre) {
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            cand.videoUrl = url;
+            cand.videoNombre = nombre || '';
+            if (window._fbReady) {
+                window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(cand.id)), cand)
+                    .then(function(){ renderVideoTab(); renderCandidates(); })
+                    .catch(function(e){ console.error(e); alert('Error al guardar el video: ' + e.message); });
+            } else {
+                renderVideoTab(); renderCandidates();
+            }
+        }
+
+        function eliminarVideo() {
+            if (!confirm('¿Eliminar el video de este profesional?')) return;
+            var cand = candidates.find(function(x){ return x.id === currentEditCandidateId; });
+            if (!cand) return;
+            delete cand.videoUrl;
+            delete cand.videoNombre;
+            if (window._fbReady) {
+                window._fbSetDoc(window._fbDoc(window._db, 'candidates', String(cand.id)), cand)
+                    .then(function(){ renderVideoTab(); renderCandidates(); })
+                    .catch(function(e){ console.error(e); });
+            } else { renderVideoTab(); renderCandidates(); }
+        }
+
         function resetPDFProgress() {
             var progWrap = document.getElementById('pdfProgressBar');
             if (progWrap) progWrap.parentElement.style.display = 'none';
@@ -1119,7 +1306,7 @@
         }
 
                 function closeModal() { document.getElementById('candidateModal').style.display='none'; currentEditCandidateId=null; cvCacheId=null; cvCacheHTML=null; }
-        function resetFilters() { document.getElementById('searchFilter').value=''; document.getElementById('specialtyFilter').value=''; document.getElementById('statusFilter').value=''; renderCandidates(); }
+        function resetFilters() { document.getElementById('searchFilter').value=''; document.getElementById('specialtyFilter').value=''; document.getElementById('statusFilter').value=''; document.getElementById('sedeFilter').value=''; renderCandidates(); }
 
         function limpiarRespuestaAI(text) {
             let cleaned = text.replace(/[\u0000-\u001F\u007F-\u009F]/g,' ').replace(/```json\n?/g,'').replace(/```\n?/g,'').replace(/\n/g,' ').replace(/\r/g,' ').replace(/\t/g,' ');
@@ -1129,6 +1316,8 @@
         }
 
         function extraerUbicacion(texto) {
+            const zona=['El Bolsón','El Bolson','Lago Puelo','Bariloche','Epuyén','Epuyen','Cholila','Dina Huapi'];
+            for(let z of zona){ if(texto.toLowerCase().includes(z.toLowerCase())) return z.replace('Bolson','Bolsón').replace('Epuyen','Epuyén'); }
             const prov=['Buenos Aires','CABA','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego','Tucumán'];
             for(let p of prov){ if(texto.includes(p)) return p; }
             const m=texto.match(/(?:Villa|San|Santa|Ciudad|Mar del|La|El|Los|Las)\s+[A-Z][a-z]+/);
@@ -1159,7 +1348,7 @@
                     tituloOriginal:parsed.titulo_original||'',
                     experience:parsed.experiencia_anos||0, technologies:parsed.tecnologias||[],
                     hardSkills:parsed.hard_skills||[], softSkills:parsed.soft_skills||[],
-                    score:parsed.score_fit||70, location:extraerUbicacion(cvText),
+                    score:parsed.score_fit||70, location:extraerUbicacion(cvText), sede:normalizarSede(extraerUbicacion(cvText)+' '+cvText.substring(0,1500)),
                     scoreBreakdown:{tecnico:parsed.score_tecnico||40,experiencia:parsed.score_experiencia||30,soft:parsed.score_soft||15,herramientas:parsed.score_herramientas||15},
                     recommendation:parsed.recomendacion||'Considerar',
                     date:new Date().toLocaleString(), status:'pendiente', availability:'', personalInfo:'',
@@ -1330,6 +1519,7 @@
         document.getElementById('searchFilter').addEventListener('input',()=>renderCandidates());
         document.getElementById('specialtyFilter').addEventListener('change',()=>renderCandidates());
         document.getElementById('statusFilter').addEventListener('change',()=>renderCandidates());
+        document.getElementById('sedeFilter').addEventListener('change',()=>renderCandidates());
         const dz=document.getElementById('dropZone');
         if(dz){dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');handleFileUpload(e.dataTransfer.files[0]);});}
         loadData();
