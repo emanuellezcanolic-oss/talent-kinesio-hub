@@ -1176,12 +1176,15 @@
             })
             .catch(function(){});
 
-        function configurarCloudinary() {
-            var cn = prompt('1 de 2 — Pegá tu "Cloud name" de Cloudinary:', CLOUDINARY.cloudName || '');
-            if (cn === null) return;
-            cn = cn.trim();
-            if (!cn) { alert('No ingresaste el Cloud name.'); return; }
-            var up = prompt('2 de 2 — Pegá el nombre del "Upload preset" (tiene que ser Unsigned):', CLOUDINARY.uploadPreset || '');
+        function configurarCloudinary(soloPreset) {
+            var cn = CLOUDINARY.cloudName;
+            if (!soloPreset || !cn) {
+                cn = prompt('Pegá tu "Cloud name" de Cloudinary:', CLOUDINARY.cloudName || '');
+                if (cn === null) return;
+                cn = cn.trim();
+                if (!cn) { alert('No ingresaste el Cloud name.'); return; }
+            }
+            var up = prompt('Pegá el nombre del "Upload preset" (tiene que estar en modo Unsigned).\n\nEstá en Cloudinary → Settings → Upload → Upload presets.', CLOUDINARY.uploadPreset || '');
             if (up === null) return;
             up = up.trim();
             if (!up) { alert('No ingresaste el Upload preset.'); return; }
@@ -1237,8 +1240,8 @@
                 + '<input type="text" id="videoLinkInput" placeholder="https://youtu.be/... o link de Google Drive">'
                 + '<button class="btn btn-primary" onclick="guardarVideoLink()">Guardar link</button>'
                 + '</div>'
-                + '<div class="vid-help" id="videoHelp"' + (CLOUDINARY.cloudName ? ' style="display:none"' : '') + '>' + (CLOUDINARY.cloudName ? '' : ayudaSubidaHTML()) + '</div>'
-                + '<div style="text-align:center;margin-top:12px;"><button class="btn btn-outline" onclick="configurarCloudinary()">⚙️ ' + (CLOUDINARY.cloudName ? 'Cambiar dónde se guardan los videos' : 'Activar subida de videos') + '</button></div>'
+                + '<div class="vid-help" id="videoHelp"' + (subidaLista() ? ' style="display:none"' : '') + '>' + (subidaLista() ? '' : ayudaSubidaHTML()) + '</div>'
+                + '<div style="text-align:center;margin-top:12px;"><button class="btn btn-outline" onclick="configurarCloudinary(true)">⚙️ ' + (subidaLista() ? 'Cambiar dónde se guardan los videos' : 'Activar subida de videos') + '</button></div>'
                 + '<input type="file" id="videoFileInput" accept="video/*" style="display:none" onchange="handleVideoUpload(this.files[0])">'
                 + '</div>';
         }
@@ -1268,7 +1271,8 @@
                 return;
             }
 
-            if (CLOUDINARY.cloudName && CLOUDINARY.uploadPreset) { subirACloudinary(file); return; }
+            if (subidaLista()) { subirACloudinary(file); return; }
+            if (CLOUDINARY.cloudName) { mostrarAyudaVideo(ayudaSubidaHTML()); return; }
 
             var nombre = 'videos/' + cand.id + '-' + Date.now() + '-' + file.name.replace(/[^A-Za-z0-9._-]/g, '_');
             var url = 'https://firebasestorage.googleapis.com/v0/b/' + STORAGE_BUCKET + '/o?uploadType=media&name=' + encodeURIComponent(nombre);
@@ -1298,13 +1302,23 @@
         }
 
         function ayudaSubidaHTML() {
+            if (CLOUDINARY.cloudName) {
+                return '⚠️ <b>Falta un último paso para subir archivos.</b>'
+                    + '<br>La cuenta <b>' + escapeHtml(CLOUDINARY.cloudName) + '</b> ya está cargada. Sólo falta el permiso de subida:'
+                    + '<br>1) Entrá a <a href="https://console.cloudinary.com/settings/upload_presets" target="_blank" rel="noopener">Cloudinary → Settings → Upload presets</a>.'
+                    + '<br>2) Tocá <b>Add upload preset</b>, poné <b>Signing Mode: Unsigned</b>, guardá y copiá el nombre que quedó.'
+                    + '<br>3) Volvé acá, tocá <b>⚙️ Activar subida de videos</b> y pegá ese nombre.'
+                    + '<br><br>Mientras tanto, subí el video a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo: eso ya funciona.';
+            }
             return '⚠️ <b>Todavía no está activada la subida de archivos.</b>'
                 + '<br>Se activa una sola vez y después sube cualquiera del equipo. Es gratis y no pide tarjeta:'
                 + '<br>1) Creá una cuenta en <a href="https://cloudinary.com/users/register_free" target="_blank" rel="noopener">cloudinary.com</a>.'
                 + '<br>2) Entrá a Settings → Upload → Upload presets → Add upload preset, poné <b>Signing Mode: Unsigned</b> y guardá.'
-                + '<br>3) Volvé acá y tocá <b>⚙️ Activar subida de videos</b>. Te va a pedir el <i>Cloud name</i> y el nombre del <i>preset</i>.'
+                + '<br>3) Volvé acá y tocá <b>⚙️ Activar subida de videos</b>.'
                 + '<br><br>Mientras tanto, subí el video a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo: eso ya funciona.';
         }
+
+        function subidaLista() { return !!(CLOUDINARY.cloudName && CLOUDINARY.uploadPreset); }
 
         function subirACloudinary(file) {
             var fd = new FormData();
