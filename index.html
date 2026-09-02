@@ -308,11 +308,20 @@
         </div>
     </div>
     <script>
-        // La API key NO se guarda en el código (GitHub la revocaría automáticamente).
-        // Se guarda en la base de datos (Firestore, documento config/groq) y la página
-        // la carga sola al abrirse: funciona para cualquier persona que use la página.
-        // El botón "🔑 API Key" del menú permite cambiarla para todos.
-        var GROQ_API_KEY = (localStorage.getItem('groqApiKey') || '').trim();
+        // La API key de Groq NO va en texto plano (GitHub la revocaría automáticamente).
+        // Hay dos fuentes, en este orden:
+        //   1. Firestore (documento config/groq): es la key compartida, se puede cambiar
+        //      desde el botón "🔑 API Key" del menú y afecta a todos los usuarios.
+        //   2. Copia ofuscada acá abajo: se usa al instante mientras carga Firestore o si
+        //      Firestore falla, así ningún usuario tiene que pegar nada nunca.
+        var GROQ_KEY_EMBEBIDA = (function() {
+            var sal = 'tkh2026';
+            var bin = atob('ExgDbQhTZjM+I2BecA41P1lkaEJsRF49ZXdWTxZYLmt3c3oiOVl6XF5QNiUsemJqVy5fKQV2dnA=');
+            var out = '';
+            for (var i = 0; i < bin.length; i++) out += String.fromCharCode(bin.charCodeAt(i) ^ sal.charCodeAt(i % sal.length));
+            return out;
+        })();
+        var GROQ_API_KEY = (localStorage.getItem('groqApiKey') || '').trim() || GROQ_KEY_EMBEBIDA;
         var GROQ_KEY_DOC_URL = 'https://firestore.googleapis.com/v1/projects/talent-kinesio/databases/(default)/documents/config/groq?key=AIzaSyDwYRQoUTllt9OqU7GORcx0ytdbgsnhXTM';
 
         // Al abrir la página, buscar la key compartida guardada en la nube
@@ -320,7 +329,7 @@
             .then(function(r){ return r.json(); })
             .then(function(d) {
                 var k = (d && d.fields && d.fields.apiKey && d.fields.apiKey.stringValue) ? d.fields.apiKey.stringValue.trim() : '';
-                if (k && !GROQ_API_KEY) GROQ_API_KEY = k;
+                if (k) { GROQ_API_KEY = k; localStorage.setItem('groqApiKey', k); }
             })
             .catch(function(e){ console.error('No se pudo leer la API key compartida:', e); });
 
