@@ -350,7 +350,7 @@
             .then(function(r){ return r.json(); })
             .then(function(d) {
                 var k = (d && d.fields && d.fields.apiKey && d.fields.apiKey.stringValue) ? d.fields.apiKey.stringValue.trim() : '';
-                if (k) { GROQ_API_KEY = k; localStorage.setItem('groqApiKey', k); }
+                if (k && k.indexOf('gsk_') === 0) { GROQ_API_KEY = k; localStorage.setItem('groqApiKey', k); }
             })
             .catch(function(e){ console.error('No se pudo leer la API key compartida:', e); });
 
@@ -369,7 +369,8 @@
             nueva = nueva.trim();
             if (!nueva) { alert('No ingresaste ninguna key. No se hicieron cambios.'); return false; }
             if (nueva.indexOf('gsk_') !== 0) {
-                alert('⚠️ Esa key no parece de Groq (deberían empezar con "gsk_"). La guardo igual, pero si falla revisala.');
+                alert('❌ Esa no es una API Key de Groq: todas empiezan con "gsk_".\n\nNo la guardo, porque el resto del equipo la rechazaría y se quedarían sin IA. Revisala y probá de nuevo.');
+                return false;
             }
             localStorage.setItem('groqApiKey', nueva);
             GROQ_API_KEY = nueva;
@@ -383,6 +384,50 @@
             if (GROQ_API_KEY) return true;
             alert('🔑 Falta configurar tu API Key de Groq.\nAhora te pido que la pegues.');
             return configurarApiKey();
+        }
+
+        // Groq da de baja modelos cada tanto. En vez de tener el nombre hardcodeado,
+        // se prueban en orden y se recuerda el primero que funcione.
+        var GROQ_TEXT_MODELS = ['llama-3.3-70b-versatile', 'meta-llama/llama-4-scout-17b-16e-instruct', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
+        var GROQ_MODEL_OK = localStorage.getItem('groqModeloOk') || '';
+
+        function esErrorDeModelo(data) {
+            var err = (data && data.error) || {};
+            if (err.code === 'model_not_found' || err.code === 'model_decommissioned') return true;
+            var m = (err.message || '').toLowerCase();
+            if (m.indexOf('model') === -1) return false;
+            return m.indexOf('does not exist') !== -1 || m.indexOf('decommissioned') !== -1 || m.indexOf('deprecated') !== -1 || m.indexOf('not found') !== -1;
+        }
+
+        // Llama a Groq probando modelos hasta que uno responda. Devuelve una promesa
+        // con el texto de la respuesta.
+        function groqChat(opciones) {
+            var lista = GROQ_MODEL_OK ? [GROQ_MODEL_OK].concat(GROQ_TEXT_MODELS.filter(function(m){ return m !== GROQ_MODEL_OK; })) : GROQ_TEXT_MODELS.slice();
+            var i = 0;
+
+            function intentar() {
+                var cuerpo = { model: lista[i], messages: opciones.messages, temperature: opciones.temperature };
+                if (opciones.max_tokens) cuerpo.max_tokens = opciones.max_tokens;
+                return fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+                    body: JSON.stringify(cuerpo)
+                })
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
+                    if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
+                    if (esErrorDeModelo(data)) {
+                        if (i < lista.length - 1) { i++; return intentar(); }
+                        throw new Error('Ningún modelo de IA está disponible en este momento. Probá de nuevo en un rato.');
+                    }
+                    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                        throw new Error(data.error ? data.error.message : 'Respuesta inesperada de la IA');
+                    }
+                    if (lista[i] !== GROQ_MODEL_OK) { GROQ_MODEL_OK = lista[i]; localStorage.setItem('groqModeloOk', lista[i]); }
+                    return data.choices[0].message.content;
+                });
+            }
+            return intentar();
         }
 
         function esErrorDeApiKey(data) {
@@ -460,9 +505,9 @@
             const rubroCounts = ESPECIALIDADES.map(function(cat){ return candidates.filter(function(c){ return normalizarEspecialidad(c.specialty) === cat; }).length; });
             if (specialtyChart) specialtyChart.destroy();
             const ctx = document.getElementById('specialtyChart') ? document.getElementById('specialtyChart').getContext('2d') : null;
-            if(ctx) specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Entrenadores','Nutricionistas','Recepcionistas','Otros'], datasets:[{ data:rubroCounts, backgroundColor:['#667eea','#f59e0b','#10b981','#ec4899','#9ca3af'] }] } });
+            if(ctx && typeof Chart!=='undefined') specialtyChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Kinesiólogos','Entrenadores','Nutricionistas','Recepcionistas','Otros'], datasets:[{ data:rubroCounts, backgroundColor:['#667eea','#f59e0b','#10b981','#ec4899','#9ca3af'] }] } });
             const top = [...candidates].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
-            document.getElementById('topCandidatesList').innerHTML = top.map(c=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee"><span><strong>'+escapeHtml(c.name)+'</strong><br><small>'+(c.specialty||'')+' | '+(c.location||'Sin ubicación')+'</small></span><span style="font-weight:bold;color:#667eea;">'+(c.score||70)+'%</span></div>').join('');
+            document.getElementById('topCandidatesList').innerHTML = top.map(c=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee"><span><strong>'+escapeHtml(c.name)+'</strong><br><small>'+escapeHtml(c.specialty||'')+' | '+escapeHtml(c.location||'Sin ubicación')+'</small></span><span style="font-weight:bold;color:#667eea;">'+(c.score||70)+'%</span></div>').join('');
         }
 
         function renderCandidates() {
@@ -491,16 +536,18 @@
                 +(iScore>0?'<span class="card-iscore '+iScoreClass+'">🎤 '+iScore+'/100'+(iVerdict?' · '+iVerdict:'')+'</span>':'')
                 +'</div>'
                 +'<div class="skills-list">'+(c.hardSkills||[]).slice(0,3).map(s=>'<span class="skill-tag">'+escapeHtml(s)+'</span>').join('')+'</div>'
-                +'<div style="margin-top:8px;font-size:12px;color:#999;">📍 '+(c.location||'Sin ubicación')+' | 📅 '+(c.date||'')+'</div>'
+                +'<div style="margin-top:8px;font-size:12px;color:#999;">📍 '+escapeHtml(c.location||'Sin ubicación')+' | 📅 '+escapeHtml(c.date||'')+'</div>'
                 +'<div><span class="sede-badge">🏢 '+sedeDe(c)+'</span>'+(c.videoUrl?'<span class="sede-badge" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca;margin-left:6px;">🎥 Video</span>':'')+'</div>'
-                +(c.availability?'<div style="font-size:11px;color:#10b981;margin-top:4px;">✅ '+c.availability+'</div>':'')
+                +(c.availability?'<div style="font-size:11px;color:#10b981;margin-top:4px;">✅ '+escapeHtml(c.availability)+'</div>':'')
                 +'</div>';
             }).join('');
         }
 
         function escapeHtml(text) {
-            if(!text) return '';
-            return text.replace(/[&<>]/g, function(m){ return m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'; });
+            if (text === null || text === undefined) return '';
+            return String(text).replace(/[&<>"']/g, function(m){
+                return m==='&'?'&amp;':m==='<'?'&lt;':m==='>'?'&gt;':m==='"'?'&quot;':'&#39;';
+            });
         }
 
         // ── CV VIEWER: usa Groq para parsear el texto crudo del PDF ──
@@ -544,15 +591,9 @@
                 return;
             }
             var prompt = 'Eres asistente de RRHH. Recib\u00eds el texto crudo de un CV extra\u00eddo de PDF (puede tener palabras pegadas, sin formato). Devuelve SOLO JSON v\u00e1lido sin explicaciones ni backticks:\n{"contacto":[{"tipo":"email|telefono|ubicacion","valor":"..."}],"perfil":"texto del perfil en 2-4 oraciones","experiencia":[{"cargo":"...","empresa":"...","fecha":"...","descripcion":"..."}],"formacion":[{"titulo":"...","institucion":"...","fecha":"..."}],"capacitaciones":[{"nombre":"...","institucion":"...","fecha":"..."}],"habilidades":["..."],"idiomas":[{"idioma":"...","nivel":"..."}]}\n\nCV:\n';
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-                body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: prompt + texto.substring(0, 4000) }], temperature: 0.1, max_tokens: 2000 })
-            })
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                if (esErrorDeApiKey(data)) throw new Error('API key inválida');
-                var raw = data.choices[0].message.content.replace(/```json/g,'').replace(/```/g,'').trim();
+            groqChat({ messages: [{ role: 'user', content: prompt + texto.substring(0, 4000) }], temperature: 0.1, max_tokens: 2000 })
+            .then(function(contenido) {
+                var raw = contenido.replace(/```json/g,'').replace(/```/g,'').trim();
                 var f = raw.indexOf('{'), l = raw.lastIndexOf('}');
                 if (f===-1||l===-1) throw new Error('no json');
                 var parsed = JSON.parse(raw.substring(f, l+1));
@@ -655,9 +696,9 @@
                 +'<div class="score-item"><div class="label">Herramientas</div><div class="value">'+(c.scoreBreakdown&&c.scoreBreakdown.herramientas?c.scoreBreakdown.herramientas:Math.floor((c.score||70)*0.15))+'%</div></div>'
                 +'</div>'
                 +'<div class="form-group"><label>Score Total (0-100)</label><input type="range" id="editScore" min="0" max="100" value="'+(c.score||70)+'" oninput="document.getElementById(\'scoreValue\').innerText=this.value"><span id="scoreValue">'+(c.score||70)+'</span></div>'
-                +'<div class="form-group"><label>Hard Skills (separar por comas)</label><input type="text" id="editHardSkills" value="'+(c.hardSkills||[]).join(', ')+'"></div>'
-                +'<div class="form-group"><label>Soft Skills (separar por comas)</label><input type="text" id="editSoftSkills" value="'+(c.softSkills||[]).join(', ')+'"></div>'
-                +'<div class="form-group"><label>Tecnologías/Herramientas</label><input type="text" id="editTechnologies" value="'+(c.technologies||[]).join(', ')+'"></div>'
+                +'<div class="form-group"><label>Hard Skills (separar por comas)</label><input type="text" id="editHardSkills" value="'+escapeHtml((c.hardSkills||[]).join(', '))+'"></div>'
+                +'<div class="form-group"><label>Soft Skills (separar por comas)</label><input type="text" id="editSoftSkills" value="'+escapeHtml((c.softSkills||[]).join(', '))+'"></div>'
+                +'<div class="form-group"><label>Tecnologías/Herramientas</label><input type="text" id="editTechnologies" value="'+escapeHtml((c.technologies||[]).join(', '))+'"></div>'
                 +'<div class="form-group"><label>Estado del proceso</label><select id="editStatus"><option value="pendiente"'+(c.status==='pendiente'?' selected':'')+'>Pendiente</option><option value="entrevistado"'+(c.status==='entrevistado'?' selected':'')+'>Entrevistado</option><option value="contratado"'+(c.status==='contratado'?' selected':'')+'>Contratado</option><option value="descartado"'+(c.status==='descartado'?' selected':'')+'>Descartado</option></select></div>'
                 +'<div class="form-group"><label>Disponibilidad</label><select id="editAvailability"><option value="">Seleccionar</option><option value="inmediata"'+(c.availability==='inmediata'?' selected':'')+'>Inmediata</option><option value="15 dias"'+(c.availability==='15 dias'?' selected':'')+'>15 días</option><option value="30 dias"'+(c.availability==='30 dias'?' selected':'')+'>30 días</option></select></div>'
                 +'<div class="form-group"><label>Info adicional</label><textarea id="editPersonalInfo" rows="2">'+escapeHtml(c.personalInfo||'')+'</textarea></div>'
@@ -928,16 +969,8 @@
             var result = document.getElementById('iqAiResult');
             if (result) { result.classList.remove('visible'); result.innerText = ''; }
 
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-                body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: promptText }], temperature: 0.4, max_tokens: 800 })
-            })
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
-                if (!data.choices || !data.choices[0]) throw new Error('Sin respuesta de IA');
-                var text = data.choices[0].message.content;
+            groqChat({ messages: [{ role: 'user', content: promptText }], temperature: 0.4, max_tokens: 800 })
+            .then(function(text) {
                 if (result) { result.innerText = text; result.classList.add('visible'); }
                 cand.interviewAIResult = text;
                 saveInterviewData();
@@ -1164,27 +1197,26 @@
         var STORAGE_BUCKET = 'talent-kinesio.firebasestorage.app';
         // Cloudinary: alternativa gratis y sin tarjeta a Firebase Storage. Los datos
         // se guardan una sola vez en Firestore (config/cloudinary) y sirven para todos.
-        var CLOUDINARY = { cloudName: '', uploadPreset: '' };
+        var CLOUDINARY = { cloudName: 'yzlpdm55', uploadPreset: 'talent_videos' };
+        var CLOUDINARY_CUENTAS_VALIDAS = ['yzlpdm55'];
         var CLOUDINARY_DOC_URL = 'https://firestore.googleapis.com/v1/projects/talent-kinesio/databases/(default)/documents/config/cloudinary?key=AIzaSyDwYRQoUTllt9OqU7GORcx0ytdbgsnhXTM';
 
         fetch(CLOUDINARY_DOC_URL)
             .then(function(r){ return r.json(); })
             .then(function(d) {
                 var f = (d && d.fields) || {};
-                CLOUDINARY.cloudName = (f.cloudName && f.cloudName.stringValue || '').trim();
-                CLOUDINARY.uploadPreset = (f.uploadPreset && f.uploadPreset.stringValue || '').trim();
+                var cn = (f.cloudName && f.cloudName.stringValue || '').trim();
+                var up = (f.uploadPreset && f.uploadPreset.stringValue || '').trim();
+                if (cn && up && CLOUDINARY_CUENTAS_VALIDAS.indexOf(cn) !== -1) {
+                    CLOUDINARY.cloudName = cn;
+                    CLOUDINARY.uploadPreset = up;
+                }
             })
             .catch(function(){});
 
-        function configurarCloudinary(soloPreset) {
+        function configurarCloudinary() {
             var cn = CLOUDINARY.cloudName;
-            if (!soloPreset || !cn) {
-                cn = prompt('Pegá tu "Cloud name" de Cloudinary:', CLOUDINARY.cloudName || '');
-                if (cn === null) return;
-                cn = cn.trim();
-                if (!cn) { alert('No ingresaste el Cloud name.'); return; }
-            }
-            var up = prompt('Pegá el nombre del "Upload preset" (tiene que estar en modo Unsigned).\n\nEstá en Cloudinary → Settings → Upload → Upload presets.', CLOUDINARY.uploadPreset || '');
+            var up = prompt('Cuenta de Cloudinary: ' + cn + '\n\nPegá el nombre del "Upload preset" (tiene que estar en modo Unsigned).\nEstá en Cloudinary → Settings → Upload → Upload presets.\n\n(La cuenta sólo se cambia editando el código: si se pudiera cambiar desde acá, cualquiera podría desviar los videos de los candidatos a otro lado.)', CLOUDINARY.uploadPreset || '');
             if (up === null) return;
             up = up.trim();
             if (!up) { alert('No ingresaste el Upload preset.'); return; }
@@ -1200,8 +1232,11 @@
         }
         var VIDEO_MAX_MB = 200;
 
+        function esLinkSeguro(u) { return /^https?:\/\//i.test(u || ''); }
+
         function videoEmbedHTML(url) {
             var u = url || '';
+            if (!esLinkSeguro(u)) return '<div style="padding:20px;color:#fff;text-align:center;font-size:13px;">El link de este video no es válido.</div>';
             var yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
             if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" allowfullscreen></iframe>';
             var dr = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([A-Za-z0-9_-]{10,})/);
@@ -1222,7 +1257,7 @@
                     + '<button class="pdfv-btn pdfv-btn-danger" onclick="eliminarVideo()">🗑️ Eliminar</button>'
                     + '</div>'
                     + '<div class="vid-player">' + videoEmbedHTML(cand.videoUrl) + '</div>'
-                    + '<div style="margin-top:10px;font-size:12px;"><a href="' + escapeHtml(cand.videoUrl) + '" target="_blank" rel="noopener">Abrir el video en una pestaña nueva</a></div>'
+                    + (esLinkSeguro(cand.videoUrl) ? '<div style="margin-top:10px;font-size:12px;"><a href="' + escapeHtml(cand.videoUrl) + '" target="_blank" rel="noopener">Abrir el video en una pestaña nueva</a></div>' : '')
                     + '</div>';
                 return;
             }
@@ -1241,7 +1276,7 @@
                 + '<button class="btn btn-primary" onclick="guardarVideoLink()">Guardar link</button>'
                 + '</div>'
                 + '<div class="vid-help" id="videoHelp"' + (subidaLista() ? ' style="display:none"' : '') + '>' + (subidaLista() ? '' : ayudaSubidaHTML()) + '</div>'
-                + '<div style="text-align:center;margin-top:12px;"><button class="btn btn-outline" onclick="configurarCloudinary(true)">⚙️ ' + (subidaLista() ? 'Cambiar dónde se guardan los videos' : 'Activar subida de videos') + '</button></div>'
+                + '<div style="text-align:center;margin-top:12px;"><button class="btn btn-outline" onclick="configurarCloudinary()">⚙️ ' + (subidaLista() ? 'Cambiar el permiso de subida' : 'Activar subida de videos') + '</button></div>'
                 + '<input type="file" id="videoFileInput" accept="video/*" style="display:none" onchange="handleVideoUpload(this.files[0])">'
                 + '</div>';
         }
@@ -1302,19 +1337,11 @@
         }
 
         function ayudaSubidaHTML() {
-            if (CLOUDINARY.cloudName) {
-                return '⚠️ <b>Falta un último paso para subir archivos.</b>'
-                    + '<br>La cuenta <b>' + escapeHtml(CLOUDINARY.cloudName) + '</b> ya está cargada. Sólo falta el permiso de subida:'
-                    + '<br>1) Entrá a <a href="https://console.cloudinary.com/settings/upload_presets" target="_blank" rel="noopener">Cloudinary → Settings → Upload presets</a>.'
-                    + '<br>2) Tocá <b>Add upload preset</b>, poné <b>Signing Mode: Unsigned</b>, guardá y copiá el nombre que quedó.'
-                    + '<br>3) Volvé acá, tocá <b>⚙️ Activar subida de videos</b> y pegá ese nombre.'
-                    + '<br><br>Mientras tanto, subí el video a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo: eso ya funciona.';
-            }
-            return '⚠️ <b>Todavía no está activada la subida de archivos.</b>'
-                + '<br>Se activa una sola vez y después sube cualquiera del equipo. Es gratis y no pide tarjeta:'
-                + '<br>1) Creá una cuenta en <a href="https://cloudinary.com/users/register_free" target="_blank" rel="noopener">cloudinary.com</a>.'
-                + '<br>2) Entrá a Settings → Upload → Upload presets → Add upload preset, poné <b>Signing Mode: Unsigned</b> y guardá.'
-                + '<br>3) Volvé acá y tocá <b>⚙️ Activar subida de videos</b>.'
+            return '⚠️ <b>Falta un último paso para subir archivos.</b>'
+                + '<br>La cuenta <b>' + escapeHtml(CLOUDINARY.cloudName) + '</b> ya está cargada. Sólo falta el permiso de subida:'
+                + '<br>1) Entrá a <a href="https://console.cloudinary.com/settings/upload_presets" target="_blank" rel="noopener">Cloudinary → Settings → Upload presets</a>.'
+                + '<br>2) Tocá <b>Add upload preset</b>, poné <b>Signing Mode: Unsigned</b>, guardá y copiá el nombre que quedó.'
+                + '<br>3) Volvé acá, tocá <b>⚙️ Activar subida de videos</b> y pegá ese nombre.'
                 + '<br><br>Mientras tanto, subí el video a YouTube (como "oculto") o a Google Drive y pegá el link acá abajo: eso ya funciona.';
         }
 
@@ -1412,19 +1439,8 @@
             if (!requireGroqKey()) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
             try {
-                const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
-                    body: JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'Eres experto en RRHH de un centro de kinesiología y entrenamiento. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","titulo_original":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}. REGLA OBLIGATORIA para "especialidad": elegí EXACTAMENTE una de estas 5 categorías según la profesión PRINCIPAL del candidato, aunque mencione varias: "Kinesiólogo" (kinesiólogos, fisioterapeutas, fisiatras, lic. en kinesiología y fisiatría), "Entrenador" (entrenadores, personal trainers, profesores de educación física, instructores de musculación/spinning/funcional/natación, preparadores físicos, coaches deportivos), "Nutricionista" (nutricionistas, dietistas), "Recepcionista" (recepcionistas, administrativos, atención al cliente), "Otro" (cualquier otra profesión). En "titulo_original" copiá el título o profesión textual tal como figura en el CV.'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 })
-                });
-                const data = await r.json();
-                if (esErrorDeApiKey(data)) {
-                    throw new Error('La API Key no es válida o fue revocada. Andá al botón "🔑 API Key" del menú y pegá una nueva.');
-                }
-                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                    var errMsg = data.error ? data.error.message : 'Respuesta inesperada de la IA';
-                    throw new Error(errMsg);
-                }
-                const parsed = limpiarRespuestaAI(data.choices[0].message.content);
+                const contenido = await groqChat({ messages:[{role:'system',content:'Eres experto en RRHH de un centro de kinesiología y entrenamiento. Analiza el CV y responde SOLO con JSON válido: {"nombre":"","especialidad":"","titulo_original":"","experiencia_anos":0,"tecnologias":[],"hard_skills":[],"soft_skills":[],"score_fit":70,"recomendacion":"Considerar","score_tecnico":40,"score_experiencia":30,"score_soft":15,"score_herramientas":15}. REGLA OBLIGATORIA para "especialidad": elegí EXACTAMENTE una de estas 5 categorías según la profesión PRINCIPAL del candidato, aunque mencione varias: "Kinesiólogo" (kinesiólogos, fisioterapeutas, fisiatras, lic. en kinesiología y fisiatría), "Entrenador" (entrenadores, personal trainers, profesores de educación física, instructores de musculación/spinning/funcional/natación, preparadores físicos, coaches deportivos), "Nutricionista" (nutricionistas, dietistas), "Recepcionista" (recepcionistas, administrativos, atención al cliente), "Otro" (cualquier otra profesión). En "titulo_original" copiá el título o profesión textual tal como figura en el CV.'},{role:'user',content:cvText.substring(0,3000)}], temperature:0.3 });
+                const parsed = limpiarRespuestaAI(contenido);
                 const candidate = {
                     id:Date.now(), name:parsed.nombre||'Candidato', specialty:normalizarEspecialidad(parsed.especialidad),
                     tituloOriginal:parsed.titulo_original||'',
@@ -1513,7 +1529,7 @@
                 .then(function(data) {
                     if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
                     if (data.error) {
-                        if (intento < GROQ_VISION_MODELS.length - 1) { intento++; return llamar(); }
+                        if (esErrorDeModelo(data) && intento < GROQ_VISION_MODELS.length - 1) { intento++; return llamar(); }
                         throw new Error(data.error.message || 'La IA no pudo leer la imagen');
                     }
                     if (!data.choices || !data.choices[0] || !data.choices[0].message) throw new Error('Respuesta inesperada de la IA');
@@ -1570,23 +1586,23 @@
             const sorted=Object.entries(allSkills).sort((a,b)=>b[1]-a[1]).slice(0,10);
             if(skillsChart)skillsChart.destroy();
             const ctxSk=document.getElementById('skillsChart')?document.getElementById('skillsChart').getContext('2d'):null;
-            if(ctxSk)skillsChart=new Chart(ctxSk,{type:'bar',data:{labels:sorted.map(s=>s[0]),datasets:[{label:'Candidatos',data:sorted.map(s=>s[1]),backgroundColor:'#667eea'}]}});
+            if(ctxSk && typeof Chart!=='undefined')skillsChart=new Chart(ctxSk,{type:'bar',data:{labels:sorted.map(s=>s[0]),datasets:[{label:'Candidatos',data:sorted.map(s=>s[1]),backgroundColor:'#667eea'}]}});
             const locs={};
             candidates.forEach(c=>{if(c.location&&c.location!=='No especificada')locs[c.location]=(locs[c.location]||0)+1;});
             const locD=Object.entries(locs).sort((a,b)=>b[1]-a[1]).slice(0,6);
             if(locationChart)locationChart.destroy();
             const ctxLo=document.getElementById('locationChart')?document.getElementById('locationChart').getContext('2d'):null;
-            if(ctxLo)locationChart=new Chart(ctxLo,{type:'pie',data:{labels:locD.map(l=>l[0]),datasets:[{data:locD.map(l=>l[1]),backgroundColor:['#667eea','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899']}]}});
+            if(ctxLo && typeof Chart!=='undefined')locationChart=new Chart(ctxLo,{type:'pie',data:{labels:locD.map(l=>l[0]),datasets:[{data:locD.map(l=>l[1]),backgroundColor:['#667eea','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899']}]}});
             const st={pendiente:0,entrevistado:0,contratado:0,descartado:0};
             candidates.forEach(c=>st[c.status]=(st[c.status]||0)+1);
             if(statusChart)statusChart.destroy();
             const ctxSt=document.getElementById('statusChart')?document.getElementById('statusChart').getContext('2d'):null;
-            if(ctxSt)statusChart=new Chart(ctxSt,{type:'doughnut',data:{labels:['Pendiente','Entrevistado','Contratado','Descartado'],datasets:[{data:[st.pendiente,st.entrevistado,st.contratado,st.descartado],backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444']}]}});
+            if(ctxSt && typeof Chart!=='undefined')statusChart=new Chart(ctxSt,{type:'doughnut',data:{labels:['Pendiente','Entrevistado','Contratado','Descartado'],datasets:[{data:[st.pendiente,st.entrevistado,st.contratado,st.descartado],backgroundColor:['#f59e0b','#3b82f6','#10b981','#ef4444']}]}});
             const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toLocaleDateString();}).reverse();
             const dc=days.map(d=>candidates.filter(c=>c.date&&c.date.includes(d.split(',')[0])).length);
             if(trendChart)trendChart.destroy();
             const ctxTr=document.getElementById('trendChart')?document.getElementById('trendChart').getContext('2d'):null;
-            if(ctxTr)trendChart=new Chart(ctxTr,{type:'line',data:{labels:days,datasets:[{label:'CVs evaluados',data:dc,borderColor:'#10b981',tension:0.3,fill:true}]}});
+            if(ctxTr && typeof Chart!=='undefined')trendChart=new Chart(ctxTr,{type:'line',data:{labels:days,datasets:[{label:'CVs evaluados',data:dc,borderColor:'#10b981',tension:0.3,fill:true}]}});
         }
 
         function showSection(section) {
