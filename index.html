@@ -386,10 +386,48 @@
             return configurarApiKey();
         }
 
-        // Groq da de baja modelos cada tanto. En vez de tener el nombre hardcodeado,
-        // se prueban en orden y se recuerda el primero que funcione.
-        var GROQ_TEXT_MODELS = ['llama-3.3-70b-versatile', 'meta-llama/llama-4-scout-17b-16e-instruct', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
+        // Groq da de baja modelos seguido. En vez de tener nombres fijos que se
+        // vencen, la página le pregunta a Groq qué modelos tiene la cuenta y usa
+        // esos. Las listas de abajo son sólo el orden de preferencia.
+        var GROQ_TEXT_PREFERIDOS = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.6-27b', 'meta-llama/llama-4-maverick-17b-128e-instruct'];
+        var GROQ_VISION_PREFERIDOS = ['qwen/qwen3.6-27b', 'meta-llama/llama-4-maverick-17b-128e-instruct'];
+        var GROQ_MODELOS_DISPONIBLES = null;
         var GROQ_MODEL_OK = localStorage.getItem('groqModeloOk') || '';
+
+        // Modelos que no sirven para leer un CV (audio, embeddings, moderación)
+        function sirveParaChat(id) {
+            return !/whisper|tts|embed|guard|moderation|playai/i.test(id);
+        }
+        function pareceDeVision(id) {
+            return /vision|maverick|scout|llama-4|qwen3\.6|gemini|multimodal/i.test(id);
+        }
+
+        function cargarModelosDeGroq() {
+            if (GROQ_MODELOS_DISPONIBLES) return Promise.resolve(GROQ_MODELOS_DISPONIBLES);
+            if (!GROQ_API_KEY) return Promise.resolve([]);
+            return fetch('https://api.groq.com/openai/v1/models', {
+                headers: { 'Authorization': 'Bearer ' + GROQ_API_KEY }
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(d) {
+                GROQ_MODELOS_DISPONIBLES = (d && d.data ? d.data : [])
+                    .map(function(m){ return m.id; })
+                    .filter(function(id){ return id && sirveParaChat(id); });
+                return GROQ_MODELOS_DISPONIBLES;
+            })
+            .catch(function(){ GROQ_MODELOS_DISPONIBLES = []; return []; });
+        }
+
+        // Arma el orden en que se van a probar: primero el que ya funcionó, después
+        // los preferidos que la cuenta realmente tiene, y al final cualquier otro.
+        function ordenDeModelos(preferidos, disponibles, filtroExtra) {
+            var lista = [];
+            function agregar(id) { if (id && lista.indexOf(id) === -1) lista.push(id); }
+            if (GROQ_MODEL_OK && (!disponibles.length || disponibles.indexOf(GROQ_MODEL_OK) !== -1) && (!filtroExtra || filtroExtra(GROQ_MODEL_OK))) agregar(GROQ_MODEL_OK);
+            preferidos.forEach(function(id){ if (!disponibles.length || disponibles.indexOf(id) !== -1) agregar(id); });
+            disponibles.forEach(function(id){ if (!filtroExtra || filtroExtra(id)) agregar(id); });
+            return lista.length ? lista : preferidos.slice();
+        }
 
         function esErrorDeModelo(data) {
             var err = (data && data.error) || {};
@@ -402,32 +440,34 @@
         // Llama a Groq probando modelos hasta que uno responda. Devuelve una promesa
         // con el texto de la respuesta.
         function groqChat(opciones) {
-            var lista = GROQ_MODEL_OK ? [GROQ_MODEL_OK].concat(GROQ_TEXT_MODELS.filter(function(m){ return m !== GROQ_MODEL_OK; })) : GROQ_TEXT_MODELS.slice();
-            var i = 0;
+            return cargarModelosDeGroq().then(function(disponibles) {
+                var lista = ordenDeModelos(GROQ_TEXT_PREFERIDOS, disponibles, null);
+                var i = 0;
 
-            function intentar() {
-                var cuerpo = { model: lista[i], messages: opciones.messages, temperature: opciones.temperature };
-                if (opciones.max_tokens) cuerpo.max_tokens = opciones.max_tokens;
-                return fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-                    body: JSON.stringify(cuerpo)
-                })
-                .then(function(r){ return r.json(); })
-                .then(function(data) {
-                    if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
-                    if (esErrorDeModelo(data)) {
-                        if (i < lista.length - 1) { i++; return intentar(); }
-                        throw new Error('Ningún modelo de IA está disponible en este momento. Probá de nuevo en un rato.');
-                    }
-                    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                        throw new Error(data.error ? data.error.message : 'Respuesta inesperada de la IA');
-                    }
-                    if (lista[i] !== GROQ_MODEL_OK) { GROQ_MODEL_OK = lista[i]; localStorage.setItem('groqModeloOk', lista[i]); }
-                    return data.choices[0].message.content;
-                });
-            }
-            return intentar();
+                function intentar() {
+                    var cuerpo = { model: lista[i], messages: opciones.messages, temperature: opciones.temperature };
+                    if (opciones.max_tokens) cuerpo.max_tokens = opciones.max_tokens;
+                    return fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+                        body: JSON.stringify(cuerpo)
+                    })
+                    .then(function(r){ return r.json(); })
+                    .then(function(data) {
+                        if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
+                        if (esErrorDeModelo(data)) {
+                            if (i < lista.length - 1) { i++; return intentar(); }
+                            throw new Error('Groq dio de baja los modelos que usaba la página y no encontré ninguno de reemplazo. Probá de nuevo más tarde.');
+                        }
+                        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                            throw new Error(data.error ? data.error.message : 'Respuesta inesperada de la IA');
+                        }
+                        if (lista[i] !== GROQ_MODEL_OK) { GROQ_MODEL_OK = lista[i]; localStorage.setItem('groqModeloOk', lista[i]); }
+                        return data.choices[0].message.content;
+                    });
+                }
+                return intentar();
+            });
         }
 
         function esErrorDeApiKey(data) {
@@ -1486,7 +1526,6 @@
         var pendingUploadFile = null; // stores the file to convert after analysis
 
         // Modelos de Groq con visión (se prueban en orden por si alguno cambia de nombre)
-        var GROQ_VISION_MODELS = ['meta-llama/llama-4-scout-17b-16e-instruct', 'meta-llama/llama-4-maverick-17b-128e-instruct'];
 
         function archivoImagenADataURL(file, maxW) {
             return new Promise(function(resolve, reject) {
@@ -1510,13 +1549,17 @@
         }
 
         function extraerTextoDeImagen(dataURL) {
-            var intento = 0;
+            return cargarModelosDeGroq().then(function(disponibles) {
+                var modelos = ordenDeModelos(GROQ_VISION_PREFERIDOS, disponibles, pareceDeVision);
+                var intento = 0;
+                return llamar();
+
             function llamar() {
                 return fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
                     body: JSON.stringify({
-                        model: GROQ_VISION_MODELS[intento],
+                        model: modelos[intento],
                         messages: [{ role: 'user', content: [
                             { type: 'text', text: 'Esta imagen es el CV de un candidato. Extraé TODO el texto visible, ordenado por secciones (datos personales, contacto, experiencia, formación, idiomas, etc.). Devolvé SOLO el texto plano del CV, sin comentarios tuyos ni explicaciones.' },
                             { type: 'image_url', image_url: { url: dataURL } }
@@ -1529,14 +1572,15 @@
                 .then(function(data) {
                     if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
                     if (data.error) {
-                        if (esErrorDeModelo(data) && intento < GROQ_VISION_MODELS.length - 1) { intento++; return llamar(); }
+                        if (esErrorDeModelo(data) && intento < modelos.length - 1) { intento++; return llamar(); }
+                        if (esErrorDeModelo(data)) throw new Error('Ninguno de los modelos de Groq que leen imágenes está disponible. Pegá el texto del CV a mano, o probá con un PDF que tenga texto seleccionable.');
                         throw new Error(data.error.message || 'La IA no pudo leer la imagen');
                     }
                     if (!data.choices || !data.choices[0] || !data.choices[0].message) throw new Error('Respuesta inesperada de la IA');
                     return data.choices[0].message.content;
                 });
             }
-            return llamar();
+            });
         }
 
         async function handleFileUpload(file) {
