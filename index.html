@@ -429,6 +429,21 @@
             return lista.length ? lista : preferidos.slice();
         }
 
+        function esLimiteDeUso(data, status) {
+            if (status === 429) return true;
+            var err = (data && data.error) || {};
+            if (err.code === 'rate_limit_exceeded') return true;
+            return /rate limit|too many requests|quota/i.test(err.message || '');
+        }
+
+        // Cuántos segundos pide esperar Groq antes de reintentar
+        function segundosDeEspera(data) {
+            var m = ((data && data.error && data.error.message) || '').match(/try again in ([\d.]+)\s*(m|s)/i);
+            if (!m) return 8;
+            var n = parseFloat(m[1]);
+            return Math.min(60, Math.ceil(m[2].toLowerCase() === 'm' ? n * 60 : n));
+        }
+
         function esErrorDeModelo(data) {
             var err = (data && data.error) || {};
             if (err.code === 'model_not_found' || err.code === 'model_decommissioned') return true;
@@ -443,6 +458,7 @@
             return cargarModelosDeGroq().then(function(disponibles) {
                 var lista = ordenDeModelos(GROQ_TEXT_PREFERIDOS, disponibles, null);
                 var i = 0;
+                var esperas = 0;
 
                 function intentar() {
                     var cuerpo = { model: lista[i], messages: opciones.messages, temperature: opciones.temperature };
@@ -452,9 +468,20 @@
                         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
                         body: JSON.stringify(cuerpo)
                     })
-                    .then(function(r){ return r.json(); })
+                    .then(function(r){ return r.json().then(function(d){ d.__status = r.status; return d; }); })
                     .then(function(data) {
                         if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
+                        if (esLimiteDeUso(data, data.__status)) {
+                            // Groq frena cuando se le mandan muchos CVs seguidos.
+                            // Se espera lo que pide y se reintenta solo, hasta 2 veces.
+                            if (esperas < 2) {
+                                esperas++;
+                                var seg = segundosDeEspera(data);
+                                if (opciones.onEspera) opciones.onEspera(seg);
+                                return new Promise(function(res){ setTimeout(res, seg * 1000); }).then(intentar);
+                            }
+                            throw new Error('Groq frenó la cuenta por mandar muchos CVs seguidos (es el límite del plan gratuito).\n\nEsperá un minuto y seguí cargando: no se perdió nada de lo que ya guardaste.');
+                        }
                         if (esErrorDeModelo(data)) {
                             if (i < lista.length - 1) { i++; return intentar(); }
                             throw new Error('Groq dio de baja los modelos que usaba la página y no encontré ninguno de reemplazo. Probá de nuevo más tarde.');
@@ -1552,6 +1579,7 @@
             return cargarModelosDeGroq().then(function(disponibles) {
                 var modelos = ordenDeModelos(GROQ_VISION_PREFERIDOS, disponibles, pareceDeVision);
                 var intento = 0;
+                var esperas = 0;
                 return llamar();
 
             function llamar() {
@@ -1568,9 +1596,13 @@
                         max_tokens: 2500
                     })
                 })
-                .then(function(r){ return r.json(); })
+                .then(function(r){ return r.json().then(function(d){ d.__status = r.status; return d; }); })
                 .then(function(data) {
                     if (esErrorDeApiKey(data)) throw new Error('La API Key no es válida o fue revocada. Actualizala desde el botón "🔑 API Key" del menú.');
+                    if (esLimiteDeUso(data, data.__status)) {
+                        if (esperas < 2) { esperas++; return new Promise(function(res){ setTimeout(res, segundosDeEspera(data) * 1000); }).then(llamar); }
+                        throw new Error('Groq frenó la cuenta por mandar muchos CVs seguidos (es el límite del plan gratuito).\n\nEsperá un minuto y probá de nuevo.');
+                    }
                     if (data.error) {
                         if (esErrorDeModelo(data) && intento < modelos.length - 1) { intento++; return llamar(); }
                         if (esErrorDeModelo(data)) throw new Error('Ninguno de los modelos de Groq que leen imágenes está disponible. Pegá el texto del CV a mano, o probá con un PDF que tenga texto seleccionable.');
